@@ -42,7 +42,7 @@ public class App {
             System.out.println("\nKết nối cơ sở dữ liệu thành công!");
 
             // Demo A: Truy vấn từ View mới tạo (v_doanh_thu_chi_nhanh)
-            try (PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM public.v_doanh_thu_chi_nhanh LIMIT 5");
+            try (PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM v_doanh_thu_chi_nhanh LIMIT 5");
                  ResultSet rs = pstmt.executeQuery()) {
                 System.out.println("\n--- DOANH THU CÁC CHI NHÁNH (Lấy từ View) ---");
                 while (rs.next()) {
@@ -54,7 +54,7 @@ public class App {
             }
 
             // Demo B: Tải câu truy vấn động từ file tim_phong_trong.sql thông qua SQLHelper
-            String timPhongSql = SQLHelper.readQuery("tim_phong_trong.sql");
+            String timPhongSql = SQLHelper.readQuery("quanly/tim_phong_trong.sql");
             try (PreparedStatement pstmt = conn.prepareStatement(timPhongSql)) {
                 // Đặt tham số cho chi nhánh 1, khoảng thời gian: 15/06/2026 14:00 đến 20/06/2026 12:00
                 pstmt.setInt(1, 1);

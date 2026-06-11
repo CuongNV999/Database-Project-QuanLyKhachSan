@@ -10,14 +10,14 @@ SELECT
     lp.chat_luong,
     lp.loai_giuong,
     lp.view,
-    lp.gia_tien
-FROM public.phong p
-JOIN public.loaiphong lp ON p.id_lp = lp.id_lp
+    lp.gia_tien::numeric AS gia_tien
+FROM phong p
+JOIN loaiphong lp ON p.id_lp = lp.id_lp
 WHERE lp.id_cn = ?
   AND p.id_p NOT IN (
       SELECT htp.id_p 
-      FROM public.hoadon_thue_phong htp
-      JOIN public.hoadon h ON htp.id_hd = h.id_hd
+      FROM hoadon_thue_phong htp
+      JOIN hoadon h ON htp.id_hd = h.id_hd
       WHERE h.trang_thai != 'Đã hủy' -- Bỏ qua các phòng đã hủy đặt phòng
         AND htp.ngaynhan < ?         -- ngaynhan_booked < ngaytra_wanted
         AND htp.ngaytra > ?          -- ngaytra_booked > ngaynhan_wanted
