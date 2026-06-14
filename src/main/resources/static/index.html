@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,11 +13,16 @@
             --bg-color: #0b0f19;
             --sidebar-bg: rgba(17, 24, 39, 0.7);
             --card-bg: rgba(31, 41, 55, 0.45);
-            --accent-primary: #8b5cf6; /* Indigo */
-            --accent-secondary: #06b6d4; /* Cyan */
-            --success-color: #10b981; /* Emerald */
-            --warning-color: #f59e0b; /* Amber */
-            --error-color: #ef4444; /* Crimson */
+            --accent-primary: #8b5cf6;
+            /* Indigo */
+            --accent-secondary: #06b6d4;
+            /* Cyan */
+            --success-color: #10b981;
+            /* Emerald */
+            --warning-color: #f59e0b;
+            /* Amber */
+            --error-color: #ef4444;
+            /* Crimson */
             --text-main: #f3f4f6;
             --text-secondary: #9ca3af;
             --border-glass: rgba(255, 255, 255, 0.08);
@@ -32,7 +38,7 @@
 
         body {
             background-color: var(--bg-color);
-            background-image: 
+            background-image:
                 radial-gradient(at 10% 10%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
                 radial-gradient(at 90% 90%, rgba(6, 182, 212, 0.15) 0px, transparent 50%);
             background-attachment: fixed;
@@ -98,7 +104,8 @@
             fill: currentColor;
         }
 
-        .nav-item:hover, .nav-item.active {
+        .nav-item:hover,
+        .nav-item.active {
             color: var(--text-main);
             background: rgba(255, 255, 255, 0.05);
             border-left: 4px solid var(--accent-secondary);
@@ -219,8 +226,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .section-header {
@@ -261,7 +275,9 @@
             font-weight: 500;
         }
 
-        input, select, button {
+        input,
+        select,
+        button {
             padding: 10px 16px;
             border-radius: 8px;
             border: 1px solid var(--border-glass);
@@ -272,7 +288,8 @@
             transition: all 0.2s ease;
         }
 
-        input:focus, select:focus {
+        input:focus,
+        select:focus {
             border-color: var(--accent-secondary);
             box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.15);
         }
@@ -340,10 +357,25 @@
             text-align: center;
         }
 
-        .badge-success { background: rgba(16, 185, 129, 0.15); color: var(--success-color); }
-        .badge-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning-color); }
-        .badge-error { background: rgba(239, 68, 68, 0.15); color: var(--error-color); }
-        .badge-info { background: rgba(6, 182, 212, 0.15); color: var(--accent-secondary); }
+        .badge-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success-color);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning-color);
+        }
+
+        .badge-error {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--error-color);
+        }
+
+        .badge-info {
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--accent-secondary);
+        }
 
         /* Operations forms layout */
         .ops-grid {
@@ -409,8 +441,13 @@
             font-weight: bold;
         }
 
-        .toast-success { border-left: 4px solid var(--success-color); }
-        .toast-error { border-left: 4px solid var(--error-color); }
+        .toast-success {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .toast-error {
+            border-left: 4px solid var(--error-color);
+        }
 
         /* Login Screen Overlay */
         .login-overlay {
@@ -466,14 +503,15 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Login Overlay -->
     <div id="login-screen" class="login-overlay">
         <div class="login-card">
             <div class="login-header">
-                <h2>HOMESTAY HUB</h2>
-                <p>Đăng nhập hệ thống để truy cập API nghiệp vụ</p>
+                <h2>HOMESTAY MANAGEMENT</h2>
+
             </div>
             <form id="form-login" onsubmit="handleLogin(event)">
                 <div class="form-group" style="margin-bottom: 1.2rem;">
@@ -496,28 +534,45 @@
     <!-- Sidebar -->
     <aside>
         <div class="logo">
-            <svg style="width: 28px; height: 28px;" viewBox="0 0 24 24"><path fill="currentColor" d="M19 6V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v1H3v3h18V6h-2M7 5h10v1H7V5m14 6v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8h18M6 13h5v2H6v-2m7 0h5v2h-5v-2m-7 4h5v2H6v-2m7 0h5v2h-5v-2Z"/></svg>
+            <svg style="width: 28px; height: 28px;" viewBox="0 0 24 24">
+                <path fill="currentColor"
+                    d="M19 6V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v1H3v3h18V6h-2M7 5h10v1H7V5m14 6v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8h18M6 13h5v2H6v-2m7 0h5v2h-5v-2m-7 4h5v2H6v-2m7 0h5v2h-5v-2Z" />
+            </svg>
             <span>HOMESTAY HUB</span>
         </div>
         <ul class="nav-links">
             <li class="nav-item active" onclick="switchTab('dashboard')">
-                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                </svg>
                 <span>Doanh Thu & Tổng Quan</span>
             </li>
             <li class="nav-item" onclick="switchTab('rooms-tab')">
-                <svg viewBox="0 0 24 24"><path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z" />
+                </svg>
                 <span>Danh Sách Phòng</span>
             </li>
             <li class="nav-item" onclick="switchTab('operations')">
-                <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
+                </svg>
                 <span>Nhiệm Vụ Nghiệp Vụ</span>
             </li>
             <li class="nav-item" onclick="switchTab('facilities')">
-                <svg viewBox="0 0 24 24"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.3C.5 6.7.9 9.8 2.9 11.8c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.6z"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.3C.5 6.7.9 9.8 2.9 11.8c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.6z" />
+                </svg>
                 <span>CSVC & Bảo Trì</span>
             </li>
             <li class="nav-item" onclick="switchTab('efficiency')">
-                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" />
+                </svg>
                 <span>Phòng Lớn Hiệu Suất Thấp</span>
             </li>
         </ul>
@@ -531,11 +586,15 @@
                 <p id="tab-desc">Quản lý hiệu suất, tình hình tài chính của các chi nhánh homestay.</p>
             </div>
             <div style="display:flex; align-items:center; gap:1.5rem;">
-                <div id="user-profile" style="background: rgba(255, 255, 255, 0.05); padding: 8px 16px; border-radius: 12px; border: 1px solid var(--border-glass); text-align: right; display: none;">
+                <div id="user-profile"
+                    style="background: rgba(255, 255, 255, 0.05); padding: 8px 16px; border-radius: 12px; border: 1px solid var(--border-glass); text-align: right; display: none;">
                     <span id="user-name" style="font-weight: 600; display: block;">...</span>
-                    <span id="user-role-branch" style="font-size: 0.8rem; color: var(--accent-secondary); display: block;">...</span>
+                    <span id="user-role-branch"
+                        style="font-size: 0.8rem; color: var(--accent-secondary); display: block;">...</span>
                 </div>
-                <button id="btn-logout" class="btn-primary" style="background: var(--error-color); display: none; padding: 10px 16px;" onclick="handleLogout()">Đăng xuất</button>
+                <button id="btn-logout" class="btn-primary"
+                    style="background: var(--error-color); display: none; padding: 10px 16px;"
+                    onclick="handleLogout()">Đăng xuất</button>
             </div>
         </header>
 
@@ -547,7 +606,10 @@
                     <p id="total-branches">...</p>
                 </div>
                 <div class="card-icon">
-                    <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3L2 12h3v8h14v-8h3L12 3zm0 4.25c1.24 0 2.25 1.01 2.25 2.25S13.24 11.75 12 11.75 9.75 10.74 9.75 9.5 10.76 7.25 12 7.25zm4 9.75H8v-.75c0-1.33 2.67-2 4-2s4 .67 4 2v.75z"/></svg>
+                    <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24">
+                        <path fill="currentColor"
+                            d="M12 3L2 12h3v8h14v-8h3L12 3zm0 4.25c1.24 0 2.25 1.01 2.25 2.25S13.24 11.75 12 11.75 9.75 10.74 9.75 9.5 10.76 7.25 12 7.25zm4 9.75H8v-.75c0-1.33 2.67-2 4-2s4 .67 4 2v.75z" />
+                    </svg>
                 </div>
             </div>
             <div class="card">
@@ -556,7 +618,9 @@
                     <p id="total-rooms">...</p>
                 </div>
                 <div class="card-icon">
-                    <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24"><path fill="currentColor" d="M19 10h-6V5h-2v5H5V5H3v15h2v-3h14v3h2V10h-2z"/></svg>
+                    <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M19 10h-6V5h-2v5H5V5H3v15h2v-3h14v3h2V10h-2z" />
+                    </svg>
                 </div>
             </div>
             <div class="card">
@@ -565,7 +629,9 @@
                     <p id="vacant-rooms">...</p>
                 </div>
                 <div class="card-icon">
-                    <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+                    <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+                    </svg>
                 </div>
             </div>
             <div class="card">
@@ -574,7 +640,10 @@
                     <p id="active-maintenance">...</p>
                 </div>
                 <div class="card-icon">
-                    <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24"><path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                    <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24">
+                        <path fill="currentColor"
+                            d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
+                    </svg>
                 </div>
             </div>
         </div>
@@ -588,7 +657,8 @@
             <div class="filter-bar">
                 <div class="form-group" style="flex-grow: 1;">
                     <label for="search-doanhthu">Tìm kiếm chi nhánh</label>
-                    <input type="text" id="search-doanhthu" placeholder="Nhập tên chi nhánh để lọc..." oninput="filterDoanhThuTable()">
+                    <input type="text" id="search-doanhthu" placeholder="Nhập tên chi nhánh để lọc..."
+                        oninput="filterDoanhThuTable()">
                 </div>
             </div>
             <div class="table-responsive">
@@ -602,7 +672,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td colspan="4" style="text-align:center">Đang tải dữ liệu...</td></tr>
+                        <tr>
+                            <td colspan="4" style="text-align:center">Đang tải dữ liệu...</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -613,7 +685,7 @@
             <div class="section-header">
                 <h2>Thư Mục Phòng & Trạng Thái</h2>
             </div>
-            
+
             <div class="filter-bar">
                 <div class="form-group">
                     <label for="room-branch-select">Chi Nhánh</label>
@@ -621,15 +693,21 @@
                 </div>
                 <div class="form-group" style="flex-grow: 1;">
                     <label for="search-rooms">Tìm kiếm phòng</label>
-                    <input type="text" id="search-rooms" placeholder="Nhập số phòng, chất lượng, loại giường, trạng thái..." oninput="filterRoomsTable()">
+                    <input type="text" id="search-rooms"
+                        placeholder="Nhập số phòng, chất lượng, loại giường, trạng thái..."
+                        oninput="filterRoomsTable()">
                 </div>
                 <div class="form-group">
                     <label>Bộ Lọc Đặc Biệt</label>
                     <div style="display:flex; gap:10px;">
-                        <button class="btn-primary" style="background:#4b5563" onclick="loadRoomStatusDetail()">Tất Cả Các Phòng</button>
-                        <button class="btn-primary" style="background:var(--error-color)" onclick="loadChuaDonDep()">Đang Dọn Dẹp</button>
-                        <button class="btn-primary" style="background:var(--warning-color)" onclick="loadSapCheckIn()">Sắp Check-In</button>
-                        <button class="btn-primary" style="background:var(--accent-primary)" onclick="loadQuaHanCheckOut()">Quá Hạn Check-Out</button>
+                        <button class="btn-primary" style="background:#4b5563" onclick="loadRoomStatusDetail()">Tất Cả
+                            Các Phòng</button>
+                        <button class="btn-primary" style="background:var(--error-color)"
+                            onclick="loadChuaDonDep()">Đang Dọn Dẹp</button>
+                        <button class="btn-primary" style="background:var(--warning-color)"
+                            onclick="loadSapCheckIn()">Sắp Check-In</button>
+                        <button class="btn-primary" style="background:var(--accent-primary)"
+                            onclick="loadQuaHanCheckOut()">Quá Hạn Check-Out</button>
                     </div>
                 </div>
             </div>
@@ -648,7 +726,9 @@
                         </tr>
                     </thead>
                     <tbody id="table-rooms-body">
-                        <tr><td colspan="7" style="text-align:center">Chọn bộ lọc để xem dữ liệu...</td></tr>
+                        <tr>
+                            <td colspan="7" style="text-align:center">Chọn bộ lọc để xem dữ liệu...</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -664,18 +744,23 @@
                 <!-- Quick Booking -->
                 <div class="form-card">
                     <h3>
-                        <svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:currentColor">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                        </svg>
                         Đặt Phòng Nhanh (func_tim_va_dat_phong_nhanh)
                     </h3>
                     <form id="form-quickbook" onsubmit="handleQuickBook(event)">
                         <div class="form-group">
                             <label for="qb-kh">Khách Hàng</label>
-                            <input type="text" id="qb-kh" list="qb-kh-list" placeholder="Nhập tên mới hoặc chọn khách hàng..." autocomplete="off" required>
+                            <input type="text" id="qb-kh" list="qb-kh-list"
+                                placeholder="Nhập tên mới hoặc chọn khách hàng..." autocomplete="off" required>
                             <datalist id="qb-kh-list"></datalist>
                         </div>
                         <div class="form-group">
                             <label for="qb-nv-search">Nhân Viên Thực Hiện</label>
-                            <input type="text" id="qb-nv-search" list="qb-nv-list" placeholder="Gõ để tìm nhân viên..." autocomplete="off" required>
+                            <input type="text" id="qb-nv-search" list="qb-nv-list" placeholder="Gõ để tìm nhân viên..."
+                                autocomplete="off" required>
                             <datalist id="qb-nv-list"></datalist>
                             <input type="hidden" id="qb-nv" required>
                         </div>
@@ -702,11 +787,13 @@
                         </div>
                         <div class="form-group">
                             <label for="qb-checkin">Thời Gian Nhận Phòng</label>
-                            <input type="text" id="qb-checkin" placeholder="YYYY-MM-DD HH:MM:SS" value="2026-06-15 14:00:00" required>
+                            <input type="text" id="qb-checkin" placeholder="YYYY-MM-DD HH:MM:SS"
+                                value="2026-06-15 14:00:00" required>
                         </div>
                         <div class="form-group">
                             <label for="qb-checkout">Thời Gian Trả Phòng</label>
-                            <input type="text" id="qb-checkout" placeholder="YYYY-MM-DD HH:MM:SS" value="2026-06-20 12:00:00" required>
+                            <input type="text" id="qb-checkout" placeholder="YYYY-MM-DD HH:MM:SS"
+                                value="2026-06-20 12:00:00" required>
                         </div>
                         <div class="form-group">
                             <label for="qb-coc">Tiền Cọc (VND)</label>
@@ -738,7 +825,8 @@
                                 <label for="cp-phongmoi">Phòng Trống Mới</label>
                                 <select id="cp-phongmoi" required></select>
                             </div>
-                            <button type="submit" class="btn-primary" style="background:var(--warning-color)">Xác Nhận Chuyển Phòng</button>
+                            <button type="submit" class="btn-primary" style="background:var(--warning-color)">Xác Nhận
+                                Chuyển Phòng</button>
                         </form>
                     </div>
 
@@ -759,8 +847,12 @@
                                 </select>
                             </div>
                             <div style="display:flex; gap:10px;">
-                                <button type="submit" class="btn-primary" style="flex-grow:1; background:var(--success-color)">Thanh Toán (Lấy Hóa Đơn)</button>
-                                <button type="button" class="btn-primary" style="flex-grow:1; background:var(--error-color)" onclick="handleHuyDat()">Hủy Đặt Phòng</button>
+                                <button type="submit" class="btn-primary"
+                                    style="flex-grow:1; background:var(--success-color)">Thanh Toán (Lấy Hóa
+                                    Đơn)</button>
+                                <button type="button" class="btn-primary"
+                                    style="flex-grow:1; background:var(--error-color)" onclick="handleHuyDat()">Hủy Đặt
+                                    Phòng</button>
                             </div>
                         </form>
                     </div>
@@ -777,12 +869,14 @@
             <div class="filter-bar">
                 <div class="form-group" style="flex-grow: 1;">
                     <label for="search-huuhao">Tìm kiếm trang thiết bị</label>
-                    <input type="text" id="search-huuhao" placeholder="Nhập tên trang thiết bị, mã phòng, chi nhánh..." oninput="filterHuuHaoTable()">
+                    <input type="text" id="search-huuhao" placeholder="Nhập tên trang thiết bị, mã phòng, chi nhánh..."
+                        oninput="filterHuuHaoTable()">
                 </div>
             </div>
 
             <div style="margin-bottom:2rem;">
-                <h3 style="font-size:1.1rem; margin-bottom:1rem; color:var(--accent-secondary)">Danh sách Cơ Sở Vật Chất hư hại cần dọn/thay mới (Báo Cáo Hao Mòn)</h3>
+                <h3 style="font-size:1.1rem; margin-bottom:1rem; color:var(--accent-secondary)">Danh sách Cơ Sở Vật Chất
+                    hư hại cần dọn/thay mới (Báo Cáo Hao Mòn)</h3>
                 <div class="table-responsive">
                     <table id="table-huuhao">
                         <thead>
@@ -796,7 +890,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr><td colspan="6" style="text-align:center">Đang tải dữ liệu...</td></tr>
+                            <tr>
+                                <td colspan="6" style="text-align:center">Đang tải dữ liệu...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -828,7 +924,8 @@
                 </div>
                 <div class="form-group" style="flex-grow: 1;">
                     <label for="search-efficiency">Tìm kiếm phòng</label>
-                    <input type="text" id="search-efficiency" placeholder="Nhập mã phòng, tên chi nhánh..." oninput="filterEfficiencyTable()">
+                    <input type="text" id="search-efficiency" placeholder="Nhập mã phòng, tên chi nhánh..."
+                        oninput="filterEfficiencyTable()">
                 </div>
                 <button class="btn-primary" onclick="loadEfficiencyReport()">Chạy Báo Cáo</button>
             </div>
@@ -851,7 +948,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td colspan="11" style="text-align:center">Thiết lập bộ lọc và chạy báo cáo...</td></tr>
+                        <tr>
+                            <td colspan="11" style="text-align:center">Thiết lập bộ lọc và chạy báo cáo...</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -874,7 +973,7 @@
 
         // Wrap global fetch to intercept 401 responses and force logout
         const originalFetch = window.fetch;
-        window.fetch = async function(...args) {
+        window.fetch = async function (...args) {
             const response = await originalFetch(...args);
             if (response.status === 401) {
                 sessionStorage.removeItem('userSession');
@@ -885,7 +984,7 @@
         };
 
         // Load data on window load
-        window.onload = function() {
+        window.onload = function () {
             checkLogin();
 
             // Setup autocomplete listener for Employee input
@@ -907,9 +1006,9 @@
         function switchTab(tabId) {
             document.querySelectorAll('.section-container').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            
+
             document.getElementById(tabId).classList.add('active');
-            
+
             // Set nav active class
             const navItems = document.querySelectorAll('.nav-item');
             if (tabId === 'dashboard') {
@@ -948,7 +1047,7 @@
 
             messageEl.innerText = msg;
             toast.className = 'toast show';
-            
+
             if (isSuccess) {
                 toast.classList.add('toast-success');
                 iconBg.style.background = 'var(--success-color)';
@@ -970,10 +1069,10 @@
                 // Branches
                 const resBranch = await fetch(`${API_BASE}/branches`);
                 const branches = await resBranch.json();
-                
+
                 const qbBranch = document.getElementById('qb-cn');
                 const filterBranch = document.getElementById('room-branch-select');
-                
+
                 qbBranch.innerHTML = '';
                 filterBranch.innerHTML = '';
                 branches.forEach(b => {
@@ -1008,7 +1107,7 @@
                 const invoices = await resInvoices.json();
                 const cpInvoices = document.getElementById('cp-hd');
                 const ttInvoices = document.getElementById('tt-hd');
-                
+
                 cpInvoices.innerHTML = '';
                 ttInvoices.innerHTML = '';
                 invoices.forEach(inv => {
@@ -1034,10 +1133,10 @@
                         // Lock branch selection
                         qbBranch.value = user.branchId;
                         qbBranch.disabled = true;
-                        
+
                         filterBranch.value = user.branchId;
                         filterBranch.disabled = true;
-                        
+
                         // Also trigger room list branch change for their own branch
                         onRoomBranchChange();
                     } else {
@@ -1057,7 +1156,7 @@
             if (session) {
                 const user = JSON.parse(session);
                 document.getElementById('login-screen').classList.add('hidden');
-                
+
                 // Show profile info
                 document.getElementById('user-profile').style.display = 'block';
                 document.getElementById('user-name').innerText = user.fullName;
@@ -1118,11 +1217,11 @@
                 showAlert("Vui lòng nhập tên hoặc chọn khách hàng!", false);
                 return;
             }
-            
+
             // Always create a new customer record for each booking session, even if name is duplicate
             let idKh = null;
             let newCustName = qbKhVal;
-            
+
             // If the user selected from the datalist suggestion, strip the ID suffix to get the raw name
             const khMatch = qbKhVal.match(/(.*)\s\(ID:\s(\d+)\)/);
             if (khMatch) {
@@ -1251,7 +1350,7 @@
                 const revenues = await res.json();
                 const tbody = document.querySelector('#table-doanhthu tbody');
                 tbody.innerHTML = '';
-                
+
                 revenues.forEach(row => {
                     tbody.innerHTML += `
                         <tr>
@@ -1273,7 +1372,7 @@
                 const rooms = await res.json();
                 renderRoomsTable(rooms);
                 filterRoomsByBranch();
-            } catch(e) { console.error(e); }
+            } catch (e) { console.error(e); }
         }
 
         async function loadChuaDonDep() {
@@ -1281,7 +1380,7 @@
                 const bId = document.getElementById('room-branch-select').value || 1;
                 const res = await fetch(`${API_BASE}/chua-don-dep?chiNhanhId=${bId}`);
                 const rooms = await res.json();
-                
+
                 // Customize header for clean check
                 document.getElementById('table-rooms-header').innerHTML = `
                     <th>Mã Phòng</th>
@@ -1290,10 +1389,10 @@
                     <th>Loại Giường</th>
                     <th>Trạng Thái</th>
                 `;
-                
+
                 const tbody = document.getElementById('table-rooms-body');
                 tbody.innerHTML = '';
-                if(rooms.length === 0) {
+                if (rooms.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="5" style="text-align:center">Không có phòng nào đang cần dọn dẹp tại chi nhánh này.</td></tr>`;
                     return;
                 }
@@ -1308,7 +1407,7 @@
                         </tr>
                     `;
                 });
-            } catch(e) { console.error(e); }
+            } catch (e) { console.error(e); }
         }
 
         async function loadSapCheckIn() {
@@ -1316,7 +1415,7 @@
                 const todayStr = new Date().toLocaleDateString('en-CA');
                 const res = await fetch(`${API_BASE}/sap-checkin?date=${todayStr}`);
                 const data = await res.json();
-                
+
                 document.getElementById('table-rooms-header').innerHTML = `
                     <th>Hóa Đơn</th>
                     <th>Mã Phòng</th>
@@ -1325,10 +1424,10 @@
                     <th>Ngày Nhận Dự Kiến</th>
                     <th>Trạng Thái HĐ</th>
                 `;
-                
+
                 const tbody = document.getElementById('table-rooms-body');
                 tbody.innerHTML = '';
-                if(data.length === 0) {
+                if (data.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="6" style="text-align:center">Không có phòng nào sắp check-in hôm nay.</td></tr>`;
                     return;
                 }
@@ -1344,14 +1443,14 @@
                         </tr>
                     `;
                 });
-            } catch(e) { console.error(e); }
+            } catch (e) { console.error(e); }
         }
 
         async function loadQuaHanCheckOut() {
             try {
                 const res = await fetch(`${API_BASE}/qua-han-checkout`);
                 const data = await res.json();
-                
+
                 document.getElementById('table-rooms-header').innerHTML = `
                     <th>Hóa Đơn</th>
                     <th>Mã Phòng</th>
@@ -1360,10 +1459,10 @@
                     <th>Ngày Trả Đáng Lẽ</th>
                     <th>Số Giờ Quá Hạn</th>
                 `;
-                
+
                 const tbody = document.getElementById('table-rooms-body');
                 tbody.innerHTML = '';
-                if(data.length === 0) {
+                if (data.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="6" style="text-align:center">Tất cả các phòng đã checkout đúng hạn!</td></tr>`;
                     return;
                 }
@@ -1379,7 +1478,7 @@
                         </tr>
                     `;
                 });
-            } catch(e) { console.error(e); }
+            } catch (e) { console.error(e); }
         }
 
         function renderRoomsTable(rooms) {
@@ -1395,7 +1494,7 @@
             `;
             const tbody = document.getElementById('table-rooms-body');
             tbody.innerHTML = '';
-            
+
             rooms.forEach(r => {
                 let badgeClass = 'badge-success';
                 if (r.trang_thai === 'Đang dọn dẹp' || r.trang_thai === 'Đang sửa') badgeClass = 'badge-error';
@@ -1423,7 +1522,7 @@
                 const data = await res.json();
                 const tbody = document.querySelector('#table-huuhao tbody');
                 tbody.innerHTML = '';
-                if(data.length === 0) {
+                if (data.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="6" style="text-align:center">Tất cả trang bị hoạt động Tốt, không có báo cáo hư hại.</td></tr>`;
                     return;
                 }
@@ -1439,7 +1538,7 @@
                         </tr>
                     `;
                 });
-            } catch(e) { console.error(e); }
+            } catch (e) { console.error(e); }
         }
 
         async function loadEfficiencyReport() {
@@ -1453,12 +1552,12 @@
                 const data = await res.json();
                 const tbody = document.querySelector('#table-efficiency tbody');
                 tbody.innerHTML = '';
-                
-                if(data.length === 0) {
+
+                if (data.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="11" style="text-align:center">Không phát hiện phòng diện tích lớn nào có hiệu suất thấp trong khoảng thời gian đã chọn!</td></tr>`;
                     return;
                 }
-                
+
                 data.forEach(r => {
                     let badgeClass = 'badge-success';
                     if (r.hieu_suat < 40.0) badgeClass = 'badge-error';
@@ -1480,7 +1579,7 @@
                         </tr>
                     `;
                 });
-            } catch(e) { console.error(e); }
+            } catch (e) { console.error(e); }
         }
 
         // --- Client-side Filter Functions ---
@@ -1524,7 +1623,7 @@
             const select = document.getElementById('room-branch-select');
             const selectedText = select.options[select.selectedIndex]?.text.toLowerCase();
             const rows = document.querySelectorAll('#table-rooms-body tr');
-            
+
             // If header contains "CHẤT LƯỢNG CŨ", it is the cleaning report.
             // That report is already filtered server-side by branch! No need to filter client-side.
             const isChuaDonDep = document.getElementById('table-rooms-header').innerText.includes("CHẤT LƯỢNG CŨ");
@@ -1548,4 +1647,5 @@
         }
     </script>
 </body>
+
 </html>
