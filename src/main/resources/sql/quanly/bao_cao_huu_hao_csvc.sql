@@ -5,6 +5,7 @@ SELECT
     p.id_p,
     p.dia_chi AS ten_phong,
     cn.ten_cn,
+    lp.id_cn AS id_cn,
     csvc.ten_csvc,
     pt.so_luong,
     pt.tinh_trang

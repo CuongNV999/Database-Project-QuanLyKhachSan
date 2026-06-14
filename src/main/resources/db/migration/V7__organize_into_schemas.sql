@@ -44,4 +44,21 @@ ALTER FUNCTION public.func_dat_phong_auto_update_status() SET SCHEMA hoadon;
 ALTER FUNCTION public.func_check_booking_overlap() SET SCHEMA hoadon;
 ALTER FUNCTION public.func_prevent_paid_invoice_edit() SET SCHEMA hoadon;
 ALTER FUNCTION public.func_check_child_age() SET SCHEMA khachhang;
+CREATE OR REPLACE FUNCTION public.func_them_hoa_don_nhanh(
+    p_id_kh INT,
+    p_id_nv INT,
+    p_phuongthuc VARCHAR(100)
+)
+RETURNS INT AS $$
+DECLARE
+    v_id_hd INT;
+BEGIN
+    INSERT INTO hoadon (trang_thai, ngaylap, phuongthuc, id_kh, id_nv)
+    VALUES ('Đã đặt', CURRENT_DATE, p_phuongthuc, p_id_kh, p_id_nv)
+    RETURNING id_hd INTO v_id_hd;
+    
+    RETURN v_id_hd;
+END;
+$$ LANGUAGE plpgsql;
+
 ALTER FUNCTION public.func_them_hoa_don_nhanh(integer, integer, character varying) SET SCHEMA hoadon;
