@@ -22,7 +22,7 @@ echo.
 echo =================================================================
 echo [INFO] Dang bien dich va chay ung dung...
 echo =================================================================
-call mvn compile exec:java
+call mvn spring-boot:run
 echo.
 echo Nhan phim bat ky de quay lai Menu...
 pause > nul

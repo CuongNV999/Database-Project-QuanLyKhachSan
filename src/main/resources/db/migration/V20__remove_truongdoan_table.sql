@@ -4,11 +4,10 @@
 -- 1. Thêm cột id_truong_doan vào bảng doankhach
 ALTER TABLE khachhang.doankhach ADD COLUMN id_truong_doan INTEGER;
 
--- 2. Sao chép dữ liệu trưởng đoàn từ bảng truongdoan sang cột mới trong doankhach
-UPDATE khachhang.doankhach dk
-SET id_truong_doan = td.id_kh
-FROM khachhang.truongdoan td
-WHERE dk.id_doan = td.id_doan;
+-- UPDATE khachhang.doankhach dk
+-- SET id_truong_doan = td.id_kh
+-- FROM khachhang.truongdoan td
+-- WHERE dk.id_doan = td.id_doan;
 
 -- 3. Tạo ràng buộc khóa ngoại tham chiếu đến bảng khachhang(id_kh) với tùy chọn ON DELETE SET NULL
 ALTER TABLE khachhang.doankhach

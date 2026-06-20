@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\unrestrict PjTvhz1cTyKZwrpbmN4rixfYbP8KTTSCPgjVBdfpr7rMWuLvxB1UPW1nXTVIZb5
+-- \unrestrict PjTvhz1cTyKZwrpbmN4rixfYbP8KTTSCPgjVBdfpr7rMWuLvxB1UPW1nXTVIZb5
 
 -- Dumped from database version 18.3
 -- Dumped by pg_dump version 18.3
