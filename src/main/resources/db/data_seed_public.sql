@@ -52,9 +52,9 @@ INSERT INTO public.chinhanh (id_cn, ten_cn, dia_chi) VALUES (10, 'Barnes Ltd Hom
 -- Data for Name: chucvu; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.chucvu (chuc_vu, luong) VALUES ('Manager', 2000.00);
-INSERT INTO public.chucvu (chuc_vu, luong) VALUES ('Receptionist', 800.00);
-INSERT INTO public.chucvu (chuc_vu, luong) VALUES ('Housekeeper', 700.00);
+-- INSERT INTO public.chucvu (chuc_vu, luong) VALUES ('Manager', 2000.00);
+-- INSERT INTO public.chucvu (chuc_vu, luong) VALUES ('Receptionist', 800.00);
+-- INSERT INTO public.chucvu (chuc_vu, luong) VALUES ('Housekeeper', 700.00);
 
 
 --
@@ -3615,56 +3615,56 @@ INSERT INTO public.khachhang (id_kh, cccd, dia_chi, ho_ten, sdt, quoc_tich, pass
 -- Data for Name: nhanvien; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (1, 'Christopher Campbell', 'Receptionist', 1);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (2, 'Shannon Vargas', 'Receptionist', 2);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (3, 'Karen Bush', 'Receptionist', 3);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (4, 'Jacqueline Miller', 'Receptionist', 4);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (5, 'Zachary Jensen', 'Receptionist', 5);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (6, 'Thomas Calhoun', 'Receptionist', 6);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (7, 'Leah Hernandez', 'Receptionist', 7);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (8, 'Mark Pitts', 'Receptionist', 8);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (9, 'Tonya Reese', 'Receptionist', 9);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (10, 'Shirley Padilla', 'Receptionist', 10);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (11, 'Ricky Booth', 'Receptionist', 1);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (12, 'Matthew Tanner', 'Receptionist', 2);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (13, 'Arthur Rogers', 'Receptionist', 3);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (14, 'Alan Thompson', 'Receptionist', 4);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (15, 'Vincent Bennett', 'Receptionist', 5);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (16, 'Raymond Taylor', 'Receptionist', 6);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (17, 'Tracy Williams', 'Receptionist', 7);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (18, 'Courtney Meyer', 'Receptionist', 8);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (19, 'Maria Jackson', 'Receptionist', 9);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (20, 'Cynthia Oliver', 'Receptionist', 10);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (21, 'Mary Williams', 'Receptionist', 1);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (22, 'Joel Duncan', 'Receptionist', 2);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (23, 'Erin Stone', 'Receptionist', 3);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (24, 'Eric Diaz', 'Receptionist', 4);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (25, 'Jaime Lewis', 'Receptionist', 5);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (26, 'Sharon Carter', 'Receptionist', 6);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (27, 'Deborah Smith', 'Receptionist', 7);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (28, 'Darren Hall', 'Receptionist', 8);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (29, 'Teresa Floyd', 'Receptionist', 9);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (30, 'Michelle Padilla', 'Receptionist', 10);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (31, 'Leah Mendoza', 'Receptionist', 1);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (32, 'Diane Hoffman', 'Receptionist', 2);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (33, 'Nicole Long', 'Receptionist', 3);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (34, 'James Gibson', 'Receptionist', 4);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (35, 'Courtney Rodriguez', 'Receptionist', 5);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (36, 'Mr. Matthew Soto', 'Receptionist', 6);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (37, 'Shannon Strong', 'Receptionist', 7);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (38, 'Dalton Hall', 'Receptionist', 8);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (39, 'Donald Daniel', 'Receptionist', 9);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (40, 'Anthony Hoffman', 'Receptionist', 10);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (41, 'Mary Mueller', 'Receptionist', 1);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (42, 'Denise Rogers', 'Receptionist', 2);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (43, 'Mrs. Chelsey Williamson', 'Receptionist', 3);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (44, 'Gabriella Gould', 'Receptionist', 4);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (45, 'Krista Brown', 'Receptionist', 5);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (46, 'Juan Good', 'Receptionist', 6);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (47, 'Daniel Brown', 'Receptionist', 7);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (48, 'Jessica Baker', 'Receptionist', 8);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (49, 'Paige Wilcox', 'Receptionist', 9);
-INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn) VALUES (50, 'Tanya Gomez', 'Receptionist', 10);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (1, 'Christopher Campbell', 'Receptionist', 1, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (2, 'Shannon Vargas', 'Receptionist', 2, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (3, 'Karen Bush', 'Receptionist', 3, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (4, 'Jacqueline Miller', 'Receptionist', 4, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (5, 'Zachary Jensen', 'Receptionist', 5, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (6, 'Thomas Calhoun', 'Receptionist', 6, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (7, 'Leah Hernandez', 'Receptionist', 7, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (8, 'Mark Pitts', 'Receptionist', 8, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (9, 'Tonya Reese', 'Receptionist', 9, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (10, 'Shirley Padilla', 'Receptionist', 10, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (11, 'Ricky Booth', 'Receptionist', 1, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (12, 'Matthew Tanner', 'Receptionist', 2, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (13, 'Arthur Rogers', 'Receptionist', 3, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (14, 'Alan Thompson', 'Receptionist', 4, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (15, 'Vincent Bennett', 'Receptionist', 5, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (16, 'Raymond Taylor', 'Receptionist', 6, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (17, 'Tracy Williams', 'Receptionist', 7, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (18, 'Courtney Meyer', 'Receptionist', 8, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (19, 'Maria Jackson', 'Receptionist', 9, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (20, 'Cynthia Oliver', 'Receptionist', 10, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (21, 'Mary Williams', 'Receptionist', 1, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (22, 'Joel Duncan', 'Receptionist', 2, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (23, 'Erin Stone', 'Receptionist', 3, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (24, 'Eric Diaz', 'Receptionist', 4, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (25, 'Jaime Lewis', 'Receptionist', 5, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (26, 'Sharon Carter', 'Receptionist', 6, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (27, 'Deborah Smith', 'Receptionist', 7, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (28, 'Darren Hall', 'Receptionist', 8, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (29, 'Teresa Floyd', 'Receptionist', 9, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (30, 'Michelle Padilla', 'Receptionist', 10, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (31, 'Leah Mendoza', 'Receptionist', 1, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (32, 'Diane Hoffman', 'Receptionist', 2, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (33, 'Nicole Long', 'Receptionist', 3, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (34, 'James Gibson', 'Receptionist', 4, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (35, 'Courtney Rodriguez', 'Receptionist', 5, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (36, 'Mr. Matthew Soto', 'Receptionist', 6, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (37, 'Shannon Strong', 'Receptionist', 7, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (38, 'Dalton Hall', 'Receptionist', 8, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (39, 'Donald Daniel', 'Receptionist', 9, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (40, 'Anthony Hoffman', 'Receptionist', 10, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (41, 'Mary Mueller', 'Receptionist', 1, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (42, 'Denise Rogers', 'Receptionist', 2, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (43, 'Mrs. Chelsey Williamson', 'Receptionist', 3, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (44, 'Gabriella Gould', 'Receptionist', 4, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (45, 'Krista Brown', 'Receptionist', 5, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (46, 'Juan Good', 'Receptionist', 6, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (47, 'Daniel Brown', 'Receptionist', 7, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (48, 'Jessica Baker', 'Receptionist', 8, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (49, 'Paige Wilcox', 'Receptionist', 9, 800.00);
+INSERT INTO public.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES (50, 'Tanya Gomez', 'Receptionist', 10, 800.00);
 
 
 --
@@ -13936,14 +13936,17 @@ SELECT pg_catalog.setval('public.phong_id_p_seq', 1, false);
 
 -- Seed remaining empty tables (Antigravity generation)
 -- 1. Seed public.chusohuu
+INSERT INTO public.chusohuu (id_csh, ten_csh, email, sdt) VALUES
 (1, 'Nguyễn Văn An', 'an.nguyen@owner.homestay.vn', '0901234567'),
 (2, 'Trần Thị Bình', 'binh.tran@owner.homestay.vn', '0912345678'),
 (3, 'Lê Hoài Nam', 'nam.le@owner.homestay.vn', '0923456789'),
 (4, 'Phạm Minh Đức', 'duc.pham@owner.homestay.vn', '0934567890'),
 (5, 'Hoàng Thu Trang', 'trang.hoang@owner.homestay.vn', '0945678901');
 
+SELECT pg_catalog.setval('public.chusohuu_id_csh_seq', 5, true);
 
 -- 2. Seed public.chinhanh_chusohuu
+INSERT INTO public.chinhanh_chusohuu (id_cn, id_csh) VALUES
 (1, 1), (2, 1),
 (3, 2), (4, 2),
 (5, 3), (6, 3),
@@ -13952,6 +13955,7 @@ SELECT pg_catalog.setval('public.phong_id_p_seq', 1, false);
 (1, 2), (5, 4);
 
 -- 3. Seed public.dichvu
+INSERT INTO public.dichvu (id_dv, ten_dv, gia, loai_dv) VALUES
 (1, 'Ăn sáng buffet tại nhà hàng', 150000.00, 'Ẩm thực'),
 (2, 'Dịch vụ giặt ủi nhanh', 50000.00, 'Giặt là'),
 (3, 'Thuê xe máy tự lái (24h)', 150000.00, 'Phương tiện'),
@@ -13963,13 +13967,12 @@ SELECT pg_catalog.setval('public.phong_id_p_seq', 1, false);
 (9, 'Trang trí phòng trăng mật/sinh nhật', 300000.00, 'Sự kiện'),
 (10, 'Thuê phao bơi & Đồ tắm', 30000.00, 'Tiện ích');
 
+SELECT pg_catalog.setval('public.dichvu_id_dv_seq', 10, true);
 
 -- 4. Seed public.doankhach
-(1, 3), (2, 4), (3, 5), (4, 2), (5, 6),
-(6, 3), (7, 4), (8, 5), (9, 2), (10, 7),
-(11, 3), (12, 4), (13, 5), (14, 2), (15, 6),
-(16, 3), (17, 4), (18, 5), (19, 2), (20, 8);
+INSERT INTO public.doankhach (id_doan, so_thanh_vien, id_truong_doan) VALUES (1, 3, 101), (2, 4, 104), (3, 5, 108), (4, 2, 113), (5, 6, 115), (6, 3, 121), (7, 4, 124), (8, 5, 128), (9, 2, 133), (10, 7, 135), (11, 3, 142), (12, 4, 145), (13, 5, 149), (14, 2, 154), (15, 6, 156), (16, 3, 162), (17, 4, 165), (18, 5, 169), (19, 2, 174), (20, 8, 176);
 
+SELECT pg_catalog.setval('public.doankhach_id_doan_seq', 20, true);
 
 -- Link customers to groups in public.khachhang
 UPDATE public.khachhang SET id_doan = 1 WHERE id_kh BETWEEN 101 AND 103;
@@ -13994,28 +13997,30 @@ UPDATE public.khachhang SET id_doan = 19 WHERE id_kh BETWEEN 174 AND 175;
 UPDATE public.khachhang SET id_doan = 20 WHERE id_kh BETWEEN 176 AND 183;
 
 -- 5. Seed public.truongdoan
-(1, 101),
-(2, 104),
-(3, 108),
-(4, 113),
-(5, 115),
-(6, 121),
-(7, 124),
-(8, 128),
-(9, 133),
-(10, 135),
-(11, 142),
-(12, 145),
-(13, 149),
-(14, 154),
-(15, 156),
-(16, 162),
-(17, 165),
-(18, 169),
-(19, 174),
-(20, 176);
+-- INSERT INTO public.truongdoan (id_doan, id_kh) VALUES
+-- (1, 101),
+-- (2, 104),
+-- (3, 108),
+-- (4, 113),
+-- (5, 115),
+-- (6, 121),
+-- (7, 124),
+-- (8, 128),
+-- (9, 133),
+-- (10, 135),
+-- (11, 142),
+-- (12, 145),
+-- (13, 149),
+-- (14, 154),
+-- (15, 156),
+-- (16, 162),
+-- (17, 165),
+-- (18, 169),
+-- (19, 174),
+-- (20, 176);
 
 -- 6. Seed public.hoadon_sudung_dichvu
+INSERT INTO public.hoadon_sudung_dichvu (id_hd, id_dv, so_luong)
 SELECT DISTINCT ON (h.id_hd)
     h.id_hd,
     (1 + (h.id_hd * 3) % 10)::int AS id_dv,
@@ -14024,6 +14029,7 @@ FROM public.hoadon h
 WHERE h.id_hd % 5 = 0;
 
 -- 7. Seed public.khachhang_treem
+INSERT INTO public.khachhang_treem (id_kh, ten_tre_em, tuoi)
 SELECT 
     id_kh,
     'Trẻ em của ' || ho_ten AS ten_tre_em,
@@ -14031,29 +14037,42 @@ SELECT
 FROM public.khachhang
 WHERE id_kh BETWEEN 500 AND 600 AND id_kh % 3 = 0;
 
+SELECT pg_catalog.setval('public.khachhang_treem_id_tre_em_seq', (SELECT COALESCE(MAX(id_tre_em), 1) FROM public.khachhang_treem), true);
 
 -- 8. Seed public.phong_trangbi_csvc
 -- Giường ngủ (1)
+INSERT INTO public.phong_trangbi_csvc (id_p, id_csvc, so_luong, tinh_trang)
 SELECT id_p, 1, 1 + (id_p % 2), 'Tốt' FROM public.phong;
 
 -- Tivi (2)
+INSERT INTO public.phong_trangbi_csvc (id_p, id_csvc, so_luong, tinh_trang)
 SELECT id_p, 2, 1, 'Tốt' FROM public.phong;
 
 -- Ga giường (3)
+INSERT INTO public.phong_trangbi_csvc (id_p, id_csvc, so_luong, tinh_trang)
 SELECT id_p, 3, 2, 'Tốt' FROM public.phong;
 
 -- Khăn tắm (4)
+INSERT INTO public.phong_trangbi_csvc (id_p, id_csvc, so_luong, tinh_trang)
 SELECT id_p, 4, 2, 'Tốt' FROM public.phong;
 
 -- Bàn chải (5)
+INSERT INTO public.phong_trangbi_csvc (id_p, id_csvc, so_luong, tinh_trang)
 SELECT id_p, 5, 2, 'Mới' FROM public.phong;
 
 -- Nước suối (6)
+INSERT INTO public.phong_trangbi_csvc (id_p, id_csvc, so_luong, tinh_trang)
 SELECT id_p, 6, 2, 'Mới' FROM public.phong;
 
 -- Translate invoice statuses to Vietnamese
 UPDATE public.hoadon SET trang_thai = 'Đã thanh toán' WHERE trang_thai = 'Paid';
 UPDATE public.hoadon SET trang_thai = 'Đã đặt' WHERE trang_thai = 'Unpaid';
+
+-- Seed data for cosovatchat_duoc_baotri
+INSERT INTO public.cosovatchat_duoc_baotri (id_bao_tri, id_csvc, thoi_gian_bat_dau, thoi_gian_ket_thuc) VALUES (1, 1, '2026-05-10 08:00:00', '2026-05-10 12:00:00');
+INSERT INTO public.cosovatchat_duoc_baotri (id_bao_tri, id_csvc, thoi_gian_bat_dau, thoi_gian_ket_thuc) VALUES (2, 2, '2026-05-12 09:00:00', '2026-05-12 11:30:00');
+INSERT INTO public.cosovatchat_duoc_baotri (id_bao_tri, id_csvc, thoi_gian_bat_dau, thoi_gian_ket_thuc) VALUES (3, 3, '2026-05-15 14:00:00', NULL);
+SELECT pg_catalog.setval('public.cosovatchat_duoc_baotri_id_bao_tri_seq', 3, true);
 
 SET session_replication_role = 'origin';
 
@@ -14061,4 +14080,4 @@ SET session_replication_role = 'origin';
 -- PostgreSQL database dump complete
 --
 
-\unrestrict PjTvhz1cTyKZwrpbmN4rixfYbP8KTTSCPgjVBdfpr7rMWuLvxB1UPW1nXTVIZb5
+-- \unrestrict PjTvhz1cTyKZwrpbmN4rixfYbP8KTTSCPgjVBdfpr7rMWuLvxB1UPW1nXTVIZb5

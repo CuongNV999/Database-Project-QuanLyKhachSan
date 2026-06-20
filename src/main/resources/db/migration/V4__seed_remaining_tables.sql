@@ -8,7 +8,8 @@ INSERT INTO public.chusohuu (id_csh, ten_csh, email, sdt) VALUES
 (2, 'Trần Thị Bình', 'binh.tran@owner.homestay.vn', '0912345678'),
 (3, 'Lê Hoài Nam', 'nam.le@owner.homestay.vn', '0923456789'),
 (4, 'Phạm Minh Đức', 'duc.pham@owner.homestay.vn', '0934567890'),
-(5, 'Hoàng Thu Trang', 'trang.hoang@owner.homestay.vn', '0945678901');
+(5, 'Hoàng Thu Trang', 'trang.hoang@owner.homestay.vn', '0945678901')
+ON CONFLICT (id_csh) DO NOTHING;
 
 SELECT pg_catalog.setval('public.chusohuu_id_csh_seq', 5, true);
 
@@ -19,7 +20,8 @@ INSERT INTO public.chinhanh_chusohuu (id_cn, id_csh) VALUES
 (5, 3), (6, 3),
 (7, 4), (8, 4),
 (9, 5), (10, 5),
-(1, 2), (5, 4);
+(1, 2), (5, 4)
+ON CONFLICT (id_cn, id_csh) DO NOTHING;
 
 -- 3. Seed public.dichvu (Services)
 INSERT INTO public.dichvu (id_dv, ten_dv, gia, loai_dv) VALUES
@@ -32,7 +34,8 @@ INSERT INTO public.dichvu (id_dv, ten_dv, gia, loai_dv) VALUES
 (7, 'Đặt tour du lịch địa phương', 400000.00, 'Giải trí'),
 (8, 'Tổ chức tiệc nướng BBQ ngoài trời', 600000.00, 'Dịch vụ gia đình'),
 (9, 'Trang trí phòng trăng mật/sinh nhật', 300000.00, 'Sự kiện'),
-(10, 'Thuê phao bơi & Đồ tắm', 30000.00, 'Tiện ích');
+(10, 'Thuê phao bơi & Đồ tắm', 30000.00, 'Tiện ích')
+ON CONFLICT (id_dv) DO NOTHING;
 
 SELECT pg_catalog.setval('public.dichvu_id_dv_seq', 10, true);
 
@@ -41,31 +44,33 @@ INSERT INTO public.doankhach (id_doan, so_thanh_vien) VALUES
 (1, 3), (2, 4), (3, 5), (4, 2), (5, 6),
 (6, 3), (7, 4), (8, 5), (9, 2), (10, 7),
 (11, 3), (12, 4), (13, 5), (14, 2), (15, 6),
-(16, 3), (17, 4), (18, 5), (19, 2), (20, 8);
+(16, 3), (17, 4), (18, 5), (19, 2), (20, 8)
+ON CONFLICT (id_doan) DO NOTHING;
 
 SELECT pg_catalog.setval('public.doankhach_id_doan_seq', 20, true);
 
 -- Link existing customers to these groups in public.khachhang
-UPDATE public.khachhang SET id_doan = 1 WHERE id_kh BETWEEN 101 AND 103;
-UPDATE public.khachhang SET id_doan = 2 WHERE id_kh BETWEEN 104 AND 107;
-UPDATE public.khachhang SET id_doan = 3 WHERE id_kh BETWEEN 108 AND 112;
-UPDATE public.khachhang SET id_doan = 4 WHERE id_kh BETWEEN 113 AND 114;
-UPDATE public.khachhang SET id_doan = 5 WHERE id_kh BETWEEN 115 AND 120;
-UPDATE public.khachhang SET id_doan = 6 WHERE id_kh BETWEEN 121 AND 123;
-UPDATE public.khachhang SET id_doan = 7 WHERE id_kh BETWEEN 124 AND 127;
-UPDATE public.khachhang SET id_doan = 8 WHERE id_kh BETWEEN 128 AND 132;
-UPDATE public.khachhang SET id_doan = 9 WHERE id_kh BETWEEN 133 AND 134;
-UPDATE public.khachhang SET id_doan = 10 WHERE id_kh BETWEEN 135 AND 141;
-UPDATE public.khachhang SET id_doan = 11 WHERE id_kh BETWEEN 142 AND 144;
-UPDATE public.khachhang SET id_doan = 12 WHERE id_kh BETWEEN 145 AND 148;
-UPDATE public.khachhang SET id_doan = 13 WHERE id_kh BETWEEN 149 AND 153;
-UPDATE public.khachhang SET id_doan = 14 WHERE id_kh BETWEEN 154 AND 155;
-UPDATE public.khachhang SET id_doan = 15 WHERE id_kh BETWEEN 156 AND 161;
-UPDATE public.khachhang SET id_doan = 16 WHERE id_kh BETWEEN 162 AND 164;
-UPDATE public.khachhang SET id_doan = 17 WHERE id_kh BETWEEN 165 AND 168;
-UPDATE public.khachhang SET id_doan = 18 WHERE id_kh BETWEEN 169 AND 173;
-UPDATE public.khachhang SET id_doan = 19 WHERE id_kh BETWEEN 174 AND 175;
-UPDATE public.khachhang SET id_doan = 20 WHERE id_kh BETWEEN 176 AND 183;
+-- (Only run updates if we are not already linked or we just want to ensure linkage)
+UPDATE public.khachhang SET id_doan = 1 WHERE id_kh BETWEEN 101 AND 103 AND id_doan IS NULL;
+UPDATE public.khachhang SET id_doan = 2 WHERE id_kh BETWEEN 104 AND 107 AND id_doan IS NULL;
+UPDATE public.khachhang SET id_doan = 3 WHERE id_kh BETWEEN 108 AND 112 AND id_doan IS NULL;
+UPDATE public.khachhang SET id_doan = 4 WHERE id_kh BETWEEN 113 AND 114 AND id_doan IS NULL;
+UPDATE public.khachhang SET id_doan = 5 WHERE id_kh BETWEEN 115 AND 120 AND id_doan IS NULL;
+UPDATE public.khachhang SET id_doan = 6 WHERE id_kh BETWEEN 121 AND 123 AND id_doan IS NULL;
+UPDATE public.khachhang SET id_doan = 7 WHERE id_kh BETWEEN 124 AND 127 AND id_doan IS NULL;
+UPDATE public.khachhang SET id_doan = 8 WHERE id_kh BETWEEN 128 AND 132 AND id_doan IS NULL;
+UPDATE public.khachhang SET id_doan = 9 WHERE id_kh BETWEEN 133 AND 134 AND id_doan IS NULL;
+UPDATE public.khachhang SET id_doan = 10 WHERE id_kh BETWEEN 135 AND 141 AND id_doan IS NULL;
+UPDATE public.khachhang SET id_doan = 11 WHERE id_kh BETWEEN 142 AND 144 AND id_doan IS NULL;
+UPDATE public.khachhang SET id_doan = 12 WHERE id_kh BETWEEN 145 AND 148 AND id_doan IS NULL;
+UPDATE public.khachhang SET id_doan = 13 WHERE id_kh BETWEEN 149 AND 153 AND id_doan IS NULL;
+UPDATE public.khachhang SET id_doan = 14 WHERE id_kh BETWEEN 154 AND 155 AND id_doan IS NULL;
+UPDATE public.khachhang SET id_doan = 15 WHERE id_kh BETWEEN 156 AND 161 AND id_doan IS NULL;
+UPDATE public.khachhang SET id_doan = 16 WHERE id_kh BETWEEN 162 AND 164 AND id_doan IS NULL;
+UPDATE public.khachhang SET id_doan = 17 WHERE id_kh BETWEEN 165 AND 168 AND id_doan IS NULL;
+UPDATE public.khachhang SET id_doan = 18 WHERE id_kh BETWEEN 169 AND 173 AND id_doan IS NULL;
+UPDATE public.khachhang SET id_doan = 19 WHERE id_kh BETWEEN 174 AND 175 AND id_doan IS NULL;
+UPDATE public.khachhang SET id_doan = 20 WHERE id_kh BETWEEN 176 AND 183 AND id_doan IS NULL;
 
 -- 5. Seed public.truongdoan (Group Leaders)
 INSERT INTO public.truongdoan (id_doan, id_kh) VALUES
@@ -88,7 +93,8 @@ INSERT INTO public.truongdoan (id_doan, id_kh) VALUES
 (17, 165),
 (18, 169),
 (19, 174),
-(20, 176);
+(20, 176)
+ON CONFLICT (id_doan) DO NOTHING;
 
 -- 6. Seed public.hoadon_sudung_dichvu (Service usage for ~20% of the invoices)
 INSERT INTO public.hoadon_sudung_dichvu (id_hd, id_dv, so_luong)
@@ -97,7 +103,8 @@ SELECT DISTINCT ON (h.id_hd)
     (1 + (h.id_hd * 3) % 10)::int AS id_dv,
     (1 + (h.id_hd * 7) % 5)::int AS so_luong
 FROM public.hoadon h
-WHERE h.id_hd % 5 = 0;
+WHERE h.id_hd % 5 = 0
+  AND NOT EXISTS (SELECT 1 FROM public.hoadon_sudung_dichvu);
 
 -- 7. Seed public.khachhang_treem (Children under 18)
 INSERT INTO public.khachhang_treem (id_kh, ten_tre_em, tuoi)
@@ -106,31 +113,33 @@ SELECT
     'Trẻ em của ' || ho_ten AS ten_tre_em,
     (1 + (id_kh % 15))::int AS tuoi
 FROM public.khachhang
-WHERE id_kh BETWEEN 500 AND 600 AND id_kh % 3 = 0;
+WHERE id_kh BETWEEN 500 AND 600 AND id_kh % 3 = 0
+  AND NOT EXISTS (SELECT 1 FROM public.khachhang_treem);
 
 SELECT pg_catalog.setval('public.khachhang_treem_id_tre_em_seq', (SELECT COALESCE(MAX(id_tre_em), 1) FROM public.khachhang_treem), true);
 
 -- 8. Seed public.phong_trangbi_csvc (Equip amenities for all 100 rooms)
--- Giường ngủ (1)
+-- Only seed if phong_trangbi_csvc is currently empty
 INSERT INTO public.phong_trangbi_csvc (id_p, id_csvc, so_luong, tinh_trang)
-SELECT id_p, 1, 1 + (id_p % 2), 'Tốt' FROM public.phong;
+SELECT id_p, 1, 1 + (id_p % 2), 'Tốt' FROM public.phong
+WHERE NOT EXISTS (SELECT 1 FROM public.phong_trangbi_csvc);
 
--- Tivi (2)
 INSERT INTO public.phong_trangbi_csvc (id_p, id_csvc, so_luong, tinh_trang)
-SELECT id_p, 2, 1, 'Tốt' FROM public.phong;
+SELECT id_p, 2, 1, 'Tốt' FROM public.phong
+WHERE NOT EXISTS (SELECT 1 FROM public.phong_trangbi_csvc WHERE id_csvc = 2);
 
--- Ga giường (3)
 INSERT INTO public.phong_trangbi_csvc (id_p, id_csvc, so_luong, tinh_trang)
-SELECT id_p, 3, 2, 'Tốt' FROM public.phong;
+SELECT id_p, 3, 2, 'Tốt' FROM public.phong
+WHERE NOT EXISTS (SELECT 1 FROM public.phong_trangbi_csvc WHERE id_csvc = 3);
 
--- Khăn tắm (4)
 INSERT INTO public.phong_trangbi_csvc (id_p, id_csvc, so_luong, tinh_trang)
-SELECT id_p, 4, 2, 'Tốt' FROM public.phong;
+SELECT id_p, 4, 2, 'Tốt' FROM public.phong
+WHERE NOT EXISTS (SELECT 1 FROM public.phong_trangbi_csvc WHERE id_csvc = 4);
 
--- Bàn chải (5)
 INSERT INTO public.phong_trangbi_csvc (id_p, id_csvc, so_luong, tinh_trang)
-SELECT id_p, 5, 2, 'Mới' FROM public.phong;
+SELECT id_p, 5, 2, 'Mới' FROM public.phong
+WHERE NOT EXISTS (SELECT 1 FROM public.phong_trangbi_csvc WHERE id_csvc = 5);
 
--- Nước suối (6)
 INSERT INTO public.phong_trangbi_csvc (id_p, id_csvc, so_luong, tinh_trang)
-SELECT id_p, 6, 2, 'Mới' FROM public.phong;
+SELECT id_p, 6, 2, 'Mới' FROM public.phong
+WHERE NOT EXISTS (SELECT 1 FROM public.phong_trangbi_csvc WHERE id_csvc = 6);

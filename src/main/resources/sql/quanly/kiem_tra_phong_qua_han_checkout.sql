@@ -1,5 +1,5 @@
 -- Query: Danh sách phòng đã quá hạn ngày trả phòng dự kiến nhưng chưa được checkout
--- Tham số: Không có (Sử dụng thời gian hiện tại của hệ thống)
+-- Tham số: Không có
 
 SELECT 
     htp.id_hd,

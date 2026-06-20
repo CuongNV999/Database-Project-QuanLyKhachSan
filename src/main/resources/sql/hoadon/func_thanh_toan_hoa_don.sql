@@ -11,27 +11,31 @@ DECLARE
     v_tong_thanh_toan MONEY;
     r RECORD;
 BEGIN
-    -- 1. Tính tổng tiền cuối cùng cần thanh toán
+    -- 1. Cập nhật ngày thanh toán của hóa đơn thành CURRENT_TIMESTAMP trước khi tính tiền
+    -- (Điều này đảm bảo hàm hoadon.func_tinh_ti_le_checkout_muon sẽ lấy chính xác giờ thanh toán thực tế)
+    UPDATE hoadon.hoadon
+    SET ngaythanhtoan = CURRENT_TIMESTAMP
+    WHERE id_hd = p_id_hd;
+
+    -- 2. Tính tổng tiền cuối cùng cần thanh toán (hàm này sẽ tự động cập nhật lại tổng tiền từng phòng thuê)
     v_tong_thanh_toan := hoadon.func_tinh_tong_tien_hoa_don(p_id_hd);
 
-    -- 2. Cập nhật thông tin thanh toán cho hóa đơn
+    -- 3. Cập nhật trạng thái thanh toán và phương thức thanh toán
     UPDATE hoadon.hoadon
     SET trang_thai = 'Đã thanh toán',
-        ngaythanhtoan = CURRENT_DATE,
         phuongthuc = p_phuongthuc
     WHERE id_hd = p_id_hd;
 
-    -- 3. Cập nhật trạng thái các phòng trong hóa đơn này sang 'Đang dọn dẹp'
+    -- 4. Giải phóng các phòng trong hóa đơn này sang trạng thái dọn dẹp (nếu không có phòng nào đang sửa)
     FOR r IN 
         SELECT id_p FROM hoadon.hoadon_thue_phong WHERE id_hd = p_id_hd
     LOOP
+        -- Nếu phòng chưa được check-out riêng biệt (hoặc chưa chuyển sang Đang dọn dẹp/Đang sửa), chuyển sang 'Đang dọn dẹp'
         UPDATE quanly.phong
         SET trang_thai = 'Đang dọn dẹp'
-        WHERE id_p = r.id_p;
+        WHERE id_p = r.id_p AND trang_thai NOT IN ('Đang dọn dẹp', 'Đang sửa');
     END LOOP;
 
     RETURN v_tong_thanh_toan;
 END;
 $$ LANGUAGE plpgsql;
-
--- Thử chạy: SELECT hoadon.func_thanh_toan_hoa_don(5, 'Thẻ tín dụng');

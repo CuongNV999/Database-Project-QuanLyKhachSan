@@ -5,12 +5,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.stream.Collectors;
 
+import org.springframework.lang.NonNull;
+
 public class SQLHelper {
     /**
      * Đọc nội dung tệp SQL từ classpath (thư mục tài nguyên src/main/resources/sql/)
      * @param fileName Tên tệp tin SQL (ví dụ: "tim_phong_trong.sql")
      * @return Chuỗi chứa câu truy vấn SQL
      */
+    @NonNull
     public static String readQuery(String fileName) throws Exception {
         try (InputStream is = SQLHelper.class.getClassLoader().getResourceAsStream("sql/" + fileName)) {
             if (is == null) {

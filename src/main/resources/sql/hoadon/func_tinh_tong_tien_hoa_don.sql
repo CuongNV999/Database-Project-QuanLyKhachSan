@@ -1,4 +1,5 @@
--- Function: Tính tổng tiền cuối cùng của hóa đơn (Tiền phòng + Tiền dịch vụ - Giảm giá hội viên)
+-- Function: Tính tổng tiền cuối cùng của toàn bộ hóa đơn (Tổng tiền phòng + Tổng tiền dịch vụ đã dùng)
+-- Đầu vào: p_id_hd (Mã hóa đơn)
 -- Trả về: MONEY
 
 CREATE OR REPLACE FUNCTION hoadon.func_tinh_tong_tien_hoa_don(p_id_hd INT)
@@ -6,39 +7,41 @@ RETURNS MONEY AS $$
 DECLARE
     v_tien_phong MONEY := 0::money;
     v_tien_dich_vu MONEY := 0::money;
-    v_giam_gia_percent NUMERIC(5,2) := 0.00;
     v_tong_tien MONEY := 0::money;
+    v_trang_thai VARCHAR(50);
+    r RECORD;
 BEGIN
-    -- 1. Tính tổng tiền thuê các phòng của hóa đơn
+    -- 1. Lấy trạng thái hiện tại của hóa đơn
+    SELECT trang_thai INTO v_trang_thai FROM hoadon.hoadon WHERE id_hd = p_id_hd;
+
+    -- 2. Chỉ thực hiện cập nhật lại tổng tiền từng phòng thuê nếu hóa đơn chưa thanh toán.
+    -- Đối với hóa đơn đã thanh toán, thông tin tiền phòng đã được chốt và không được phép sửa đổi (tránh lỗi bảo mật).
+    IF COALESCE(v_trang_thai, '') != 'Đã thanh toán' THEN
+        FOR r IN 
+            SELECT id_p FROM hoadon.hoadon_thue_phong WHERE id_hd = p_id_hd
+        LOOP
+            UPDATE hoadon.hoadon_thue_phong
+            SET tong_tien = hoadon.func_tinh_tien_phong(p_id_hd, r.id_p)
+            WHERE id_hd = p_id_hd AND id_p = r.id_p;
+        END LOOP;
+    END IF;
+
+    -- 3. Tính tổng tiền thuê các phòng của hóa đơn sau khi đã cập nhật
     SELECT COALESCE(SUM(tong_tien), 0::money)
     INTO v_tien_phong
     FROM hoadon.hoadon_thue_phong
     WHERE id_hd = p_id_hd;
 
-    -- 2. Tính tổng tiền sử dụng dịch vụ của hóa đơn
+    -- 4. Tính tổng tiền sử dụng dịch vụ của hóa đơn (BUFFET ăn sáng, giặt là, spa...)
     SELECT COALESCE(SUM(hsd.so_luong * dv.gia), 0::money)
     INTO v_tien_dich_vu
     FROM hoadon.hoadon_sudung_dichvu hsd
     JOIN hoadon.dichvu dv ON hsd.id_dv = dv.id_dv
     WHERE hsd.id_hd = p_id_hd;
 
-    -- 3. Lấy mức giảm giá hội viên của khách hàng liên kết với hóa đơn (dùng LEFT JOIN đề phòng không phải hội viên)
-    SELECT COALESCE(hhv.muc_giam_gia, 0.00)
-    INTO v_giam_gia_percent
-    FROM hoadon.hoadon h
-    JOIN khachhang.khachhang kh ON h.id_kh = kh.id_kh
-    LEFT JOIN khachhang.hoivien hv ON kh.id_hv = hv.id_hv
-    LEFT JOIN khachhang.hanghoivien hhv ON hv.hang = hhv.hang
-    WHERE h.id_hd = p_id_hd;
-
-    -- Đảm bảo không bị NULL nếu câu truy vấn không trả về dòng nào
-    v_giam_gia_percent := COALESCE(v_giam_gia_percent, 0.00);
-
-    -- 4. Tính toán tổng tiền sau giảm giá
-    v_tong_tien := (v_tien_phong + v_tien_dich_vu) * (1 - v_giam_gia_percent / 100);
+    -- Tổng tiền hóa đơn = Tổng tiền phòng + Tiền dịch vụ
+    v_tong_tien := v_tien_phong + v_tien_dich_vu;
 
     RETURN v_tong_tien;
 END;
 $$ LANGUAGE plpgsql;
-
--- Thử chạy: SELECT hoadon.func_tinh_tong_tien_hoa_don(5);

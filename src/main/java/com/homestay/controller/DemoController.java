@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
+import org.springframework.lang.NonNull;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,8 @@ public class DemoController {
         return branchId;
     }
 
-    private String wrapWithBranchFilter(String sql) {
+    @NonNull
+    private String wrapWithBranchFilter(@NonNull String sql) {
         String cleanSql = sql.trim();
         if (cleanSql.endsWith(";")) {
             cleanSql = cleanSql.substring(0, cleanSql.length() - 1);
@@ -52,17 +54,22 @@ public class DemoController {
 
         Map<String, Object> res = null;
 
-        // Mock application logins with branch mapping (NOT database roles)
+        // Mock application logins with branch mapping
         if (username.equals("nv1_cn1") && password.equals("123")) {
-            res = Map.of("success", true, "role", "Nhân viên", "branchId", 1, "branchName", "Salazar, Page and Martinez Homestay", "fullName", "Nguyen Van A");
+            res = Map.of("success", true, "role", "Nhân viên", "branchId", 1, "branchName",
+                    "Salazar, Page and Martinez Homestay", "fullName", "Nguyen Van A");
         } else if (username.equals("ql_cn1") && password.equals("123")) {
-            res = Map.of("success", true, "role", "Quản lý", "branchId", 1, "branchName", "Salazar, Page and Martinez Homestay", "fullName", "Tran Thi B");
+            res = Map.of("success", true, "role", "Quản lý", "branchId", 1, "branchName",
+                    "Salazar, Page and Martinez Homestay", "fullName", "Tran Thi B");
         } else if (username.equals("nv2_cn2") && password.equals("123")) {
-            res = Map.of("success", true, "role", "Nhân viên", "branchId", 2, "branchName", "Schultz-Osborne Homestay", "fullName", "Le Van C");
+            res = Map.of("success", true, "role", "Nhân viên", "branchId", 2, "branchName", "Schultz-Osborne Homestay",
+                    "fullName", "Le Van C");
         } else if (username.equals("ql_cn2") && password.equals("123")) {
-            res = Map.of("success", true, "role", "Quản lý", "branchId", 2, "branchName", "Schultz-Osborne Homestay", "fullName", "Pham Thi D");
+            res = Map.of("success", true, "role", "Quản lý", "branchId", 2, "branchName", "Schultz-Osborne Homestay",
+                    "fullName", "Pham Thi D");
         } else if (username.equals("admin") && password.equals("123")) {
-            res = Map.of("success", true, "role", "Administrator", "branchId", -1, "branchName", "Tất cả chi nhánh", "fullName", "Quản trị viên Hệ thống");
+            res = Map.of("success", true, "role", "Administrator", "branchId", -1, "branchName", "Tất cả chi nhánh",
+                    "fullName", "Quản trị viên Hệ thống");
         }
 
         if (res != null) {
@@ -95,7 +102,8 @@ public class DemoController {
     public List<Map<String, Object>> getBranches(HttpSession session) {
         Integer branchId = checkBranchAccess(session);
         if (branchId > 0) {
-            return jdbcTemplate.queryForList("SELECT id_cn, ten_cn FROM quanly.chinhanh WHERE id_cn = ? ORDER BY id_cn", branchId);
+            return jdbcTemplate.queryForList("SELECT id_cn, ten_cn FROM quanly.chinhanh WHERE id_cn = ? ORDER BY id_cn",
+                    branchId);
         }
         return jdbcTemplate.queryForList("SELECT id_cn, ten_cn FROM quanly.chinhanh ORDER BY id_cn");
     }
@@ -110,7 +118,8 @@ public class DemoController {
     public List<Map<String, Object>> getEmployees(HttpSession session) {
         Integer branchId = checkBranchAccess(session);
         if (branchId > 0) {
-            return jdbcTemplate.queryForList("SELECT id_nv, ten_nv FROM nhansu.nhanvien WHERE id_cn = ? ORDER BY id_nv LIMIT 100", branchId);
+            return jdbcTemplate.queryForList(
+                    "SELECT id_nv, ten_nv FROM nhansu.nhanvien WHERE id_cn = ? ORDER BY id_nv LIMIT 100", branchId);
         }
         return jdbcTemplate.queryForList("SELECT id_nv, ten_nv FROM nhansu.nhanvien ORDER BY id_nv LIMIT 100");
     }
@@ -120,9 +129,10 @@ public class DemoController {
         Integer branchId = checkBranchAccess(session);
         if (branchId > 0) {
             return jdbcTemplate.queryForList(
-                "SELECT p.id_p, p.dia_chi, p.trang_thai FROM quanly.phong p " +
-                "JOIN quanly.loaiphong lp ON p.id_lp = lp.id_lp " +
-                "WHERE lp.id_cn = ? ORDER BY p.id_p", branchId);
+                    "SELECT p.id_p, p.dia_chi, p.trang_thai FROM quanly.phong p " +
+                            "JOIN quanly.loaiphong lp ON p.id_lp = lp.id_lp " +
+                            "WHERE lp.id_cn = ? ORDER BY p.id_p",
+                    branchId);
         }
         return jdbcTemplate.queryForList("SELECT id_p, dia_chi, trang_thai FROM quanly.phong ORDER BY id_p");
     }
@@ -132,11 +142,13 @@ public class DemoController {
         Integer branchId = checkBranchAccess(session);
         if (branchId > 0) {
             return jdbcTemplate.queryForList(
-                "SELECT h.id_hd, h.trang_thai, h.ngaylap, h.id_kh FROM hoadon.hoadon h " +
-                "JOIN nhansu.nhanvien nv ON h.id_nv = nv.id_nv " +
-                "WHERE nv.id_cn = ? ORDER BY h.id_hd DESC LIMIT 100", branchId);
+                    "SELECT h.id_hd, h.trang_thai, h.ngaylap, h.id_kh FROM hoadon.hoadon h " +
+                            "JOIN nhansu.nhanvien nv ON h.id_nv = nv.id_nv " +
+                            "WHERE nv.id_cn = ? ORDER BY h.id_hd DESC LIMIT 100",
+                    branchId);
         }
-        return jdbcTemplate.queryForList("SELECT id_hd, trang_thai, ngaylap, id_kh FROM hoadon.hoadon ORDER BY id_hd DESC LIMIT 100");
+        return jdbcTemplate.queryForList(
+                "SELECT id_hd, trang_thai, ngaylap, id_kh FROM hoadon.hoadon ORDER BY id_hd DESC LIMIT 100");
     }
 
     // -------------------------------------------------------------
@@ -167,8 +179,7 @@ public class DemoController {
                 timPhongSql,
                 chiNhanhId,
                 Timestamp.valueOf(checkOut),
-                Timestamp.valueOf(checkIn)
-        );
+                Timestamp.valueOf(checkIn));
     }
 
     @GetMapping("/phong-status-detail")
@@ -176,9 +187,9 @@ public class DemoController {
         Integer branchId = checkBranchAccess(session);
         if (branchId > 0) {
             String sql = "SELECT v.* FROM v_phong_status_detail v " +
-                         "JOIN quanly.phong p ON v.id_p = p.id_p " +
-                         "JOIN quanly.loaiphong lp ON p.id_lp = lp.id_lp " +
-                         "WHERE lp.id_cn = ? ORDER BY v.id_p";
+                    "JOIN quanly.phong p ON v.id_p = p.id_p " +
+                    "JOIN quanly.loaiphong lp ON p.id_lp = lp.id_lp " +
+                    "WHERE lp.id_cn = ? ORDER BY v.id_p";
             return jdbcTemplate.queryForList(sql, branchId);
         }
         String sql = "SELECT * FROM v_phong_status_detail ORDER BY id_p";
@@ -186,7 +197,8 @@ public class DemoController {
     }
 
     @GetMapping("/chua-don-dep")
-    public List<Map<String, Object>> getChuaDonDep(@RequestParam(defaultValue = "1") int chiNhanhId, HttpSession session) throws Exception {
+    public List<Map<String, Object>> getChuaDonDep(@RequestParam(defaultValue = "1") int chiNhanhId,
+            HttpSession session) throws Exception {
         Integer branchId = checkBranchAccess(session);
         if (branchId > 0) {
             chiNhanhId = branchId;
@@ -241,9 +253,11 @@ public class DemoController {
         String sql = SQLHelper.readQuery("quanly/phong_lon_hieu_suat_thap.sql");
         if (branchId > 0) {
             sql = wrapWithBranchFilter(sql);
-            return jdbcTemplate.queryForList(sql, java.sql.Date.valueOf(tuNgay), java.sql.Date.valueOf(denNgay), mucItKhach, mucSanHieuSuat, branchId);
+            return jdbcTemplate.queryForList(sql, java.sql.Date.valueOf(tuNgay), java.sql.Date.valueOf(denNgay),
+                    mucItKhach, mucSanHieuSuat, branchId);
         }
-        return jdbcTemplate.queryForList(sql, java.sql.Date.valueOf(tuNgay), java.sql.Date.valueOf(denNgay), mucItKhach, mucSanHieuSuat);
+        return jdbcTemplate.queryForList(sql, java.sql.Date.valueOf(tuNgay), java.sql.Date.valueOf(denNgay), mucItKhach,
+                mucSanHieuSuat);
     }
 
     // -------------------------------------------------------------
@@ -266,7 +280,8 @@ public class DemoController {
             }
 
             if (idKh == null) {
-                return Map.of("success", false, "message", "Đặt phòng thất bại: Vui lòng chọn hoặc nhập tên khách hàng!");
+                return Map.of("success", false, "message",
+                        "Đặt phòng thất bại: Vui lòng chọn hoặc nhập tên khách hàng!");
             }
             int idNv = ((Number) body.get("idNv")).intValue();
             int idCn = ((Number) body.get("idCn")).intValue();
@@ -281,17 +296,18 @@ public class DemoController {
                 idCn = branchId;
                 // Verify employee is from this branch
                 Integer count = jdbcTemplate.queryForObject(
-                    "SELECT COUNT(*) FROM nhansu.nhanvien WHERE id_nv = ? AND id_cn = ?",
-                    Integer.class, idNv, branchId);
+                        "SELECT COUNT(*) FROM nhansu.nhanvien WHERE id_nv = ? AND id_cn = ?",
+                        Integer.class, idNv, branchId);
                 if (count == null || count == 0) {
-                    return Map.of("success", false, "message", "Đặt phòng thất bại: Nhân viên thực hiện không thuộc chi nhánh của bạn!");
+                    return Map.of("success", false, "message",
+                            "Đặt phòng thất bại: Nhân viên thực hiện không thuộc chi nhánh của bạn!");
                 }
             }
 
             String sql = "SELECT quanly.func_tim_va_dat_phong_nhanh(?, ?, ?, ?, ?, ?::timestamp, ?::timestamp, ?::numeric::money, ?::numeric::money) AS id_hd";
-            Integer idHd = jdbcTemplate.queryForObject(sql, Integer.class, 
-                    idKh, idNv, idCn, chatLuong, loaiGiuong, 
-                    Timestamp.valueOf(ngayNhan), Timestamp.valueOf(ngayTra), 
+            Integer idHd = jdbcTemplate.queryForObject(sql, Integer.class,
+                    idKh, idNv, idCn, chatLuong, loaiGiuong,
+                    Timestamp.valueOf(ngayNhan), Timestamp.valueOf(ngayTra),
                     tienCoc, phuThu);
             return Map.of("success", true, "message", "Đặt phòng nhanh thành công!", "id_hd", idHd);
         } catch (Exception e) {
@@ -308,10 +324,11 @@ public class DemoController {
             if (branchId > 0) {
                 // Verify invoice belongs to the branch
                 Integer count = jdbcTemplate.queryForObject(
-                    "SELECT COUNT(*) FROM hoadon.hoadon h JOIN nhansu.nhanvien nv ON h.id_nv = nv.id_nv WHERE h.id_hd = ? AND nv.id_cn = ?",
-                    Integer.class, idHd, branchId);
+                        "SELECT COUNT(*) FROM hoadon.hoadon h JOIN nhansu.nhanvien nv ON h.id_nv = nv.id_nv WHERE h.id_hd = ? AND nv.id_cn = ?",
+                        Integer.class, idHd, branchId);
                 if (count == null || count == 0) {
-                    return Map.of("success", false, "message", "Hủy đặt phòng thất bại: Hóa đơn không thuộc chi nhánh của bạn!");
+                    return Map.of("success", false, "message",
+                            "Hủy đặt phòng thất bại: Hóa đơn không thuộc chi nhánh của bạn!");
                 }
             }
 
@@ -320,7 +337,8 @@ public class DemoController {
             if (Boolean.TRUE.equals(result)) {
                 return Map.of("success", true, "message", "Hủy đặt phòng thành công!");
             } else {
-                return Map.of("success", false, "message", "Hủy đặt phòng thất bại (hóa đơn không tồn tại hoặc đã thanh toán)!");
+                return Map.of("success", false, "message",
+                        "Hủy đặt phòng thất bại (hóa đơn không tồn tại hoặc đã thanh toán)!");
             }
         } catch (Exception e) {
             return Map.of("success", false, "message", "Lỗi: " + e.getMessage());
@@ -337,10 +355,11 @@ public class DemoController {
             if (branchId > 0) {
                 // Verify invoice belongs to the branch
                 Integer count = jdbcTemplate.queryForObject(
-                    "SELECT COUNT(*) FROM hoadon.hoadon h JOIN nhansu.nhanvien nv ON h.id_nv = nv.id_nv WHERE h.id_hd = ? AND nv.id_cn = ?",
-                    Integer.class, idHd, branchId);
+                        "SELECT COUNT(*) FROM hoadon.hoadon h JOIN nhansu.nhanvien nv ON h.id_nv = nv.id_nv WHERE h.id_hd = ? AND nv.id_cn = ?",
+                        Integer.class, idHd, branchId);
                 if (count == null || count == 0) {
-                    return Map.of("success", false, "message", "Thanh toán thất bại: Hóa đơn không thuộc chi nhánh của bạn!");
+                    return Map.of("success", false, "message",
+                            "Thanh toán thất bại: Hóa đơn không thuộc chi nhánh của bạn!");
                 }
             }
 
@@ -363,13 +382,14 @@ public class DemoController {
             if (branchId > 0) {
                 // Verify both rooms belong to the branch
                 Integer countCu = jdbcTemplate.queryForObject(
-                    "SELECT COUNT(*) FROM quanly.phong p JOIN quanly.loaiphong lp ON p.id_lp = lp.id_lp WHERE p.id_p = ? AND lp.id_cn = ?",
-                    Integer.class, idPIdCu, branchId);
+                        "SELECT COUNT(*) FROM quanly.phong p JOIN quanly.loaiphong lp ON p.id_lp = lp.id_lp WHERE p.id_p = ? AND lp.id_cn = ?",
+                        Integer.class, idPIdCu, branchId);
                 Integer countMoi = jdbcTemplate.queryForObject(
-                    "SELECT COUNT(*) FROM quanly.phong p JOIN quanly.loaiphong lp ON p.id_lp = lp.id_lp WHERE p.id_p = ? AND lp.id_cn = ?",
-                    Integer.class, idPIdMoi, branchId);
+                        "SELECT COUNT(*) FROM quanly.phong p JOIN quanly.loaiphong lp ON p.id_lp = lp.id_lp WHERE p.id_p = ? AND lp.id_cn = ?",
+                        Integer.class, idPIdMoi, branchId);
                 if (countCu == null || countCu == 0 || countMoi == null || countMoi == 0) {
-                    return Map.of("success", false, "message", "Chuyển phòng thất bại: Phòng không thuộc chi nhánh của bạn!");
+                    return Map.of("success", false, "message",
+                            "Chuyển phòng thất bại: Phòng không thuộc chi nhánh của bạn!");
                 }
             }
 
@@ -378,7 +398,8 @@ public class DemoController {
             if (Boolean.TRUE.equals(result)) {
                 return Map.of("success", true, "message", "Chuyển phòng thành công!");
             } else {
-                return Map.of("success", false, "message", "Chuyển phòng thất bại (phòng mới không trống hoặc phòng cũ không thuộc hóa đơn này)!");
+                return Map.of("success", false, "message",
+                        "Chuyển phòng thất bại (phòng mới không trống hoặc phòng cũ không thuộc hóa đơn này)!");
             }
         } catch (Exception e) {
             return Map.of("success", false, "message", "Lỗi: " + e.getMessage());

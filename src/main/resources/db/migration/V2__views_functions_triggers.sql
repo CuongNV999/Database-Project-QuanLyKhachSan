@@ -32,6 +32,20 @@ LEFT JOIN public.hoadon_thue_phong htp ON p.id_p = htp.id_p
 LEFT JOIN public.hoadon h ON htp.id_hd = h.id_hd AND h.trang_thai = 'Đã thanh toán'
 GROUP BY cn.id_cn, cn.ten_cn;
 
+-- 3. View thông tin chủ sở hữu của từng chi nhánh
+CREATE OR REPLACE VIEW public.v_thong_tin_chu_so_huu_chi_nhanh AS
+SELECT 
+    cn.id_cn,
+    cn.ten_cn,
+    cn.dia_chi AS dia_chi_chi_nhanh,
+    csh.id_csh,
+    csh.ten_csh AS ten_chu_so_huu,
+    csh.email AS email_chu_so_huu,
+    csh.sdt AS sdt_chu_so_huu
+FROM public.chinhanh cn
+JOIN public.chinhanh_chusohuu cc ON cn.id_cn = cc.id_cn
+JOIN public.chusohuu csh ON cc.id_csh = csh.id_csh;
+
 
 -- -------------------------------------------------------------
 -- Functions

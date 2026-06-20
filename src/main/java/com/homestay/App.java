@@ -28,7 +28,7 @@ public class App {
                 String sqlView = "SELECT * FROM v_doanh_thu_chi_nhanh LIMIT 5";
                 List<Map<String, Object>> branchRevenues = jdbcTemplate.queryForList(sqlView);
 
-                System.out.println("\n--- DOANH THU CÁC CHI NHÁNH (Lấy từ View) ---");
+                System.out.println("\n--- DOANH THU CÁC CHI NHÁNH  ---");
                 for (Map<String, Object> row : branchRevenues) {
                     System.out.printf("Chi nhánh: %s | Tổng doanh thu phòng: %,.0f VND | Số hóa đơn: %d\n",
                             row.get("ten_cn"),
@@ -43,18 +43,19 @@ public class App {
             try {
                 String timPhongSql = SQLHelper.readQuery("quanly/tim_phong_trong.sql");
                 System.out.println("\n--- TOP 5 PHÒNG CÒN TRỐNG TẠI CHI NHÁNH 1 (Từ 15/06/2026 đến 20/06/2026) ---");
-                
-                // Đặt tham số cho chi nhánh 1, khoảng thời gian: 15/06/2026 14:00 đến 20/06/2026 12:00
+
+                // Đặt tham số cho chi nhánh 1, khoảng thời gian: 15/06/2026 14:00 đến
+                // 20/06/2026 12:00
                 List<Map<String, Object>> availableRooms = jdbcTemplate.queryForList(
                         timPhongSql,
                         1,
                         Timestamp.valueOf("2026-06-20 12:00:00"),
-                        Timestamp.valueOf("2026-06-15 14:00:00")
-                );
+                        Timestamp.valueOf("2026-06-15 14:00:00"));
 
                 int printedCount = 0;
                 for (Map<String, Object> row : availableRooms) {
-                    if (printedCount >= 5) break;
+                    if (printedCount >= 5)
+                        break;
                     System.out.printf("Phòng: %s | Chất lượng: %s | Giường: %s | Giá: %,.0f VND\n",
                             row.get("ten_phong"),
                             row.get("chat_luong"),

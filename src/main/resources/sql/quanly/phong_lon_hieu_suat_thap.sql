@@ -36,7 +36,7 @@ room_maintenance_days AS (
     SELECT 
         pt.id_p,
         COUNT(DISTINCT ds.booked_day) AS tong_so_dem_bao_tri
-    FROM quanly.cosovatchat_duoc_baotri bt
+    FROM quanly.baotri bt
     JOIN quanly.phong_trangbi_csvc pt ON bt.id_csvc = pt.id_csvc
     CROSS JOIN date_series ds
     WHERE ds.booked_day >= bt.thoi_gian_bat_dau::date

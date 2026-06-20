@@ -6,8 +6,7 @@ SELECT
     nv.id_nv,
     nv.ten_nv,
     nv.chuc_vu,
-    cv.luong::numeric AS luong_nhan_vien
+    nv.luong::numeric AS luong_nhan_vien
 FROM nhanvien nv
-LEFT JOIN chucvu cv ON nv.chuc_vu = cv.chuc_vu
 WHERE nv.id_cn = ?
-ORDER BY cv.luong DESC, nv.id_nv ASC;
+ORDER BY nv.luong DESC, nv.id_nv ASC;

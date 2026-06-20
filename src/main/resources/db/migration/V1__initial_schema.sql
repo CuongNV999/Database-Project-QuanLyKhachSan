@@ -305,7 +305,6 @@ CREATE TABLE public.hoadon_thue_phong (
     so_luong integer,
     ngaynhan timestamp without time zone,
     ngaytra timestamp without time zone,
-    ma_phien character varying(50),
     tien_coc numeric(15,2) DEFAULT 0,
     phu_thu numeric(15,2) DEFAULT 0,
     tong_tien numeric(15,2) DEFAULT 0,
@@ -734,11 +733,7 @@ ALTER TABLE ONLY public.hoadon_sudung_dichvu
 
 
 --
--- Name: hoadon_thue_phong hoadon_thue_phong_ma_phien_key; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
-ALTER TABLE ONLY public.hoadon_thue_phong
-    ADD CONSTRAINT hoadon_thue_phong_ma_phien_key UNIQUE (ma_phien);
 
 
 --
@@ -1120,5 +1115,5 @@ ALTER TABLE ONLY public.truongdoan
 -- PostgreSQL database dump complete
 --
 
-\unrestrict HHz1HGOYESpwPy9ss7Ds8UdAX3y18htdBXblNtav2ZMpJzg6Zhu5Sp7qoeEG2Ut
+-- \unrestrict HHz1HGOYESpwPy9ss7Ds8UdAX3y18htdBXblNtav2ZMpJzg6Zhu5Sp7qoeEG2Ut
 

@@ -11,8 +11,7 @@ SELECT
     COALESCE(SUM(hsd.so_luong * dv.gia), 0::money)::numeric AS tong_tien_dich_vu,
     (COALESCE(SUM(htp.tong_tien), 0::money) + COALESCE(SUM(hsd.so_luong * dv.gia), 0::money))::numeric AS tong_chi_tieu_doan
 FROM doankhach dk
-LEFT JOIN truongdoan td ON dk.id_doan = td.id_doan
-LEFT JOIN khachhang kh_truong ON td.id_kh = kh_truong.id_kh
+LEFT JOIN khachhang kh_truong ON dk.id_truong_doan = kh_truong.id_kh
 LEFT JOIN khachhang kh_mem ON dk.id_doan = kh_mem.id_doan
 LEFT JOIN hoadon h ON kh_mem.id_kh = h.id_kh AND h.trang_thai = 'Đã thanh toán'
 LEFT JOIN hoadon_thue_phong htp ON h.id_hd = htp.id_hd
