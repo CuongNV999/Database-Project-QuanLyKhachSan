@@ -334,7 +334,7 @@ BEGIN
     -- K. Generate 1,000 Child customers
     FOR v_i IN 1..1000 LOOP
         INSERT INTO khachhang.khachhang_treem (id_kh, id_tre_em, ten_tre_em, tuoi) VALUES
-        (2000 + v_i, v_i, v_child_names[(v_i % 10) + 1] || ' ' || (SELECT ho_ten FROM khachhang.khachhang WHERE id_kh = 2000 + v_i), (v_i % 12) + 1);
+        (2000 + v_i, v_i, v_child_names[(v_i % 10) + 1], (v_i % 12) + 1);
     END LOOP;
 
     -- L. Generate 8,000 Invoices (ngaylap spread over 2026)
