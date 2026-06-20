@@ -4,7 +4,7 @@
 
 SELECT 
     dk.id_doan,
-    dk.so_thanh_vien,
+    (SELECT COUNT(*)::integer FROM khachhang.khachhang WHERE id_doan = dk.id_doan) AS so_thanh_vien,
     kh_truong.ho_ten AS ten_truong_doan,
     COUNT(DISTINCT h.id_hd) AS tong_so_hoa_don,
     COALESCE(SUM(htp.tong_tien), 0::money)::numeric AS tong_tien_phong,
@@ -18,4 +18,4 @@ LEFT JOIN hoadon_thue_phong htp ON h.id_hd = htp.id_hd
 LEFT JOIN hoadon_sudung_dichvu hsd ON h.id_hd = hsd.id_hd
 LEFT JOIN dichvu dv ON hsd.id_dv = dv.id_dv
 WHERE dk.id_doan = ?
-GROUP BY dk.id_doan, dk.so_thanh_vien, kh_truong.ho_ten;
+GROUP BY dk.id_doan, kh_truong.ho_ten;

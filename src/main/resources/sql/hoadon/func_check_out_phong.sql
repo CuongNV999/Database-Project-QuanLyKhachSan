@@ -41,8 +41,7 @@ BEGIN
     UPDATE hoadon.hoadon_thue_phong
     SET ngaytra = CURRENT_TIMESTAMP,
         phu_thu_tieu_hao = COALESCE(phu_thu_tieu_hao, 0::money) + p_phu_thu_tieu_hao,
-        phu_thu_hong_hoc = COALESCE(phu_thu_hong_hoc, 0::money) + p_phu_thu_hong_hoc,
-        phu_thu = COALESCE(phu_thu, 0::money) + p_phu_thu_tieu_hao + p_phu_thu_hong_hoc
+        phu_thu_hong_hoc = COALESCE(phu_thu_hong_hoc, 0::money) + p_phu_thu_hong_hoc
     WHERE id_hd = p_id_hd AND id_p = p_id_p;
 
     -- 4. Tính toán lại tổng tiền của riêng phòng này (để cập nhật VAT, phí phục vụ và giảm giá)

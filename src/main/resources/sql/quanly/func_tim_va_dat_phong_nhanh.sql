@@ -77,7 +77,7 @@ BEGIN
     END IF;
 
     -- 3. Tạo bản ghi chi tiết thuê phòng (tạm thời để tổng tiền là 0)
-    INSERT INTO hoadon.hoadon_thue_phong (id_hd, id_p, ngaynhan, ngaytra, so_ngay_luu_tru, tien_coc, phu_thu, tong_tien)
+    INSERT INTO hoadon.hoadon_thue_phong (id_hd, id_p, ngaynhan, ngaytra, so_ngay_luu_tru, tien_coc, phu_thu_tieu_hao, tong_tien)
     VALUES (v_id_hd, v_id_p, p_ngaynhan, p_ngaytra, v_so_ngay_luu_tru, p_tien_coc, p_phu_thu, 0::money);
 
     -- 4. Tính toán lại tổng tiền phòng thực tế dựa trên công thức nghiệp vụ

@@ -1,4 +1,6 @@
 @echo off
+chcp 65001 > nul
+set PGCLIENTENCODING=utf8
 title Quan ly Khach san - Homestay Management
 
 :menu

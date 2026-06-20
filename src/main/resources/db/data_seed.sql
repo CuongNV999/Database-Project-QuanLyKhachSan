@@ -282,8 +282,8 @@ BEGIN
 
     -- I. Generate 1,000 groups
     FOR v_i IN 1..1000 LOOP
-        INSERT INTO khachhang.doankhach (id_doan, so_thanh_vien, id_truong_doan) VALUES
-        (v_i, (v_i % 5) + 2, NULL);
+        INSERT INTO khachhang.doankhach (id_doan, id_truong_doan) VALUES
+        (v_i, NULL);
     END LOOP;
 
     -- J. Generate 10,000 Customers (la_knn correctly set, with realistic names and addresses)
@@ -403,14 +403,13 @@ BEGIN
             v_tong_tien := 0::money;
         END IF;
 
-        INSERT INTO hoadon.hoadon_thue_phong (id_hd, id_p, so_luong, ngaynhan, ngaytra, tien_coc, phu_thu, tong_tien, phu_thu_tieu_hao, phu_thu_hong_hoc, so_ngay_luu_tru) VALUES
+        INSERT INTO hoadon.hoadon_thue_phong (id_hd, id_p, so_luong, ngaynhan, ngaytra, tien_coc, tong_tien, phu_thu_tieu_hao, phu_thu_hong_hoc, so_ngay_luu_tru) VALUES
         (v_id_hd, 
          v_id_p, 
          1, 
          v_ngaynhan, 
          v_ngaytra, 
          v_tien_coc, 
-         v_phu_thu, 
          CASE WHEN v_trang_thai = 'Đã thanh toán' THEN v_tong_tien ELSE 0::money END, 
          v_phu_tieu_hao, 
          v_phu_hong_hoc, 

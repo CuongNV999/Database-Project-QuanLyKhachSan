@@ -28,7 +28,9 @@ DECLARE
     v_tong_tien MONEY;
 BEGIN
     -- 1. Lấy thông tin ngày nhận, ngày trả, số ngày lưu trú, tiền đặt cọc, các loại phụ thu khác và ngày thanh toán thực tế
-    SELECT htp.ngaynhan, htp.ngaytra, htp.so_ngay_luu_tru, htp.tien_coc, htp.phu_thu, h.ngaythanhtoan
+    SELECT htp.ngaynhan, htp.ngaytra, htp.so_ngay_luu_tru, htp.tien_coc, 
+           (COALESCE(htp.phu_thu_tieu_hao, 0::money) + COALESCE(htp.phu_thu_hong_hoc, 0::money)), 
+           h.ngaythanhtoan
     INTO v_ngaynhan, v_ngaytra, v_so_ngay_luu_tru, v_tien_coc, v_phu_thu, v_ngaythanhtoan
     FROM hoadon.hoadon_thue_phong htp
     JOIN hoadon.hoadon h ON htp.id_hd = h.id_hd
