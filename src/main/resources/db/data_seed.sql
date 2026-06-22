@@ -22,7 +22,6 @@ TRUNCATE TABLE
     quanly.phong, 
     quanly.cosovatchat, 
     quanly.phong_trangbi_csvc, 
-    quanly.baotri, 
     nhansu.nhanvien, 
     khachhang.muchoivien, 
     khachhang.hoivien, 
@@ -74,6 +73,11 @@ DECLARE
     v_id_p INT;
     v_id_nv INT;
     
+    -- Variables for variable branch scale
+    v_room_counts INT[] := ARRAY[20, 25, 18, 15, 22, 12, 10, 10, 8, 14];
+    v_num_rooms INT;
+    v_num_receptionists INT;
+    v_num_cleaners INT;
     -- Name arrays for generating realistic names pseudorandomly
     v_last_names TEXT[] := ARRAY['Nguyễn', 'Trần', 'Lê', 'Phạm', 'Hoàng', 'Phan', 'Vũ', 'Võ', 'Đặng', 'Bùi'];
     v_mid_names TEXT[] := ARRAY['Văn', 'Thị', 'Minh', 'Anh', 'Đức', 'Duy', 'Hữu', 'Quốc', 'Thanh', 'Ngọc'];
@@ -199,8 +203,8 @@ BEGIN
                 WHEN 1 THEN '20m2'
                 WHEN 2 THEN '25m2'
                 WHEN 3 THEN '32m2'
-                WHEN 4 THEN '50m2'
-                ELSE '45m2'
+                WHEN 4 THEN 'Large'
+                ELSE 'Large'
              END,
              CASE v_t
                 WHEN 1 THEN '1 người'
@@ -220,9 +224,10 @@ BEGIN
         END LOOP;
     END LOOP;
 
-    -- E. Generate 15 Rooms per Branch (id_p: 101 to 1015)
+    -- E. Generate Rooms per Branch based on branch scale (id_p: c * 100 + r)
     FOR v_c IN 1..10 LOOP
-        FOR v_r IN 1..15 LOOP
+        v_num_rooms := v_room_counts[v_c];
+        FOR v_r IN 1..v_num_rooms LOOP
             v_id_p := v_c * 100 + v_r;
             v_id_lp := (v_c - 1) * 5 + ((v_r - 1) % 5 + 1);
             INSERT INTO quanly.phong (id_p, dia_chi, trang_thai, id_lp, id_cn) VALUES
@@ -237,7 +242,8 @@ BEGIN
     -- F. Equip each room with 5 facilities
     -- Bed (id_csvc=1), TV (2), AC (3), Towel (4), Ga giường (5)
     FOR v_c IN 1..10 LOOP
-        FOR v_r IN 1..15 LOOP
+        v_num_rooms := v_room_counts[v_c];
+        FOR v_r IN 1..v_num_rooms LOOP
             v_id_p := v_c * 100 + v_r;
             FOR v_i IN 1..5 LOOP
                 INSERT INTO quanly.phong_trangbi_csvc (id_p, id_csvc, so_luong, tinh_trang) VALUES
@@ -246,24 +252,42 @@ BEGIN
         END LOOP;
     END LOOP;
 
-    -- G. Seed 3 staff members per branch (id_nv: 1 to 30)
+    -- G. Seed staff members dynamically based on branch scale
+    v_id_nv := 0;
     FOR v_c IN 1..10 LOOP
-        FOR v_e IN 1..3 LOOP
-            v_id_nv := (v_c - 1) * 3 + v_e;
+        v_num_rooms := v_room_counts[v_c];
+        v_num_receptionists := CASE WHEN v_num_rooms < 12 THEN 1 WHEN v_num_rooms <= 20 THEN 2 ELSE 3 END;
+        v_num_cleaners := CASE WHEN v_num_rooms < 10 THEN 1 WHEN v_num_rooms <= 15 THEN 2 WHEN v_num_rooms <= 20 THEN 3 ELSE 4 END;
+        
+        -- 1. Manager (Quản lý) - 1 per branch
+        v_id_nv := v_id_nv + 1;
+        INSERT INTO nhansu.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES
+        (v_id_nv,
+         v_last_names[(v_id_nv % 10) + 1] || ' ' || v_mid_names[((v_id_nv / 3) % 10) + 1] || ' ' || v_first_names[((v_id_nv / 7) % 15) + 1],
+         'Quản lý',
+         v_c,
+         16000000::numeric::money);
+         
+        -- 2. Receptionists (Lễ tân)
+        FOR v_i IN 1..v_num_receptionists LOOP
+            v_id_nv := v_id_nv + 1;
             INSERT INTO nhansu.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES
             (v_id_nv,
              v_last_names[(v_id_nv % 10) + 1] || ' ' || v_mid_names[((v_id_nv / 3) % 10) + 1] || ' ' || v_first_names[((v_id_nv / 7) % 15) + 1],
-             CASE v_e
-                WHEN 1 THEN 'Quản lý'
-                WHEN 2 THEN 'Lễ tân'
-                ELSE 'Dọn phòng'
-             END,
+             'Lễ tân',
              v_c,
-             CASE v_e
-                WHEN 1 THEN 16000000
-                WHEN 2 THEN 7500000
-                ELSE 6000000
-             END::numeric::money);
+             7500000::numeric::money);
+        END LOOP;
+        
+        -- 3. Cleaners (Dọn phòng)
+        FOR v_i IN 1..v_num_cleaners LOOP
+            v_id_nv := v_id_nv + 1;
+            INSERT INTO nhansu.nhanvien (id_nv, ten_nv, chuc_vu, id_cn, luong) VALUES
+            (v_id_nv,
+             v_last_names[(v_id_nv % 10) + 1] || ' ' || v_mid_names[((v_id_nv / 3) % 10) + 1] || ' ' || v_first_names[((v_id_nv / 7) % 15) + 1],
+             'Dọn phòng',
+             v_c,
+             6000000::numeric::money);
         END LOOP;
     END LOOP;
 
@@ -355,7 +379,7 @@ BEGIN
             CASE WHEN v_i % 2 = 0 THEN 'Chuyển khoản' ELSE 'Tiền mặt' END
          ELSE NULL END,
          (v_i * 17) % 10000 + 1, -- id_kh
-         (v_i * 3) % 30 + 1      -- id_nv
+         (v_i * 3) % 54 + 1      -- id_nv
         );
     END LOOP;
 
@@ -365,7 +389,7 @@ BEGIN
         
         -- Pick a room in a branch
         v_c := (v_i % 10) + 1; -- branch
-        v_r := ((v_i / 10) % 15) + 1; -- room index
+        v_r := ((v_i / 10) % v_room_counts[v_c]) + 1; -- room index
         v_id_p := v_c * 100 + v_r;
         
         SELECT h.id_kh, h.ngaylap, h.trang_thai INTO v_id_kh, v_ngaylap, v_trang_thai FROM hoadon.hoadon h WHERE h.id_hd = v_id_hd;
@@ -373,47 +397,20 @@ BEGIN
         v_ngaynhan := v_ngaylap::timestamp + '14:00:00'::time;
         v_so_ngay := (v_i % 5) + 1; -- 1 to 5 nights
         v_ngaytra := v_ngaynhan + v_so_ngay * INTERVAL '1 day';
-        v_tien_coc := (v_so_ngay * 100000)::numeric::money;
         
         v_phu_tieu_hao := CASE WHEN v_i % 7 = 0 THEN 50000 ELSE 0 END::numeric::money;
         v_phu_hong_hoc := CASE WHEN v_i % 25 = 0 THEN 300000 ELSE 0 END::numeric::money;
-        v_phu_thu := v_phu_tieu_hao + v_phu_hong_hoc;
-        
-        -- Get room price
-        SELECT lp.gia_tien INTO v_gia_tien
-        FROM quanly.phong p
-        JOIN quanly.loaiphong lp ON p.id_lp = lp.id_lp
-        WHERE p.id_p = v_id_p;
-        
-        -- Get membership discount
-        v_discount_pct := 0.00;
-        SELECT COALESCE(mhv.muc_giam_gia, 0.00) INTO v_discount_pct
-        FROM khachhang.khachhang kh
-        LEFT JOIN khachhang.hoivien hv ON kh.id_hv = hv.id_hv
-        LEFT JOIN khachhang.muchoivien mhv ON hv.id_mhv = mhv.id_mhv
-        WHERE kh.id_kh = v_id_kh;
-        
-        v_base := v_so_ngay * v_gia_tien;
-        v_vat := v_base * 0.08;
-        v_service := v_base * 0.05;
-        v_discount := v_base * (v_discount_pct / 100.00);
-        v_tong_tien := v_base + v_vat + v_service + v_phu_thu - v_discount - v_tien_coc;
-        
-        IF v_tong_tien < 0::money THEN
-            v_tong_tien := 0::money;
-        END IF;
 
-        INSERT INTO hoadon.hoadon_thue_phong (id_hd, id_p, so_luong, ngaynhan, ngaytra, tien_coc, tong_tien, phu_thu_tieu_hao, phu_thu_hong_hoc, so_ngay_luu_tru) VALUES
+        INSERT INTO hoadon.hoadon_thue_phong (id_hd, id_p, so_luong, ngaynhan, ngaytra, phu_thu_tieu_hao, phu_thu_hong_hoc, so_ngay_luu_tru) VALUES
         (v_id_hd, 
          v_id_p, 
          1, 
          v_ngaynhan, 
          v_ngaytra, 
-         v_tien_coc, 
-         CASE WHEN v_trang_thai = 'Đã thanh toán' THEN v_tong_tien ELSE 0::money END, 
          v_phu_tieu_hao, 
          v_phu_hong_hoc, 
-         v_so_ngay);
+         v_so_ngay)
+        ON CONFLICT (id_hd, id_p) DO NOTHING;
     END LOOP;
 
     -- N. Generate 6,000 Service Usages
@@ -424,21 +421,52 @@ BEGIN
 END;
 $$;
 
+-- Add specific demo cases for Branch 1 (Hanoi Central Homestay)
+-- Ensure we have a few clean customers for demo
+INSERT INTO khachhang.khachhang (id_kh, ho_ten, sdt, dia_chi, quoc_tich, la_knn) VALUES
+(10001, 'Nguyen Demo CheckIn', '0999888777', 'Hà Nội', 'Việt Nam', FALSE),
+(10002, 'Nguyen Demo Overdue', '0999888666', 'Đà Nẵng', 'Việt Nam', FALSE)
+ON CONFLICT (id_kh) DO NOTHING;
+
+-- Demo case 1: Sắp Check-In today (2026-06-22) for room 101
+INSERT INTO hoadon.hoadon (id_hd, trang_thai, ngaylap, id_kh, id_nv) VALUES
+(9001, 'Đã đặt', '2026-06-22', 10001, 2)
+ON CONFLICT (id_hd) DO NOTHING;
+
+INSERT INTO hoadon.hoadon_thue_phong (id_hd, id_p, so_luong, ngaynhan, ngaytra, phu_thu_tieu_hao, phu_thu_hong_hoc, so_ngay_luu_tru) VALUES
+(9001, 101, 1, '2026-06-22 14:00:00', '2026-06-25 12:00:00', 0::money, 0::money, 3)
+ON CONFLICT (id_hd, id_p) DO NOTHING;
+
+-- Update room 101 state to 'Đã đặt'
+UPDATE quanly.phong SET trang_thai = 'Đã đặt' WHERE id_p = 101;
+
+-- Demo case 2: Quá Hạn Check-Out (Expected check-out: 2026-06-21) for room 102
+INSERT INTO hoadon.hoadon (id_hd, trang_thai, ngaylap, id_kh, id_nv) VALUES
+(9002, 'Đã đặt', '2026-06-18', 10002, 2)
+ON CONFLICT (id_hd) DO NOTHING;
+
+INSERT INTO hoadon.hoadon_thue_phong (id_hd, id_p, so_luong, ngaynhan, ngaytra, phu_thu_tieu_hao, phu_thu_hong_hoc, so_ngay_luu_tru) VALUES
+(9002, 102, 1, '2026-06-18 14:00:00', '2026-06-21 12:00:00', 0::money, 0::money, 3)
+ON CONFLICT (id_hd, id_p) DO NOTHING;
+
+-- Update room 102 state to 'Đã đặt'
+UPDATE quanly.phong SET trang_thai = 'Đã đặt' WHERE id_p = 102;
+
 -- Reset all sequences to ensure future auto-increments continue correctly
 SELECT pg_catalog.setval('hoadon.dichvu_id_dv_seq', 7, true);
-SELECT pg_catalog.setval('hoadon.hoadon_id_hd_seq', 8000, true);
+SELECT pg_catalog.setval('hoadon.hoadon_id_hd_seq', 9010, true);
 SELECT pg_catalog.setval('khachhang.doankhach_id_doan_seq', 1000, true);
 SELECT pg_catalog.setval('khachhang.hoivien_id_hv_seq', 2000, true);
-SELECT pg_catalog.setval('khachhang.khachhang_id_kh_seq', 10000, true);
+SELECT pg_catalog.setval('khachhang.khachhang_id_kh_seq', 10010, true);
 SELECT pg_catalog.setval('khachhang.khachhang_treem_id_tre_em_seq', 1000, true);
 SELECT pg_catalog.setval('khachhang.muchoivien_id_mhv_seq', 4, true);
-SELECT pg_catalog.setval('nhansu.nhanvien_id_nv_seq', 30, true);
-SELECT pg_catalog.setval('quanly.baotri_id_bao_tri_seq', 2, true);
+SELECT pg_catalog.setval('nhansu.nhanvien_id_nv_seq', 54, true);
+
 SELECT pg_catalog.setval('quanly.chinhanh_id_cn_seq', 10, true);
 SELECT pg_catalog.setval('quanly.chusohuu_id_csh_seq', 5, true);
 SELECT pg_catalog.setval('quanly.cosovatchat_id_csvc_seq', 7, true);
 SELECT pg_catalog.setval('quanly.loaiphong_id_lp_seq', 50, true);
-SELECT pg_catalog.setval('quanly.phong_id_p_seq', 1015, true);
+SELECT pg_catalog.setval('quanly.phong_id_p_seq', 1014, true);
 
 -- Restore default session replication role
 SET session_replication_role = 'origin';

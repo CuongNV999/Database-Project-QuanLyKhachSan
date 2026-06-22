@@ -7,9 +7,9 @@ SELECT
     (SELECT COUNT(*)::integer FROM khachhang.khachhang WHERE id_doan = dk.id_doan) AS so_thanh_vien,
     kh_truong.ho_ten AS ten_truong_doan,
     COUNT(DISTINCT h.id_hd) AS tong_so_hoa_don,
-    COALESCE(SUM(htp.tong_tien), 0::money)::numeric AS tong_tien_phong,
+    COALESCE(SUM(hoadon.func_tinh_tien_phong(h.id_hd, htp.id_p)), 0::money)::numeric AS tong_tien_phong,
     COALESCE(SUM(hsd.so_luong * dv.gia), 0::money)::numeric AS tong_tien_dich_vu,
-    (COALESCE(SUM(htp.tong_tien), 0::money) + COALESCE(SUM(hsd.so_luong * dv.gia), 0::money))::numeric AS tong_chi_tieu_doan
+    (COALESCE(SUM(hoadon.func_tinh_tien_phong(h.id_hd, htp.id_p)), 0::money) + COALESCE(SUM(hsd.so_luong * dv.gia), 0::money))::numeric AS tong_chi_tieu_doan
 FROM doankhach dk
 LEFT JOIN khachhang kh_truong ON dk.id_truong_doan = kh_truong.id_kh
 LEFT JOIN khachhang kh_mem ON dk.id_doan = kh_mem.id_doan

@@ -10,7 +10,7 @@ SELECT
     mhv.hang AS hang_hoi_vien,
     hv.tong_luu_tru,
     COUNT(DISTINCT h.id_hd) AS so_lan_dat,
-    SUM(htp.tong_tien)::numeric AS tong_chi_tieu
+    SUM(hoadon.func_tinh_tien_phong(h.id_hd, htp.id_p))::numeric AS tong_chi_tieu
 FROM khachhang kh
 LEFT JOIN hoivien hv ON kh.id_hv = hv.id_hv
 LEFT JOIN muchoivien mhv ON hv.id_mhv = mhv.id_mhv

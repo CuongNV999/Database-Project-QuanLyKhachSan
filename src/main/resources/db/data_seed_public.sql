@@ -14068,11 +14068,7 @@ SELECT id_p, 6, 2, 'Mới' FROM public.phong;
 UPDATE public.hoadon SET trang_thai = 'Đã thanh toán' WHERE trang_thai = 'Paid';
 UPDATE public.hoadon SET trang_thai = 'Đã đặt' WHERE trang_thai = 'Unpaid';
 
--- Seed data for cosovatchat_duoc_baotri
-INSERT INTO public.cosovatchat_duoc_baotri (id_bao_tri, id_csvc, thoi_gian_bat_dau, thoi_gian_ket_thuc) VALUES (1, 1, '2026-05-10 08:00:00', '2026-05-10 12:00:00');
-INSERT INTO public.cosovatchat_duoc_baotri (id_bao_tri, id_csvc, thoi_gian_bat_dau, thoi_gian_ket_thuc) VALUES (2, 2, '2026-05-12 09:00:00', '2026-05-12 11:30:00');
-INSERT INTO public.cosovatchat_duoc_baotri (id_bao_tri, id_csvc, thoi_gian_bat_dau, thoi_gian_ket_thuc) VALUES (3, 3, '2026-05-15 14:00:00', NULL);
-SELECT pg_catalog.setval('public.cosovatchat_duoc_baotri_id_bao_tri_seq', 3, true);
+
 
 SET session_replication_role = 'origin';
 

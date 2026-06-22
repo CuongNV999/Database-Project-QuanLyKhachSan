@@ -26,14 +26,13 @@ BEGIN
         phuongthuc = p_phuongthuc
     WHERE id_hd = p_id_hd;
 
-    -- 4. Giải phóng các phòng trong hóa đơn này sang trạng thái dọn dẹp (nếu không có phòng nào đang sửa)
+    -- 4. Giải phóng các phòng trong hóa đơn này sang trạng thái 'Còn trống'
     FOR r IN 
         SELECT id_p FROM hoadon.hoadon_thue_phong WHERE id_hd = p_id_hd
     LOOP
-        -- Nếu phòng chưa được check-out riêng biệt (hoặc chưa chuyển sang Đang dọn dẹp/Đang sửa), chuyển sang 'Đang dọn dẹp'
         UPDATE quanly.phong
-        SET trang_thai = 'Đang dọn dẹp'
-        WHERE id_p = r.id_p AND trang_thai NOT IN ('Đang dọn dẹp', 'Đang sửa');
+        SET trang_thai = 'Còn trống'
+        WHERE id_p = r.id_p AND trang_thai != 'Còn trống';
     END LOOP;
 
     RETURN v_tong_thanh_toan;

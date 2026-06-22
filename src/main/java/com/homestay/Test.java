@@ -15,9 +15,13 @@ public class Test {
             dataSource.setPassword("admin");
 
             JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-            String TiLeCheckoutMuon = SQLHelper.readQuery("quanly/kiem_tra_phong_qua_han_checkout.sql");
-            List<Map<String, Object>> result = jdbcTemplate.queryForList(TiLeCheckoutMuon);
-            System.out.println(result);
+            String sql = "SELECT hoadon.func_tinh_tong_tien_hoa_don(?)::numeric AS tong_tien";
+            
+            int[] testInvoices = {7121, 1, 2, 5};
+            for (int id : testInvoices) {
+                List<Map<String, Object>> result = jdbcTemplate.queryForList(sql, id);
+                System.out.println("Tổng tiền hóa đơn " + id + " (số tiền trả sau thực tế): " + result.get(0).get("tong_tien") + " VND");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

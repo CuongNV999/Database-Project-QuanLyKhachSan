@@ -30,19 +30,6 @@ room_booked_days AS (
       AND ds.booked_day >= htp.ngaynhan::date
       AND ds.booked_day < htp.ngaytra::date
     GROUP BY htp.id_p
-),
-room_maintenance_days AS (
-    -- Tính tổng số đêm phòng bị bảo trì (dựa trên các cơ sở vật chất của phòng bị bảo trì)
-    SELECT 
-        pt.id_p,
-        COUNT(DISTINCT ds.booked_day) AS tong_so_dem_bao_tri
-    FROM quanly.baotri bt
-    JOIN quanly.phong_trangbi_csvc pt ON bt.id_csvc = pt.id_csvc
-    CROSS JOIN date_series ds
-    WHERE ds.booked_day >= bt.thoi_gian_bat_dau::date
-      AND (bt.thoi_gian_ket_thuc IS NULL OR ds.booked_day < bt.thoi_gian_ket_thuc::date)
-    GROUP BY pt.id_p
-)
 SELECT 
     p.id_p,
     p.dia_chi AS ten_phong,
@@ -54,13 +41,12 @@ SELECT
     lp.dien_tich,
     COALESCE(rb.so_luot_dat, 0) AS so_luot_dat,
     COALESCE(rb.tong_so_dem_thue, 0) AS tong_so_dem_thue,
-    COALESCE(rm.tong_so_dem_bao_tri, 0) AS tong_so_dem_bao_tri,
-    -- Số đêm phòng trống thực tế có thể phục vụ = Tổng số đêm - Số đêm bị bảo trì
-    (SELECT COUNT(*) FROM date_series) - COALESCE(rm.tong_so_dem_bao_tri, 0) AS tong_so_dem_co_the_phuc_vu,
+    -- Số đêm phòng trống thực tế có thể phục vụ = Tổng số đêm
+    (SELECT COUNT(*) FROM date_series) AS tong_so_dem_co_the_phuc_vu,
     -- Hiệu suất sử dụng phòng (%)
     ROUND(
         COALESCE(
-            (rb.tong_so_dem_thue::numeric / NULLIF((SELECT COUNT(*) FROM date_series) - COALESCE(rm.tong_so_dem_bao_tri, 0), 0)) * 100,
+            (rb.tong_so_dem_thue::numeric / NULLIF((SELECT COUNT(*) FROM date_series), 0)) * 100,
             0
         ), 
         2
@@ -70,14 +56,14 @@ JOIN quanly.loaiphong lp ON p.id_lp = lp.id_lp
 JOIN quanly.chinhanh cn ON lp.id_cn = cn.id_cn
 CROSS JOIN params pr
 LEFT JOIN room_booked_days rb ON p.id_p = rb.id_p
-LEFT JOIN room_maintenance_days rm ON p.id_p = rm.id_p
 WHERE lp.dien_tich = 'Large'
   AND (
       COALESCE(rb.so_luot_dat, 0) < pr.muc_it_khach
       OR
       COALESCE(
-          (rb.tong_so_dem_thue::numeric / NULLIF((SELECT COUNT(*) FROM date_series) - COALESCE(rm.tong_so_dem_bao_tri, 0), 0)) * 100,
+          (rb.tong_so_dem_thue::numeric / NULLIF((SELECT COUNT(*) FROM date_series), 0)) * 100,
           0
       ) < pr.muc_san_hieu_suat
   )
 ORDER BY hieu_suat ASC, so_luot_dat ASC;
+

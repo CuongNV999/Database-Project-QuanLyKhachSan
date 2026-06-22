@@ -236,32 +236,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- 7. Báo cáo đánh giá hỏng hóc bảo trì thiết bị
-CREATE OR REPLACE FUNCTION quanly.func_thong_ke_tan_suat_hong_hoc(p_id_cn INT)
-RETURNS TABLE (
-    ten_csvc VARCHAR(255),
-    mo_ta TEXT,
-    loai_csvc VARCHAR(50),
-    so_lan_bao_tri INT
-) AS $$
-BEGIN
-    RETURN QUERY
-    SELECT 
-        cvc.ten_csvc::VARCHAR(255),
-        cvc.mo_ta,
-        cvc.loai_csvc::VARCHAR(50),
-        COUNT(bt.id_bao_tri)::INT AS so_lan_bao_tri
-    FROM quanly.cosovatchat_duoc_baotri bt
-    JOIN quanly.cosovatchat cvc ON bt.id_csvc = cvc.id_csvc
-    JOIN quanly.phong_trangbi_csvc ptb ON cvc.id_csvc = ptb.id_csvc
-    JOIN quanly.phong p ON ptb.id_p = p.id_p
-    JOIN quanly.loaiphong lp ON p.id_lp = lp.id_lp
-    WHERE (p_id_cn = -1 OR lp.id_cn = p_id_cn)
-    GROUP BY cvc.id_csvc, cvc.ten_csvc, cvc.mo_ta, cvc.loai_csvc
-    ORDER BY so_lan_bao_tri DESC;
-END;
-$$ LANGUAGE plpgsql;
-
 -- 8. Cập nhật lại hoadon.func_tinh_tong_tien_hoa_don để bỏ qua cập nhật dữ liệu với hóa đơn đã thanh toán (tránh vi phạm trigger bảo mật)
 CREATE OR REPLACE FUNCTION hoadon.func_tinh_tong_tien_hoa_don(p_id_hd INT)
 RETURNS MONEY AS $$

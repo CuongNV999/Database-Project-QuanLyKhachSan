@@ -6,7 +6,7 @@ SELECT
     cn.id_cn,
     cn.ten_cn,
     EXTRACT(MONTH FROM h.ngaythanhtoan) AS thang,
-    COALESCE(SUM(htp.tong_tien), 0::money)::numeric AS doanh_thu_thang,
+    COALESCE(SUM(hoadon.func_tinh_tien_phong(h.id_hd, htp.id_p)), 0::money)::numeric AS doanh_thu_thang,
     COUNT(DISTINCT h.id_hd) AS so_luot_thanh_toan
 FROM chinhanh cn
 JOIN loaiphong lp ON cn.id_cn = lp.id_cn

@@ -13,3 +13,5 @@ SELECT
 FROM chinhanh cn
 JOIN chinhanh_chusohuu cc ON cn.id_cn = cc.id_cn
 JOIN chusohuu csh ON cc.id_csh = csh.id_csh;
+
+-- Thử truy vấn: SELECT * FROM v_thong_tin_chu_so_huu_chi_nhanh;

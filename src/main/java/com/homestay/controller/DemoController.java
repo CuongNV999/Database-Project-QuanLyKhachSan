@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.lang.NonNull;
 import java.sql.Timestamp;
@@ -52,24 +53,59 @@ public class DemoController {
             return Map.of("success", false, "message", "Tên đăng nhập và mật khẩu không được trống!");
         }
 
+        if (!password.equals("123")) {
+            return Map.of("success", false, "message", "Sai mật khẩu!");
+        }
+
         Map<String, Object> res = null;
 
-        // Mock application logins with branch mapping
-        if (username.equals("nv1_cn1") && password.equals("123")) {
-            res = Map.of("success", true, "role", "Nhân viên", "branchId", 1, "branchName",
-                    "Salazar, Page and Martinez Homestay", "fullName", "Nguyen Van A");
-        } else if (username.equals("ql_cn1") && password.equals("123")) {
-            res = Map.of("success", true, "role", "Quản lý", "branchId", 1, "branchName",
-                    "Salazar, Page and Martinez Homestay", "fullName", "Tran Thi B");
-        } else if (username.equals("nv2_cn2") && password.equals("123")) {
-            res = Map.of("success", true, "role", "Nhân viên", "branchId", 2, "branchName", "Schultz-Osborne Homestay",
-                    "fullName", "Le Van C");
-        } else if (username.equals("ql_cn2") && password.equals("123")) {
-            res = Map.of("success", true, "role", "Quản lý", "branchId", 2, "branchName", "Schultz-Osborne Homestay",
-                    "fullName", "Pham Thi D");
-        } else if (username.equals("admin") && password.equals("123")) {
+        if (username.equals("admin")) {
             res = Map.of("success", true, "role", "Administrator", "branchId", -1, "branchName", "Tất cả chi nhánh",
                     "fullName", "Quản trị viên Hệ thống");
+        } else if (username.startsWith("nv") && username.contains("_cn")) {
+            try {
+                String nvStr = username.substring(2, username.indexOf("_cn"));
+                String cnStr = username.substring(username.indexOf("_cn") + 3);
+                int idNv = Integer.parseInt(nvStr);
+                int idCn = Integer.parseInt(cnStr);
+
+                List<Map<String, Object>> list = jdbcTemplate.queryForList(
+                    "SELECT nv.ten_nv, nv.chuc_vu, nv.id_cn, cn.ten_cn FROM nhansu.nhanvien nv " +
+                    "JOIN quanly.chinhanh cn ON nv.id_cn = cn.id_cn " +
+                    "WHERE nv.id_nv = ? AND nv.id_cn = ?", idNv, idCn);
+
+                if (!list.isEmpty()) {
+                    Map<String, Object> emp = list.get(0);
+                    String tenNv = (String) emp.get("ten_nv");
+                    String chucVu = (String) emp.get("chuc_vu");
+                    String tenCn = (String) emp.get("ten_cn");
+                    String role = chucVu.equals("Quản lý") ? "Quản lý" : "Nhân viên";
+
+                    res = Map.of("success", true, "role", role, "branchId", idCn, "branchName", tenCn, "fullName", tenNv);
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+        } else if (username.startsWith("ql_cn")) {
+            try {
+                String cnStr = username.substring(5);
+                int idCn = Integer.parseInt(cnStr);
+
+                List<Map<String, Object>> list = jdbcTemplate.queryForList(
+                    "SELECT nv.ten_nv, nv.chuc_vu, nv.id_cn, cn.ten_cn FROM nhansu.nhanvien nv " +
+                    "JOIN quanly.chinhanh cn ON nv.id_cn = cn.id_cn " +
+                    "WHERE nv.id_cn = ? AND nv.chuc_vu = 'Quản lý' LIMIT 1", idCn);
+
+                if (!list.isEmpty()) {
+                    Map<String, Object> emp = list.get(0);
+                    String tenNv = (String) emp.get("ten_nv");
+                    String tenCn = (String) emp.get("ten_cn");
+
+                    res = Map.of("success", true, "role", "Quản lý", "branchId", idCn, "branchName", tenCn, "fullName", tenNv);
+                }
+            } catch (Exception e) {
+                // ignore
+            }
         }
 
         if (res != null) {
@@ -82,7 +118,7 @@ public class DemoController {
             return res;
         }
 
-        return Map.of("success", false, "message", "Sai tên tài khoản hoặc mật khẩu!");
+        return Map.of("success", false, "message", "Sai tên tài khoản hoặc tài khoản không tồn tại!");
     }
 
     @PostMapping("/logout")
@@ -151,6 +187,14 @@ public class DemoController {
                 "SELECT id_hd, trang_thai, ngaylap, id_kh FROM hoadon.hoadon ORDER BY id_hd DESC LIMIT 100");
     }
 
+    @GetMapping("/facilities")
+    public List<Map<String, Object>> getFacilities(HttpSession session) {
+        checkBranchAccess(session);
+        return jdbcTemplate.queryForList(
+            "SELECT id_csvc, ten_csvc, loai_csvc, gia_den_bu::numeric AS gia_den_bu FROM quanly.cosovatchat ORDER BY id_csvc"
+        );
+    }
+
     // -------------------------------------------------------------
     // B. View-based APIs and SQL Reports
     // -------------------------------------------------------------
@@ -174,7 +218,7 @@ public class DemoController {
         if (branchId > 0) {
             chiNhanhId = branchId;
         }
-        String timPhongSql = SQLHelper.readQuery("quanly/tim_phong_trong.sql");
+        String timPhongSql = SQLHelper.readQuery("quanly/giam_sat_phong/tim_phong_trong.sql");
         return jdbcTemplate.queryForList(
                 timPhongSql,
                 chiNhanhId,
@@ -203,7 +247,7 @@ public class DemoController {
         if (branchId > 0) {
             chiNhanhId = branchId;
         }
-        String sql = SQLHelper.readQuery("quanly/danh_sach_phong_chua_don_dep.sql");
+        String sql = SQLHelper.readQuery("quanly/giam_sat_phong/danh_sach_phong_chua_don_dep.sql");
         return jdbcTemplate.queryForList(sql, chiNhanhId);
     }
 
@@ -212,7 +256,7 @@ public class DemoController {
             @RequestParam(defaultValue = "2026-06-15") String date,
             HttpSession session) throws Exception {
         Integer branchId = checkBranchAccess(session);
-        String sql = SQLHelper.readQuery("quanly/danh_sach_phong_sap_checkin.sql");
+        String sql = SQLHelper.readQuery("quanly/giam_sat_phong/danh_sach_phong_sap_checkin.sql");
         if (branchId > 0) {
             sql = wrapWithBranchFilter(sql);
             return jdbcTemplate.queryForList(sql, java.sql.Date.valueOf(date), branchId);
@@ -223,7 +267,7 @@ public class DemoController {
     @GetMapping("/qua-han-checkout")
     public List<Map<String, Object>> getQuaHanCheckout(HttpSession session) throws Exception {
         Integer branchId = checkBranchAccess(session);
-        String sql = SQLHelper.readQuery("quanly/kiem_tra_phong_qua_han_checkout.sql");
+        String sql = SQLHelper.readQuery("quanly/giam_sat_phong/kiem_tra_phong_qua_han_checkout.sql");
         if (branchId > 0) {
             sql = wrapWithBranchFilter(sql);
             return jdbcTemplate.queryForList(sql, branchId);
@@ -234,7 +278,7 @@ public class DemoController {
     @GetMapping("/huu-hao-csvc")
     public List<Map<String, Object>> getHuuHaoCsvc(HttpSession session) throws Exception {
         Integer branchId = checkBranchAccess(session);
-        String sql = SQLHelper.readQuery("quanly/bao_cao_huu_hao_csvc.sql");
+        String sql = SQLHelper.readQuery("quanly/giam_sat_phong/bao_cao_huu_hao_csvc.sql");
         if (branchId > 0) {
             sql = wrapWithBranchFilter(sql);
             return jdbcTemplate.queryForList(sql, branchId);
@@ -250,7 +294,7 @@ public class DemoController {
             @RequestParam(defaultValue = "40.0") double mucSanHieuSuat,
             HttpSession session) throws Exception {
         Integer branchId = checkBranchAccess(session);
-        String sql = SQLHelper.readQuery("quanly/phong_lon_hieu_suat_thap.sql");
+        String sql = SQLHelper.readQuery("quanly/giam_sat_phong/phong_lon_hieu_suat_thap.sql");
         if (branchId > 0) {
             sql = wrapWithBranchFilter(sql);
             return jdbcTemplate.queryForList(sql, java.sql.Date.valueOf(tuNgay), java.sql.Date.valueOf(denNgay),
@@ -274,8 +318,27 @@ public class DemoController {
             } else if (body.get("newCustName") != null) {
                 String newCustName = (String) body.get("newCustName");
                 if (newCustName != null && !newCustName.trim().isEmpty()) {
-                    String insertSql = "INSERT INTO khachhang.khachhang (ho_ten) VALUES (?) RETURNING id_kh";
-                    idKh = jdbcTemplate.queryForObject(insertSql, Integer.class, newCustName.trim());
+                    String cccd = (String) body.get("cccd");
+                    String sdt = (String) body.get("sdt");
+                    String diaChi = (String) body.get("diaChi");
+                    String quocTich = (String) body.get("quocTich");
+                    String passport = (String) body.get("passport");
+                    String visa = (String) body.get("visa");
+                    Boolean laKnn = (Boolean) body.get("laKnn");
+                    if (laKnn == null) laKnn = false;
+
+                    String insertSql = "INSERT INTO khachhang.khachhang (ho_ten, cccd, sdt, dia_chi, quoc_tich, passport, visa, la_knn) " +
+                                       "VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id_kh";
+                    idKh = jdbcTemplate.queryForObject(insertSql, Integer.class, 
+                            newCustName.trim(), 
+                            (cccd == null || cccd.trim().isEmpty()) ? null : cccd.trim(),
+                            (sdt == null || sdt.trim().isEmpty()) ? null : sdt.trim(),
+                            (diaChi == null || diaChi.trim().isEmpty()) ? null : diaChi.trim(),
+                            (quocTich == null || quocTich.trim().isEmpty()) ? "Việt Nam" : quocTich.trim(),
+                            (passport == null || passport.trim().isEmpty()) ? null : passport.trim(),
+                            (visa == null || visa.trim().isEmpty()) ? null : visa.trim(),
+                            laKnn
+                    );
                 }
             }
 
@@ -401,6 +464,128 @@ public class DemoController {
                 return Map.of("success", false, "message",
                         "Chuyển phòng thất bại (phòng mới không trống hoặc phòng cũ không thuộc hóa đơn này)!");
             }
+        } catch (Exception e) {
+            return Map.of("success", false, "message", "Lỗi: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/invoice-billing/{id}")
+    public Map<String, Object> getInvoiceBilling(@PathVariable int id, HttpSession session) {
+        try {
+            checkBranchAccess(session);
+            Double tongChiPhi = jdbcTemplate.queryForObject("SELECT hoadon.func_tinh_tong_chi_phi(?)::numeric", Double.class, id);
+            Double tienCoc = jdbcTemplate.queryForObject("SELECT hoadon.func_tinh_tien_coc(?)::numeric", Double.class, id);
+            Double traSau = jdbcTemplate.queryForObject("SELECT hoadon.func_tinh_so_tien_tra_sau(?)::numeric", Double.class, id);
+            Double giamGiaPercent = 0.0;
+            try {
+                Map<String, Object> hvDetails = jdbcTemplate.queryForMap(
+                    "SELECT o_giam_gia_percent FROM hoadon.func_lay_hang_va_giam_gia_hoi_vien(?)", id
+                );
+                if (hvDetails.get("o_giam_gia_percent") != null) {
+                    giamGiaPercent = ((Number) hvDetails.get("o_giam_gia_percent")).doubleValue();
+                }
+            } catch (Exception ignored) {}
+            return Map.of(
+                "success", true,
+                "tongChiPhi", tongChiPhi != null ? tongChiPhi : 0.0,
+                "tienCoc", tienCoc != null ? tienCoc : 0.0,
+                "traSau", traSau != null ? traSau : 0.0,
+                "giamGiaPercent", giamGiaPercent
+            );
+        } catch (Exception e) {
+            return Map.of("success", false, "message", "Lỗi: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/invoice-rooms/{id}")
+    public List<Map<String, Object>> getInvoiceRooms(@PathVariable int id, HttpSession session) {
+        checkBranchAccess(session);
+        return jdbcTemplate.queryForList(
+            "SELECT htp.id_p, p.dia_chi, htp.ngaynhan, htp.ngaytra, htp.so_ngay_luu_tru, " +
+            "COALESCE(htp.phu_thu_tieu_hao::numeric, 0) AS phu_thu_tieu_hao, " +
+            "COALESCE(htp.phu_thu_hong_hoc::numeric, 0) AS phu_thu_hong_hoc, " +
+            "lp.gia_tien::numeric AS gia_tien, lp.chat_luong, lp.loai_giuong " +
+            "FROM hoadon.hoadon_thue_phong htp " +
+            "JOIN quanly.phong p ON htp.id_p = p.id_p " +
+            "JOIN quanly.loaiphong lp ON p.id_lp = lp.id_lp " +
+            "WHERE htp.id_hd = ?",
+            id
+        );
+    }
+
+    @PostMapping("/check-out-phong")
+    public Map<String, Object> checkOutPhong(@RequestBody Map<String, Object> body, HttpSession session) {
+        try {
+            Integer branchId = checkBranchAccess(session);
+            int idHd = ((Number) body.get("idHd")).intValue();
+            int idP = ((Number) body.get("idP")).intValue();
+            double phuThuTieuHao = ((Number) body.getOrDefault("phuThuTieuHao", 0)).doubleValue();
+            double phuThuHongHoc = ((Number) body.getOrDefault("phuThuHongHoc", 0)).doubleValue();
+
+            if (branchId > 0) {
+                // Verify room belongs to the branch
+                Integer count = jdbcTemplate.queryForObject(
+                        "SELECT COUNT(*) FROM quanly.phong p JOIN quanly.loaiphong lp ON p.id_lp = lp.id_lp WHERE p.id_p = ? AND lp.id_cn = ?",
+                        Integer.class, idP, branchId);
+                if (count == null || count == 0) {
+                    return Map.of("success", false, "message",
+                            "Check-out thất bại: Phòng không thuộc chi nhánh của bạn!");
+                }
+            }
+
+            String sql = "SELECT hoadon.func_check_out_phong(?, ?, ?::numeric::money, ?::numeric::money)::numeric AS tong_tien";
+            Double tongTien = jdbcTemplate.queryForObject(sql, Double.class, idHd, idP, phuThuTieuHao, phuThuHongHoc);
+            return Map.of("success", true, "message", "Check-out phòng thành công!", "tong_tien", tongTien);
+        } catch (Exception e) {
+            return Map.of("success", false, "message", "Lỗi: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/check-out-va-thanh-toan")
+    @Transactional
+    public Map<String, Object> checkOutVaThanhToan(@RequestBody Map<String, Object> body, HttpSession session) {
+        try {
+            Integer branchId = checkBranchAccess(session);
+            int idHd = ((Number) body.get("idHd")).intValue();
+            String phuongThuc = (String) body.get("phuongThuc");
+            List<Map<String, Object>> rooms = (List<Map<String, Object>>) body.get("rooms");
+
+            if (branchId > 0) {
+                // Verify invoice belongs to the branch
+                Integer count = jdbcTemplate.queryForObject(
+                        "SELECT COUNT(*) FROM hoadon.hoadon h JOIN nhansu.nhanvien nv ON h.id_nv = nv.id_nv WHERE h.id_hd = ? AND nv.id_cn = ?",
+                        Integer.class, idHd, branchId);
+                if (count == null || count == 0) {
+                    return Map.of("success", false, "message",
+                            "Check-out và thanh toán thất bại: Hóa đơn không thuộc chi nhánh của bạn!");
+                }
+            }
+
+            // 1. Loop through each room and check it out with its surcharges
+            for (Map<String, Object> room : rooms) {
+                int idP = ((Number) room.get("idP")).intValue();
+                double phuThuTieuHao = ((Number) room.getOrDefault("phuThuTieuHao", 0)).doubleValue();
+                double phuThuHongHoc = ((Number) room.getOrDefault("phuThuHongHoc", 0)).doubleValue();
+
+                if (branchId > 0) {
+                    // Verify room belongs to the branch
+                    Integer count = jdbcTemplate.queryForObject(
+                            "SELECT COUNT(*) FROM quanly.phong p JOIN quanly.loaiphong lp ON p.id_lp = lp.id_lp WHERE p.id_p = ? AND lp.id_cn = ?",
+                            Integer.class, idP, branchId);
+                    if (count == null || count == 0) {
+                        throw new RuntimeException("Phòng #" + idP + " không thuộc chi nhánh của bạn!");
+                    }
+                }
+
+                String checkOutSql = "SELECT hoadon.func_check_out_phong(?, ?, ?::numeric::money, ?::numeric::money)::numeric AS tong_tien";
+                jdbcTemplate.queryForObject(checkOutSql, Double.class, idHd, idP, phuThuTieuHao, phuThuHongHoc);
+            }
+
+            // 2. Perform invoice payment
+            String paySql = "SELECT hoadon.func_thanh_toan_hoa_don(?, ?)::numeric AS tong_tien";
+            Double tongTien = jdbcTemplate.queryForObject(paySql, Double.class, idHd, phuongThuc);
+
+            return Map.of("success", true, "message", "Check-out và thanh toán hóa đơn thành công!", "tong_tien", tongTien);
         } catch (Exception e) {
             return Map.of("success", false, "message", "Lỗi: " + e.getMessage());
         }
