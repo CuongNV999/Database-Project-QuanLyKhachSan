@@ -359,18 +359,57 @@ public class DemoController {
     }
 
     @GetMapping("/management/customers")
-    public List<Map<String, Object>> getManagementCustomers(HttpSession session) {
+    public Map<String, Object> getManagementCustomers(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "15") int size,
+            @RequestParam(required = false) String search,
+            HttpSession session) {
         checkManagerAccess(session);
-        String sql = "SELECT kh.id_kh, kh.ho_ten, kh.cccd, kh.sdt, kh.dia_chi, kh.quoc_tich, kh.passport, kh.visa, kh.la_knn, " +
+
+        String countSql = "SELECT COUNT(*) FROM khachhang.khachhang kh WHERE 1=1";
+        String dataSql = "SELECT kh.id_kh, kh.ho_ten, kh.cccd, kh.sdt, kh.dia_chi, kh.quoc_tich, kh.passport, kh.visa, kh.la_knn, " +
                 "       hv.hang AS hang_hoi_vien, hv.tong_luu_tru " +
                 "FROM khachhang.khachhang kh " +
                 "LEFT JOIN ( " +
                 "    SELECT h.id_hv, mhv.hang, h.tong_luu_tru " +
                 "    FROM khachhang.hoivien h " +
                 "    JOIN khachhang.muchoivien mhv ON h.id_mhv = mhv.id_mhv " +
-                                ") hv ON kh.id_hv = hv.id_hv " +
-                "ORDER BY kh.id_kh";
-        return jdbcTemplate.queryForList(sql);
+                ") hv ON kh.id_hv = hv.id_hv " +
+                "WHERE 1=1";
+
+        boolean hasSearch = search != null && !search.trim().isEmpty();
+        int totalElements = 0;
+        List<Map<String, Object>> content;
+
+        if (hasSearch) {
+            String filter = "%" + search.trim().toLowerCase() + "%";
+            String searchFilter = " AND (LOWER(kh.ho_ten) LIKE ? OR LOWER(kh.sdt) LIKE ? OR LOWER(kh.cccd) LIKE ? OR LOWER(kh.passport) LIKE ?)";
+            countSql += searchFilter;
+            dataSql += searchFilter;
+
+            totalElements = jdbcTemplate.queryForObject(countSql, Integer.class, filter, filter, filter, filter);
+
+            dataSql += " ORDER BY kh.id_kh LIMIT ? OFFSET ?";
+            int offset = (page - 1) * size;
+            content = jdbcTemplate.queryForList(dataSql, filter, filter, filter, filter, size, offset);
+        } else {
+            totalElements = jdbcTemplate.queryForObject(countSql, Integer.class);
+
+            dataSql += " ORDER BY kh.id_kh LIMIT ? OFFSET ?";
+            int offset = (page - 1) * size;
+            content = jdbcTemplate.queryForList(dataSql, size, offset);
+        }
+
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", content);
+        response.put("totalPages", totalPages);
+        response.put("totalElements", totalElements);
+        response.put("page", page);
+        response.put("size", size);
+
+        return response;
     }
 
     @GetMapping("/management/customers/{id}/history")

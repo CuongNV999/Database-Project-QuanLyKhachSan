@@ -1405,7 +1405,7 @@
             <div class="filter-bar">
                 <div class="form-group" style="flex-grow: 1;">
                     <label for="search-mgt-customers">Tìm kiếm khách hàng</label>
-                    <input type="text" id="search-mgt-customers" placeholder="Nhập tên, số điện thoại, CCCD/Passport..." oninput="filterMgtCustomersTable()">
+                    <input type="text" id="search-mgt-customers" placeholder="Nhập tên, số điện thoại, CCCD/Passport..." oninput="onMgtCustSearchInput()">
                 </div>
             </div>
             <div class="table-responsive">
@@ -1429,6 +1429,14 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <!-- Pagination controls for Customers -->
+            <div id="mgt-cust-pagination" style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; flex-wrap: wrap; gap: 10px;">
+                <span id="mgt-cust-pagination-info" style="font-size: 0.9rem; color: var(--text-secondary);">Hiển thị 0 - 0 trong 0 khách hàng</span>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-primary" id="mgt-cust-btn-prev" onclick="changeMgtCustPage(-1)" style="padding: 6px 12px; margin: 0; background: var(--text-secondary);">&laquo; Trước</button>
+                    <button class="btn-primary" id="mgt-cust-btn-next" onclick="changeMgtCustPage(1)" style="padding: 6px 12px; margin: 0; background: var(--accent-primary);">Sau &raquo;</button>
+                </div>
             </div>
         </section>
 
@@ -3304,17 +3312,30 @@
         }
 
         // --- Customer Management ---
-        let globalMgtCustomers = [];
+        let mgtCustCurrentPage = 1;
+        const mgtCustPageSize = 15;
+        let mgtCustTotalPages = 1;
+        let mgtCustSearchTimeout = null;
+
         async function loadManagementCustomers() {
             try {
-                const res = await fetch(`${API_BASE}/management/customers`);
+                const searchInput = document.getElementById('search-mgt-customers');
+                const searchQuery = searchInput ? searchInput.value.trim() : "";
+                
+                const url = `${API_BASE}/management/customers?page=${mgtCustCurrentPage}&size=${mgtCustPageSize}&search=${encodeURIComponent(searchQuery)}`;
+                const res = await fetch(url);
                 if (res.status === 403) {
                     showAlert('Bạn không có quyền thực hiện thao tác này!', false);
                     return;
                 }
-                const data = await res.json();
-                globalMgtCustomers = data;
-                renderMgtCustomers(globalMgtCustomers);
+                const response = await res.json();
+                
+                mgtCustTotalPages = response.totalPages || 1;
+                const list = response.content || [];
+                const totalElements = response.totalElements || 0;
+                
+                renderMgtCustomers(list);
+                updateMgtCustPaginationInfo(totalElements);
             } catch (err) {
                 console.error("Failed to load management customers:", err);
                 showAlert('Không thể tải danh sách khách hàng!', false);
@@ -3357,19 +3378,51 @@
             });
         }
 
-        function filterMgtCustomersTable() {
-            const query = document.getElementById('search-mgt-customers').value.toLowerCase().trim();
-            if (!query) {
-                renderMgtCustomers(globalMgtCustomers);
+        function onMgtCustSearchInput() {
+            clearTimeout(mgtCustSearchTimeout);
+            mgtCustSearchTimeout = setTimeout(() => {
+                mgtCustCurrentPage = 1;
+                loadManagementCustomers();
+            }, 300);
+        }
+
+        function changeMgtCustPage(direction) {
+            const newPage = mgtCustCurrentPage + direction;
+            if (newPage >= 1 && newPage <= mgtCustTotalPages) {
+                mgtCustCurrentPage = newPage;
+                loadManagementCustomers();
+            }
+        }
+
+        function updateMgtCustPaginationInfo(totalElements) {
+            const infoEl = document.getElementById('mgt-cust-pagination-info');
+            const btnPrev = document.getElementById('mgt-cust-btn-prev');
+            const btnNext = document.getElementById('mgt-cust-btn-next');
+            
+            if (!infoEl) return;
+            
+            if (totalElements === 0) {
+                infoEl.innerText = "Không có khách hàng nào để hiển thị";
+                if (btnPrev) btnPrev.disabled = true;
+                if (btnNext) btnNext.disabled = true;
                 return;
             }
-            const filtered = globalMgtCustomers.filter(c => {
-                const name = (c.ho_ten || '').toLowerCase();
-                const sdt = (c.sdt || '').toLowerCase();
-                const docId = ((c.cccd || '') + ' ' + (c.passport || '')).toLowerCase();
-                return name.includes(query) || sdt.includes(query) || docId.includes(query);
-            });
-            renderMgtCustomers(filtered);
+            
+            const start = (mgtCustCurrentPage - 1) * mgtCustPageSize + 1;
+            const end = Math.min(mgtCustCurrentPage * mgtCustPageSize, totalElements);
+            
+            infoEl.innerText = `Hiển thị ${start} - ${end} trong tổng số ${totalElements} khách hàng (Trang ${mgtCustCurrentPage}/${mgtCustTotalPages})`;
+            
+            if (btnPrev) {
+                btnPrev.disabled = (mgtCustCurrentPage === 1);
+                btnPrev.style.background = (mgtCustCurrentPage === 1) ? 'var(--border-color)' : 'var(--text-secondary)';
+                btnPrev.style.cursor = (mgtCustCurrentPage === 1) ? 'not-allowed' : 'pointer';
+            }
+            if (btnNext) {
+                btnNext.disabled = (mgtCustCurrentPage === mgtCustTotalPages);
+                btnNext.style.background = (mgtCustCurrentPage === mgtCustTotalPages) ? 'var(--border-color)' : 'var(--accent-primary)';
+                btnNext.style.cursor = (mgtCustCurrentPage === mgtCustTotalPages) ? 'not-allowed' : 'pointer';
+            }
         }
 
         async function showCustomerHistory(idKh, hoTen) {
