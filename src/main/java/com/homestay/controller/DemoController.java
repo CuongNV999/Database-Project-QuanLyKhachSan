@@ -353,7 +353,7 @@ public class DemoController {
     private void checkManagerAccess(HttpSession session) {
         checkBranchAccess(session);
         String role = (String) session.getAttribute("role");
-        if (!"Quản lý".equals(role)) {
+        if (!"Quản lý".equals(role) && !"Administrator".equals(role)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Bạn không có quyền thực hiện thao tác này!");
         }
     }
