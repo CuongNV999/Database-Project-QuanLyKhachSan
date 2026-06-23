@@ -41,7 +41,7 @@ public class App {
 
             // Demo B: Tải câu truy vấn động từ file tim_phong_trong.sql thông qua SQLHelper
             try {
-                String timPhongSql = SQLHelper.readQuery("quanly/tim_phong_trong.sql");
+                String timPhongSql = SQLHelper.readQuery("quanly/giam_sat_phong/tim_phong_trong.sql");
                 System.out.println("\n--- TOP 5 PHÒNG CÒN TRỐNG TẠI CHI NHÁNH 1 (Từ 15/06/2026 đến 20/06/2026) ---");
 
                 // Đặt tham số cho chi nhánh 1, khoảng thời gian: 15/06/2026 14:00 đến

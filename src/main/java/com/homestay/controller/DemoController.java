@@ -216,6 +216,44 @@ public class DemoController {
         return jdbcTemplate.queryForList("SELECT * FROM v_doanh_thu_chi_nhanh");
     }
 
+    @GetMapping("/doanh-thu-theo-ngay")
+    public List<Map<String, Object>> getDoanhThuTheoNgay(
+            @RequestParam String tuNgay,
+            @RequestParam String denNgay,
+            @RequestParam(defaultValue = "-1") int idCn,
+            HttpSession session) {
+        Integer branchId = checkBranchAccess(session);
+        if (branchId > 0) {
+            idCn = branchId;
+        }
+
+        String sql;
+        if (idCn > 0) {
+            sql = "SELECT h.ngaythanhtoan AS ngay, " +
+                  "SUM(hoadon.func_tinh_tong_chi_phi(h.id_hd)::numeric) AS doanh_thu, " +
+                  "COUNT(DISTINCT h.id_hd) AS so_luot_checkout " +
+                  "FROM hoadon.hoadon h " +
+                  "JOIN nhansu.nhanvien nv ON h.id_nv = nv.id_nv " +
+                  "WHERE h.trang_thai = 'Đã thanh toán' " +
+                  "AND h.ngaythanhtoan BETWEEN ?::date AND ?::date " +
+                  "AND nv.id_cn = ? " +
+                  "GROUP BY h.ngaythanhtoan " +
+                  "ORDER BY h.ngaythanhtoan";
+            return jdbcTemplate.queryForList(sql, java.sql.Date.valueOf(tuNgay), java.sql.Date.valueOf(denNgay), idCn);
+        } else {
+            sql = "SELECT h.ngaythanhtoan AS ngay, " +
+                  "SUM(hoadon.func_tinh_tong_chi_phi(h.id_hd)::numeric) AS doanh_thu, " +
+                  "COUNT(DISTINCT h.id_hd) AS so_luot_checkout " +
+                  "FROM hoadon.hoadon h " +
+                  "JOIN nhansu.nhanvien nv ON h.id_nv = nv.id_nv " +
+                  "WHERE h.trang_thai = 'Đã thanh toán' " +
+                  "AND h.ngaythanhtoan BETWEEN ?::date AND ?::date " +
+                  "GROUP BY h.ngaythanhtoan " +
+                  "ORDER BY h.ngaythanhtoan";
+            return jdbcTemplate.queryForList(sql, java.sql.Date.valueOf(tuNgay), java.sql.Date.valueOf(denNgay));
+        }
+    }
+
     @GetMapping("/phong-trong")
     public List<Map<String, Object>> getPhongTrong(
             @RequestParam(defaultValue = "1") int chiNhanhId,
@@ -393,6 +431,7 @@ public class DemoController {
                 }
             }
 
+<<<<<<< HEAD
             Integer idHd = null;
             Integer idP = null;
             if (body.get("idP") != null) {
@@ -427,6 +466,28 @@ public class DemoController {
                         idKh, idNv, idCn, chatLuong, loaiGiuong,
                         Timestamp.valueOf(ngayNhan), Timestamp.valueOf(ngayTra),
                         tienCoc, phuThu);
+=======
+            String sql = "SELECT quanly.func_tim_va_dat_phong_nhanh(?, ?, ?, ?, ?, ?::timestamp, ?::timestamp, ?::numeric::money, ?::numeric::money) AS id_hd";
+            Integer idHd = jdbcTemplate.queryForObject(sql, Integer.class,
+                    idKh, idNv, idCn, chatLuong, loaiGiuong,
+                    Timestamp.valueOf(ngayNhan), Timestamp.valueOf(ngayTra),
+                    tienCoc, phuThu);
+
+            // Log booking history
+            try {
+                String customerName = jdbcTemplate.queryForObject("SELECT ho_ten FROM khachhang.khachhang WHERE id_kh = ?", String.class, idKh);
+                String employeeName = jdbcTemplate.queryForObject("SELECT ten_nv FROM nhansu.nhanvien WHERE id_nv = ?", String.class, idNv);
+                List<Integer> roomIds = jdbcTemplate.queryForList("SELECT id_p FROM hoadon.hoadon_thue_phong WHERE id_hd = ?", Integer.class, idHd);
+                for (Integer roomId : roomIds) {
+                    jdbcTemplate.update(
+                        "INSERT INTO hoadon.lich_su_thao_tac (thao_tac, id_hd, id_kh, ho_ten_kh, id_nv, ten_nv, id_p) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                        "Đặt phòng", idHd, idKh, customerName, idNv, employeeName, roomId
+                    );
+                }
+            } catch (Exception ex) {
+                // Ignore history logging errors to not block transaction
+                System.err.println("Failed to log booking history: " + ex.getMessage());
+>>>>>>> 8bf46c0be80f717c9ac9ee785138f5a1a9d54704
             }
 
             return Map.of("success", true, "message", "Đặt phòng nhanh thành công!", "id_hd", idHd);
@@ -444,17 +505,45 @@ public class DemoController {
             if (branchId > 0) {
                 // Verify invoice belongs to the branch
                 Integer count = jdbcTemplate.queryForObject(
-                        "SELECT COUNT(*) FROM hoadon.hoadon h JOIN nhansu.nhanvien nv ON h.id_nv = nv.id_nv WHERE h.id_hd = ? AND nv.id_cn = ?",
-                        Integer.class, idHd, branchId);
+                    "SELECT COUNT(*) FROM hoadon.hoadon h JOIN nhansu.nhanvien nv ON h.id_nv = nv.id_nv WHERE h.id_hd = ? AND nv.id_cn = ?",
+                    Integer.class, idHd, branchId);
                 if (count == null || count == 0) {
                     return Map.of("success", false, "message",
                             "Hủy đặt phòng thất bại: Hóa đơn không thuộc chi nhánh của bạn!");
                 }
             }
 
+            // Get customer and employee details to log the cancellation BEFORE calling the function
+            List<Map<String, Object>> invoiceInfo = jdbcTemplate.queryForList(
+                "SELECT h.id_kh, kh.ho_ten, h.id_nv, nv.ten_nv, htp.id_p " +
+                "FROM hoadon.hoadon h " +
+                "JOIN hoadon.hoadon_thue_phong htp ON h.id_hd = htp.id_hd " +
+                "LEFT JOIN khachhang.khachhang kh ON h.id_kh = kh.id_kh " +
+                "LEFT JOIN nhansu.nhanvien nv ON h.id_nv = nv.id_nv " +
+                "WHERE h.id_hd = ?", idHd
+            );
+
             String sql = "SELECT hoadon.func_huy_dat_phong(?)";
             Boolean result = jdbcTemplate.queryForObject(sql, Boolean.class, idHd);
             if (Boolean.TRUE.equals(result)) {
+                // Log cancellation history
+                try {
+                    for (Map<String, Object> info : invoiceInfo) {
+                        Integer idKhVal = (Integer) info.get("id_kh");
+                        String hoTen = (String) info.get("ho_ten");
+                        Integer idNvVal = (Integer) info.get("id_nv");
+                        String tenNv = (String) info.get("ten_nv");
+                        Integer idP = (Integer) info.get("id_p");
+                        
+                        jdbcTemplate.update(
+                            "INSERT INTO hoadon.lich_su_thao_tac (thao_tac, id_hd, id_kh, ho_ten_kh, id_nv, ten_nv, id_p) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                            "Hủy đặt phòng", idHd, idKhVal, hoTen, idNvVal, tenNv, idP
+                        );
+                    }
+                } catch (Exception ex) {
+                    System.err.println("Failed to log cancellation history: " + ex.getMessage());
+                }
+
                 return Map.of("success", true, "message", "Hủy đặt phòng thành công!");
             } else {
                 return Map.of("success", false, "message",
@@ -463,6 +552,23 @@ public class DemoController {
         } catch (Exception e) {
             return Map.of("success", false, "message", "Lỗi: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/lich-su-thao-tac")
+    public List<Map<String, Object>> getLichSuThaoTac(HttpSession session) {
+        Integer branchId = checkBranchAccess(session);
+        if (branchId > 0) {
+            String sql = "SELECT ls.*, to_char(ls.thoi_gian, 'YYYY-MM-DD HH24:MI:SS') as thoi_gian_str " +
+                         "FROM hoadon.lich_su_thao_tac ls " +
+                         "JOIN nhansu.nhanvien nv ON ls.id_nv = nv.id_nv " +
+                         "WHERE nv.id_cn = ? " +
+                         "ORDER BY ls.id_ls DESC LIMIT 200";
+            return jdbcTemplate.queryForList(sql, branchId);
+        }
+        String sql = "SELECT ls.*, to_char(ls.thoi_gian, 'YYYY-MM-DD HH24:MI:SS') as thoi_gian_str " +
+                     "FROM hoadon.lich_su_thao_tac ls " +
+                     "ORDER BY ls.id_ls DESC LIMIT 200";
+        return jdbcTemplate.queryForList(sql);
     }
 
     @PostMapping("/thanh-toan-hoa-don")
@@ -618,6 +724,16 @@ public class DemoController {
                 }
             }
 
+            // Get customer and employee details to log the checkout
+            List<Map<String, Object>> invoiceInfo = jdbcTemplate.queryForList(
+                "SELECT h.id_kh, kh.ho_ten, h.id_nv, nv.ten_nv, htp.id_p " +
+                "FROM hoadon.hoadon h " +
+                "JOIN hoadon.hoadon_thue_phong htp ON h.id_hd = htp.id_hd " +
+                "LEFT JOIN khachhang.khachhang kh ON h.id_kh = kh.id_kh " +
+                "LEFT JOIN nhansu.nhanvien nv ON h.id_nv = nv.id_nv " +
+                "WHERE h.id_hd = ?", idHd
+            );
+
             // 1. Loop through each room and check it out with its surcharges
             for (Map<String, Object> room : rooms) {
                 int idP = ((Number) room.get("idP")).intValue();
@@ -641,6 +757,24 @@ public class DemoController {
             // 2. Perform invoice payment
             String paySql = "SELECT hoadon.func_thanh_toan_hoa_don(?, ?)::numeric AS tong_tien";
             Double tongTien = jdbcTemplate.queryForObject(paySql, Double.class, idHd, phuongThuc);
+
+            // 3. Log checkout/payment history
+            try {
+                for (Map<String, Object> info : invoiceInfo) {
+                    Integer idKhVal = (Integer) info.get("id_kh");
+                    String hoTen = (String) info.get("ho_ten");
+                    Integer idNvVal = (Integer) info.get("id_nv");
+                    String tenNv = (String) info.get("ten_nv");
+                    Integer idP = (Integer) info.get("id_p");
+                    
+                    jdbcTemplate.update(
+                        "INSERT INTO hoadon.lich_su_thao_tac (thao_tac, id_hd, id_kh, ho_ten_kh, id_nv, ten_nv, id_p) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                        "Thanh toán (Check-out)", idHd, idKhVal, hoTen, idNvVal, tenNv, idP
+                    );
+                }
+            } catch (Exception ex) {
+                System.err.println("Failed to log checkout history: " + ex.getMessage());
+            }
 
             return Map.of("success", true, "message", "Check-out và thanh toán hóa đơn thành công!", "tong_tien", tongTien);
         } catch (Exception e) {
