@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --bg-color: #f4f6f9;
@@ -863,6 +864,58 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Thống Kê Doanh Thu Theo Ngày -->
+            <div class="ops-grid" style="margin-top: 2.5rem; display: grid; grid-template-columns: 1fr;">
+                <div class="form-card" style="grid-column: 1 / -1; width: 100%;">
+                    <h3>
+                        <svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:currentColor; margin-right:8px; vertical-align:middle;">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" />
+                        </svg>
+                        Thống Kê Doanh Thu Theo Ngày
+                    </h3>
+                    
+                    <div class="filter-bar" style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: flex-start; gap: 15px; flex-wrap: wrap;">
+                        <div class="form-group">
+                            <label for="db-branch-select">Chi Nhánh</label>
+                            <select id="db-branch-select" onchange="loadDailyRevenue()" style="padding: 8px 14px; border-radius: 6px; border: 1px solid var(--border-color); background: #ffffff; min-width: 180px;"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="db-tungay">Từ Ngày</label>
+                            <input type="date" id="db-tungay" onchange="loadDailyRevenue()" style="padding: 8px 14px; border-radius: 6px; border: 1px solid var(--border-color); background: #ffffff;">
+                        </div>
+                        <div class="form-group">
+                            <label for="db-denngay">Đến Ngày</label>
+                            <input type="date" id="db-denngay" onchange="loadDailyRevenue()" style="padding: 8px 14px; border-radius: 6px; border: 1px solid var(--border-color); background: #ffffff;">
+                        </div>
+                        <button type="button" class="btn-primary" onclick="loadDailyRevenue()" style="align-self: flex-end; margin: 0; padding: 8px 16px; height: 38px;">Lọc</button>
+                    </div>
+
+                    <!-- Chart Container -->
+                    <div style="position: relative; height: 320px; width: 100%; margin-bottom: 2rem; background: #ffffff; border: 1px solid var(--border-glass); border-radius: 8px; padding: 15px;">
+                        <canvas id="dailyRevenueChart" style="height: 100%; width: 100%;"></canvas>
+                    </div>
+
+                    <!-- Detailed Daily Table -->
+                    <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+                        <table id="table-daily-revenue">
+                            <thead>
+                                <tr>
+                                    <th>Ngày Thanh Toán</th>
+                                    <th>Doanh Thu (VND)</th>
+                                    <th>Số Lượt Check-out</th>
+                                    <th>Bình Quân / Lượt (VND)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-daily-revenue-body">
+                                <tr>
+                                    <td colspan="4" style="text-align:center">Chọn khoảng thời gian lọc...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- 2. DANH SÁCH PHÒNG SECTION -->
@@ -1088,6 +1141,54 @@
                         </div>
                     </form>
                 </div>
+
+                <!-- Lịch Sử Thao Tác Đặt & Hủy Phòng -->
+                <div class="form-card" style="grid-column: 1 / -1; margin-top: 1.5rem;">
+                    <h3>
+                        <svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:currentColor; margin-right:8px; vertical-align:middle;">
+                            <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
+                        </svg>
+                        Lịch Sử Thao Tác Đặt &amp; Hủy Phòng
+                    </h3>
+                    
+                    <div class="filter-bar" style="margin-bottom: 1rem; padding: 0.5rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap;">
+                        <div class="form-group" style="flex-direction: row; align-items: center; gap: 10px; margin-bottom: 0;">
+                            <label for="filter-history-action" style="white-space: nowrap; margin-bottom: 0;">Loại thao tác:</label>
+                            <select id="filter-history-action" onchange="filterHistoryTable()" style="padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: #ffffff;">
+                                <option value="">Tất cả thao tác</option>
+                                <option value="Đặt phòng">Đặt phòng</option>
+                                <option value="Hủy đặt phòng">Hủy đặt phòng</option>
+                                <option value="Thanh toán (Check-out)">Thanh toán (Check-out)</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex-grow: 1; flex-direction: row; align-items: center; gap: 10px; margin-bottom: 0;">
+                            <label for="search-history" style="white-space: nowrap; margin-bottom: 0;">Tìm kiếm lịch sử:</label>
+                            <input type="text" id="search-history" placeholder="Tìm theo hóa đơn, khách hàng, nhân viên, phòng..." oninput="filterHistoryTable()" style="flex-grow: 1; padding: 6px 12px;">
+                        </div>
+                        <button type="button" class="btn-primary" onclick="loadHistoryLog()" style="align-self: center; margin: 0; padding: 6px 12px;">Tải Lại</button>
+                    </div>
+
+                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                        <table id="table-history">
+                            <thead>
+                                <tr>
+                                    <th>Mã LS</th>
+                                    <th>Thao Tác</th>
+                                    <th>Mã HĐ</th>
+                                    <th>Khách Hàng (ID)</th>
+                                    <th>Nhân Viên (ID)</th>
+                                    <th>Mã Phòng</th>
+                                    <th>Thời Gian Thực Hiện</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-history-body">
+                                <tr>
+                                    <td colspan="7" style="text-align:center">Đang tải lịch sử thao tác...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
             </div>
         </section>
@@ -1232,6 +1333,7 @@
             } else if (tabId === 'operations') {
                 setHeadTitle('Nhiệm Vụ Nghiệp Vụ', 'Thực hiện Đặt phòng nhanh, Chuyển phòng cho khách, Hủy lịch đặt phòng và Thanh toán hóa đơn.');
                 loadDropdowns();
+                loadHistoryLog();
             } else if (tabId === 'efficiency') {
                 setHeadTitle('Báo Cáo Hiệu Suất Phòng', 'Phân tích các phòng diện tích Lớn (Large) hoạt động kém hoặc ít lượt khách đặt.');
                 loadEfficiencyReport();
@@ -1275,12 +1377,22 @@
 
                 const qbBranch = document.getElementById('qb-cn');
                 const filterBranch = document.getElementById('room-branch-select');
+                const dbBranch = document.getElementById('db-branch-select');
 
                 qbBranch.innerHTML = '';
                 filterBranch.innerHTML = '';
+                if (dbBranch) {
+                    dbBranch.innerHTML = '';
+                    if (branches.length > 1) {
+                        dbBranch.innerHTML += '<option value="-1">Tất cả chi nhánh</option>';
+                    }
+                }
                 branches.forEach(b => {
                     qbBranch.innerHTML += `<option value="${b.id_cn}">${b.ten_cn}</option>`;
                     filterBranch.innerHTML += `<option value="${b.id_cn}">${b.ten_cn}</option>`;
+                    if (dbBranch) {
+                        dbBranch.innerHTML += `<option value="${b.id_cn}">${b.ten_cn}</option>`;
+                    }
                 });
 
                 // Customers
@@ -1345,11 +1457,19 @@
                         filterBranch.value = user.branchId;
                         filterBranch.disabled = true;
 
+                        if (dbBranch) {
+                            dbBranch.value = user.branchId;
+                            dbBranch.disabled = true;
+                        }
+
                         // Also trigger room list branch change for their own branch
                         onRoomBranchChange();
                     } else {
                         qbBranch.disabled = false;
                         filterBranch.disabled = false;
+                        if (dbBranch) {
+                            dbBranch.disabled = false;
+                        }
                     }
                 }
 
@@ -1534,6 +1654,7 @@
                     onCustomerSearchInput();
 
                     loadDropdowns();
+                    loadHistoryLog();
                     // Reload dashboard to reflect room state change
                     loadDashboard();
                 } else {
@@ -1879,6 +2000,7 @@
                     
                     // Reload dropdowns and dashboard
                     await loadDropdowns();
+                    loadHistoryLog();
                     loadDashboard();
                 } else {
                     showAlert(data.message, false);
@@ -1913,6 +2035,7 @@
                 if (data.success) {
                     showAlert(data.message, true);
                     loadDropdowns();
+                    loadHistoryLog();
                 } else {
                     showAlert(data.message, false);
                 }
@@ -1934,7 +2057,27 @@
                 document.getElementById('total-rooms').innerText = rooms.length;
                 document.getElementById('vacant-rooms').innerText = rooms.filter(r => r.trang_thai === 'Còn trống').length;
 
+                // Populate db-branch-select
+                const dbBranch = document.getElementById('db-branch-select');
+                if (dbBranch && dbBranch.innerHTML === '') {
+                    dbBranch.innerHTML = '';
+                    if (branches.length > 1) {
+                        dbBranch.innerHTML += '<option value="-1">Tất cả chi nhánh</option>';
+                    }
+                    branches.forEach(b => {
+                        dbBranch.innerHTML += `<option value="${b.id_cn}">${b.ten_cn}</option>`;
+                    });
 
+                    // Lock if manager
+                    const session = sessionStorage.getItem('userSession');
+                    if (session) {
+                        const user = JSON.parse(session);
+                        if (user.branchId > 0) {
+                            dbBranch.value = user.branchId;
+                            dbBranch.disabled = true;
+                        }
+                    }
+                }
 
                 // Load view v_doanh_thu_chi_nhanh
                 const res = await fetch(`${API_BASE}/doanh-thu-chi-nhanh`);
@@ -1952,8 +2095,136 @@
                         </tr>
                     `;
                 });
+
+                // Load daily revenue
+                loadDailyRevenue();
             } catch (err) {
                 console.error("Dashboard failed to load:", err);
+            }
+        }
+
+        let dailyRevenueChart = null;
+
+        async function loadDailyRevenue() {
+            try {
+                const tuNgayInput = document.getElementById('db-tungay');
+                const denNgayInput = document.getElementById('db-denngay');
+                const dbBranchSelect = document.getElementById('db-branch-select');
+                
+                if (!tuNgayInput || !denNgayInput || !dbBranchSelect) return;
+                
+                // Initialize default dates if empty
+                if (!tuNgayInput.value) {
+                    const now = new Date();
+                    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+                    tuNgayInput.value = startOfMonth.toLocaleDateString('en-CA');
+                }
+                if (!denNgayInput.value) {
+                    const now = new Date();
+                    denNgayInput.value = now.toLocaleDateString('en-CA');
+                }
+
+                const tuNgay = tuNgayInput.value;
+                const denNgay = denNgayInput.value;
+                const idCn = dbBranchSelect.value || -1;
+
+                const res = await fetch(`${API_BASE}/doanh-thu-theo-ngay?tuNgay=${tuNgay}&denNgay=${denNgay}&idCn=${idCn}`);
+                const data = await res.json();
+
+                // 1. Populate table
+                const tbody = document.getElementById('table-daily-revenue-body');
+                if (tbody) {
+                    tbody.innerHTML = '';
+                    if (data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-secondary);">Không có dữ liệu doanh thu trong khoảng thời gian này.</td></tr>';
+                    } else {
+                        data.forEach(row => {
+                            const dateStr = row.ngay ? row.ngay.split('T')[0].split('-').reverse().join('/') : '';
+                            const revenue = row.doanh_thu || 0;
+                            const checkouts = row.so_luot_checkout || 0;
+                            const avg = checkouts > 0 ? Math.round(revenue / checkouts) : 0;
+                            
+                            tbody.innerHTML += `
+                                <tr>
+                                    <td><strong>${dateStr}</strong></td>
+                                    <td style="font-weight:600; color:var(--accent-secondary)">${Math.round(revenue).toLocaleString()} VND</td>
+                                    <td>${checkouts} lượt</td>
+                                    <td>${avg.toLocaleString()} VND</td>
+                                </tr>
+                            `;
+                        });
+                    }
+                }
+
+                // 2. Render/Update Chart.js Line Chart
+                const ctx = document.getElementById('dailyRevenueChart');
+                if (ctx) {
+                    // Extract labels and data points
+                    const labels = data.map(row => {
+                        return row.ngay ? row.ngay.split('T')[0].split('-').reverse().slice(0, 2).join('/') : '';
+                    });
+                    const dataPoints = data.map(row => row.doanh_thu || 0);
+
+                    if (dailyRevenueChart) {
+                        dailyRevenueChart.destroy();
+                    }
+
+                    dailyRevenueChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Doanh Thu (VND)',
+                                data: dataPoints,
+                                borderColor: '#34b057',
+                                backgroundColor: 'rgba(52, 176, 87, 0.1)',
+                                borderWidth: 3,
+                                fill: true,
+                                tension: 0.3,
+                                pointBackgroundColor: '#ffffff',
+                                pointBorderColor: '#34b057',
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                pointHoverRadius: 6
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            let label = context.dataset.label || '';
+                                            if (label) {
+                                                label += ': ';
+                                            }
+                                            if (context.parsed.y !== null) {
+                                                label += new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(context.parsed.y);
+                                            }
+                                            return label;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function(value, index, values) {
+                                            return value.toLocaleString() + 'đ';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error("Failed to load daily revenue report:", err);
             }
         }
 
@@ -2207,6 +2478,72 @@
             rows.forEach(row => {
                 const text = row.innerText.toLowerCase();
                 row.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
+        async function loadHistoryLog() {
+            try {
+                const res = await fetch(`${API_BASE}/lich-su-thao-tac`);
+                const history = await res.json();
+                const tbody = document.getElementById('table-history-body');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+                
+                if (history.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--text-secondary);">Không có dữ liệu lịch sử thao tác.</td></tr>';
+                    return;
+                }
+                
+                history.forEach(row => {
+                    let badgeClass = 'badge-success';
+                    if (row.thao_tac === 'Hủy đặt phòng') {
+                        badgeClass = 'badge-error';
+                    } else if (row.thao_tac === 'Thanh toán (Check-out)') {
+                        badgeClass = 'badge-info';
+                    }
+                    
+                    const khText = row.id_kh ? `${row.ho_ten_kh} (ID: ${row.id_kh})` : 'Khách lẻ';
+                    const nvText = row.id_nv ? `${row.ten_nv} (ID: ${row.id_nv})` : 'Hệ thống';
+                    
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>#${row.id_ls}</td>
+                            <td><span class="badge ${badgeClass}">${row.thao_tac}</span></td>
+                            <td><strong>#${row.id_hd}</strong></td>
+                            <td>${khText}</td>
+                            <td>${nvText}</td>
+                            <td><strong>#${row.id_p}</strong></td>
+                            <td style="color:var(--text-secondary); font-size:0.85rem;">${row.thoi_gian_str || row.thoi_gian}</td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                console.error("Failed to load operations history:", err);
+                const tbody = document.getElementById('table-history-body');
+                if (tbody) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--error-color);">Lỗi khi tải lịch sử thao tác!</td></tr>';
+                }
+            }
+        }
+
+        function filterHistoryTable() {
+            const query = document.getElementById('search-history').value.toLowerCase();
+            const selectedAction = document.getElementById('filter-history-action').value;
+            const rows = document.querySelectorAll('#table-history-body tr');
+            rows.forEach(row => {
+                if (row.cells.length <= 1) return;
+                
+                const actionCellText = row.cells[1] ? row.cells[1].innerText.trim() : '';
+                const fullText = row.innerText.toLowerCase();
+                
+                const matchesQuery = fullText.includes(query);
+                const matchesAction = !selectedAction || actionCellText === selectedAction;
+                
+                if (matchesQuery && matchesAction) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
             });
         }
 
