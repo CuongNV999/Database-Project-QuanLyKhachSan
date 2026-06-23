@@ -255,6 +255,105 @@ public class DemoController {
         }
     }
 
+    @GetMapping("/doanh-thu-thong-ke")
+    public List<Map<String, Object>> getDoanhThuThongKe(
+            @RequestParam String mode,
+            @RequestParam(defaultValue = "-1") int idCn,
+            HttpSession session) {
+        Integer branchId = checkBranchAccess(session);
+        if (branchId > 0) {
+            idCn = branchId;
+        }
+
+        String sql;
+        Object[] params;
+
+        if ("year".equalsIgnoreCase(mode)) {
+            if (idCn > 0) {
+                sql = "SELECT TO_CHAR(d.year, 'YYYY') AS label, " +
+                      "COALESCE(SUM(hoadon.func_tinh_tong_chi_phi(h.id_hd)::numeric), 0) AS doanh_thu, " +
+                      "COUNT(DISTINCT h.id_hd) AS so_luot_checkout, " +
+                      "d.year::date AS sort_date " +
+                      "FROM GENERATE_SERIES(DATE_TRUNC('year', CURRENT_DATE) - INTERVAL '4 years', DATE_TRUNC('year', CURRENT_DATE), '1 year') AS d(year) " +
+                      "LEFT JOIN ( " +
+                      "    SELECT h.* " +
+                      "    FROM hoadon.hoadon h " +
+                      "    JOIN nhansu.nhanvien nv ON h.id_nv = nv.id_nv " +
+                      "    WHERE h.trang_thai = 'Đã thanh toán' AND nv.id_cn = ? " +
+                      ") h ON DATE_TRUNC('year', h.ngaythanhtoan) = d.year::date " +
+                      "GROUP BY d.year " +
+                      "ORDER BY sort_date ASC";
+                params = new Object[]{idCn};
+            } else {
+                sql = "SELECT TO_CHAR(d.year, 'YYYY') AS label, " +
+                      "COALESCE(SUM(hoadon.func_tinh_tong_chi_phi(h.id_hd)::numeric), 0) AS doanh_thu, " +
+                      "COUNT(DISTINCT h.id_hd) AS so_luot_checkout, " +
+                      "d.year::date AS sort_date " +
+                      "FROM GENERATE_SERIES(DATE_TRUNC('year', CURRENT_DATE) - INTERVAL '4 years', DATE_TRUNC('year', CURRENT_DATE), '1 year') AS d(year) " +
+                      "LEFT JOIN hoadon.hoadon h ON DATE_TRUNC('year', h.ngaythanhtoan) = d.year::date AND h.trang_thai = 'Đã thanh toán' " +
+                      "GROUP BY d.year " +
+                      "ORDER BY sort_date ASC";
+                params = new Object[]{};
+            }
+        } else if ("month".equalsIgnoreCase(mode)) {
+            if (idCn > 0) {
+                sql = "SELECT TO_CHAR(d.month, 'MM/YYYY') AS label, " +
+                      "COALESCE(SUM(hoadon.func_tinh_tong_chi_phi(h.id_hd)::numeric), 0) AS doanh_thu, " +
+                      "COUNT(DISTINCT h.id_hd) AS so_luot_checkout, " +
+                      "d.month::date AS sort_date " +
+                      "FROM GENERATE_SERIES(DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '9 months', DATE_TRUNC('month', CURRENT_DATE), '1 month') AS d(month) " +
+                      "LEFT JOIN ( " +
+                      "    SELECT h.* " +
+                      "    FROM hoadon.hoadon h " +
+                      "    JOIN nhansu.nhanvien nv ON h.id_nv = nv.id_nv " +
+                      "    WHERE h.trang_thai = 'Đã thanh toán' AND nv.id_cn = ? " +
+                      ") h ON DATE_TRUNC('month', h.ngaythanhtoan) = d.month::date " +
+                      "GROUP BY d.month " +
+                      "ORDER BY sort_date ASC";
+                params = new Object[]{idCn};
+            } else {
+                sql = "SELECT TO_CHAR(d.month, 'MM/YYYY') AS label, " +
+                      "COALESCE(SUM(hoadon.func_tinh_tong_chi_phi(h.id_hd)::numeric), 0) AS doanh_thu, " +
+                      "COUNT(DISTINCT h.id_hd) AS so_luot_checkout, " +
+                      "d.month::date AS sort_date " +
+                      "FROM GENERATE_SERIES(DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '9 months', DATE_TRUNC('month', CURRENT_DATE), '1 month') AS d(month) " +
+                      "LEFT JOIN hoadon.hoadon h ON DATE_TRUNC('month', h.ngaythanhtoan) = d.month::date AND h.trang_thai = 'Đã thanh toán' " +
+                      "GROUP BY d.month " +
+                      "ORDER BY sort_date ASC";
+                params = new Object[]{};
+            }
+        } else { // "day" mode - last 10 days
+            if (idCn > 0) {
+                sql = "SELECT d.date::date AS sort_date, " +
+                      "TO_CHAR(d.date, 'DD/MM/YYYY') AS label, " +
+                      "COALESCE(SUM(hoadon.func_tinh_tong_chi_phi(h.id_hd)::numeric), 0) AS doanh_thu, " +
+                      "COUNT(DISTINCT h.id_hd) AS so_luot_checkout " +
+                      "FROM GENERATE_SERIES(CURRENT_DATE - INTERVAL '9 days', CURRENT_DATE, '1 day') AS d(date) " +
+                      "LEFT JOIN ( " +
+                      "    SELECT h.* " +
+                      "    FROM hoadon.hoadon h " +
+                      "    JOIN nhansu.nhanvien nv ON h.id_nv = nv.id_nv " +
+                      "    WHERE h.trang_thai = 'Đã thanh toán' AND nv.id_cn = ? " +
+                      ") h ON h.ngaythanhtoan = d.date::date " +
+                      "GROUP BY d.date " +
+                      "ORDER BY sort_date ASC";
+                params = new Object[]{idCn};
+            } else {
+                sql = "SELECT d.date::date AS sort_date, " +
+                      "TO_CHAR(d.date, 'DD/MM/YYYY') AS label, " +
+                      "COALESCE(SUM(hoadon.func_tinh_tong_chi_phi(h.id_hd)::numeric), 0) AS doanh_thu, " +
+                      "COUNT(DISTINCT h.id_hd) AS so_luot_checkout " +
+                      "FROM GENERATE_SERIES(CURRENT_DATE - INTERVAL '9 days', CURRENT_DATE, '1 day') AS d(date) " +
+                      "LEFT JOIN hoadon.hoadon h ON h.ngaythanhtoan = d.date::date AND h.trang_thai = 'Đã thanh toán' " +
+                      "GROUP BY d.date " +
+                      "ORDER BY sort_date ASC";
+                params = new Object[]{};
+            }
+        }
+
+        return jdbcTemplate.queryForList(sql, params);
+    }
+
     @GetMapping("/phong-trong")
     public List<Map<String, Object>> getPhongTrong(
             @RequestParam(defaultValue = "1") int chiNhanhId,
@@ -837,6 +936,29 @@ public class DemoController {
                 "traSau", traSau != null ? traSau : 0.0,
                 "giamGiaPercent", giamGiaPercent
             );
+        } catch (Exception e) {
+            return Map.of("success", false, "message", "Lỗi: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/invoice-details/{id}")
+    public Map<String, Object> getInvoiceDetails(@PathVariable int id, HttpSession session) {
+        try {
+            checkBranchAccess(session);
+            String sql = "SELECT h.id_hd, h.trang_thai, h.ngaylap, h.ngaythanhtoan, h.phuongthuc, " +
+                    "       h.id_kh, kh.ho_ten AS ten_kh, h.id_nv, nv.ten_nv, cn.ten_cn " +
+                    "FROM hoadon.hoadon h " +
+                    "LEFT JOIN khachhang.khachhang kh ON h.id_kh = kh.id_kh " +
+                    "LEFT JOIN nhansu.nhanvien nv ON h.id_nv = nv.id_nv " +
+                    "LEFT JOIN quanly.chinhanh cn ON nv.id_cn = cn.id_cn " +
+                    "WHERE h.id_hd = ?";
+            List<Map<String, Object>> list = jdbcTemplate.queryForList(sql, id);
+            if (list.isEmpty()) {
+                return Map.of("success", false, "message", "Không tìm thấy hóa đơn!");
+            }
+            Map<String, Object> details = new HashMap<>(list.get(0));
+            details.put("success", true);
+            return details;
         } catch (Exception e) {
             return Map.of("success", false, "message", "Lỗi: " + e.getMessage());
         }

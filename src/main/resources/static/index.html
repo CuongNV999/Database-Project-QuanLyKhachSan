@@ -910,24 +910,29 @@
                     </h3>
 
                     <div class="filter-bar"
-                        style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: flex-start; gap: 15px; flex-wrap: wrap;">
+                        style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: flex-start; gap: 20px; flex-wrap: wrap;">
                         <div class="form-group">
                             <label for="db-branch-select">Chi Nhánh</label>
                             <select id="db-branch-select" onchange="loadDailyRevenue()"
-                                style="padding: 8px 14px; border-radius: 6px; border: 1px solid var(--border-color); background: #ffffff; min-width: 180px;"></select>
+                                style="padding: 8px 14px; border-radius: 6px; border: 1px solid var(--border-color); background: #ffffff; min-width: 180px; height: 38px;"></select>
                         </div>
-                        <div class="form-group">
-                            <label for="db-tungay">Từ Ngày</label>
-                            <input type="date" id="db-tungay" onchange="loadDailyRevenue()"
-                                style="padding: 8px 14px; border-radius: 6px; border: 1px solid var(--border-color); background: #ffffff;">
+                        <div class="form-group" style="margin-left: auto;">
+                            <label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; color: var(--text-secondary);">Thống Kê Doanh Thu</label>
+                            <div class="segmented-control" style="display: inline-flex; background: rgba(0,0,0,0.03); padding: 4px; border-radius: 8px; border: 1px solid var(--border-glass);">
+                                <button type="button" id="btn-revenue-day" class="btn-segment active" onclick="setRevenueMode('day')"
+                                    style="padding: 8px 16px; font-size: 0.85rem; font-weight: 600; border: none; border-radius: 6px; background: var(--accent-primary); color: #ffffff; cursor: pointer; transition: all 0.2s ease;">
+                                    Theo Ngày (10 ngày)
+                                </button>
+                                <button type="button" id="btn-revenue-month" class="btn-segment" onclick="setRevenueMode('month')"
+                                    style="padding: 8px 16px; font-size: 0.85rem; font-weight: 500; border: none; border-radius: 6px; background: transparent; color: var(--text-secondary); cursor: pointer; transition: all 0.2s ease;">
+                                    Theo Tháng (10 tháng)
+                                </button>
+                                <button type="button" id="btn-revenue-year" class="btn-segment" onclick="setRevenueMode('year')"
+                                    style="padding: 8px 16px; font-size: 0.85rem; font-weight: 500; border: none; border-radius: 6px; background: transparent; color: var(--text-secondary); cursor: pointer; transition: all 0.2s ease;">
+                                    Theo Năm (5 năm)
+                                </button>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="db-denngay">Đến Ngày</label>
-                            <input type="date" id="db-denngay" onchange="loadDailyRevenue()"
-                                style="padding: 8px 14px; border-radius: 6px; border: 1px solid var(--border-color); background: #ffffff;">
-                        </div>
-                        <button type="button" class="btn-primary" onclick="loadDailyRevenue()"
-                            style="align-self: flex-end; margin: 0; padding: 8px 16px; height: 38px;">Lọc</button>
                     </div>
 
                     <!-- Chart Container -->
@@ -1135,6 +1140,11 @@
                                 <strong id="qb-display-price"
                                     style="font-size: 0.9rem; color: var(--accent-secondary);">0đ/đêm</strong>
                             </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                                <span style="font-size: 0.9rem; color: var(--text-main);">Tổng tiền phòng ước tính:</span>
+                                <strong id="qb-display-total"
+                                    style="font-size: 0.9rem; color: var(--accent-secondary);">0đ</strong>
+                            </div>
                             <div style="display: flex; justify-content: space-between;">
                                 <span style="font-size: 0.9rem; color: var(--text-main);">Tiền cọc ước tính
                                     (50%):</span>
@@ -1321,11 +1331,12 @@
                                     <th>Nhân Viên (ID)</th>
                                     <th>Mã Phòng</th>
                                     <th>Thời Gian Thực Hiện</th>
+                                    <th>Hành động</th>
                                 </tr>
                             </thead>
                             <tbody id="table-history-body">
                                 <tr>
-                                    <td colspan="7" style="text-align:center">Đang tải lịch sử thao tác...</td>
+                                    <td colspan="8" style="text-align:center">Đang tải lịch sử thao tác...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -2476,50 +2487,74 @@
             }
         }
 
+        let currentRevenueMode = 'day';
         let dailyRevenueChart = null;
+
+        function setRevenueMode(mode) {
+            currentRevenueMode = mode;
+            
+            const buttons = {
+                'day': document.getElementById('btn-revenue-day'),
+                'month': document.getElementById('btn-revenue-month'),
+                'year': document.getElementById('btn-revenue-year')
+            };
+            
+            Object.keys(buttons).forEach(k => {
+                const btn = buttons[k];
+                if (!btn) return;
+                if (k === mode) {
+                    btn.classList.add('active');
+                    btn.style.background = 'var(--accent-primary)';
+                    btn.style.color = '#ffffff';
+                    btn.style.fontWeight = '600';
+                } else {
+                    btn.classList.remove('active');
+                    btn.style.background = 'transparent';
+                    btn.style.color = 'var(--text-secondary)';
+                    btn.style.fontWeight = '500';
+                }
+            });
+            
+            loadDailyRevenue();
+        }
 
         async function loadDailyRevenue() {
             try {
-                const tuNgayInput = document.getElementById('db-tungay');
-                const denNgayInput = document.getElementById('db-denngay');
                 const dbBranchSelect = document.getElementById('db-branch-select');
+                if (!dbBranchSelect) return;
 
-                if (!tuNgayInput || !denNgayInput || !dbBranchSelect) return;
-
-                // Initialize default dates if empty
-                if (!tuNgayInput.value) {
-                    const now = new Date();
-                    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-                    tuNgayInput.value = startOfMonth.toLocaleDateString('en-CA');
-                }
-                if (!denNgayInput.value) {
-                    const now = new Date();
-                    denNgayInput.value = now.toLocaleDateString('en-CA');
-                }
-
-                const tuNgay = tuNgayInput.value;
-                const denNgay = denNgayInput.value;
                 const idCn = dbBranchSelect.value || -1;
-
-                const res = await fetch(`${API_BASE}/doanh-thu-theo-ngay?tuNgay=${tuNgay}&denNgay=${denNgay}&idCn=${idCn}`);
+                const res = await fetch(`${API_BASE}/doanh-thu-thong-ke?mode=${currentRevenueMode}&idCn=${idCn}`);
                 const data = await res.json();
+
+                // Update Table Header depending on mode
+                const thTime = document.querySelector('#table-daily-revenue thead th:first-child');
+                if (thTime) {
+                    if (currentRevenueMode === 'day') {
+                        thTime.textContent = 'Ngày Thanh Toán';
+                    } else if (currentRevenueMode === 'month') {
+                        thTime.textContent = 'Tháng';
+                    } else if (currentRevenueMode === 'year') {
+                        thTime.textContent = 'Năm';
+                    }
+                }
 
                 // 1. Populate table
                 const tbody = document.getElementById('table-daily-revenue-body');
                 if (tbody) {
                     tbody.innerHTML = '';
                     if (data.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-secondary);">Không có dữ liệu doanh thu trong khoảng thời gian này.</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-secondary);">Không có dữ liệu doanh thu.</td></tr>';
                     } else {
                         data.forEach(row => {
-                            const dateStr = row.ngay ? row.ngay.split('T')[0].split('-').reverse().join('/') : '';
+                            const timeLabel = row.label || '';
                             const revenue = row.doanh_thu || 0;
                             const checkouts = row.so_luot_checkout || 0;
                             const avg = checkouts > 0 ? Math.round(revenue / checkouts) : 0;
 
                             tbody.innerHTML += `
                                 <tr>
-                                    <td><strong>${dateStr}</strong></td>
+                                    <td><strong>${timeLabel}</strong></td>
                                     <td style="font-weight:600; color:var(--accent-secondary)">${Math.round(revenue).toLocaleString()} VND</td>
                                     <td>${checkouts} lượt</td>
                                     <td>${avg.toLocaleString()} VND</td>
@@ -2529,36 +2564,36 @@
                     }
                 }
 
-                // 2. Render/Update Chart.js Line Chart
+                // 2. Render/Update Chart.js Line/Bar Chart
                 const ctx = document.getElementById('dailyRevenueChart');
                 if (ctx) {
-                    // Extract labels and data points
-                    const labels = data.map(row => {
-                        return row.ngay ? row.ngay.split('T')[0].split('-').reverse().slice(0, 2).join('/') : '';
-                    });
+                    const labels = data.map(row => row.label || '');
                     const dataPoints = data.map(row => row.doanh_thu || 0);
 
                     if (dailyRevenueChart) {
                         dailyRevenueChart.destroy();
                     }
 
+                    const chartType = currentRevenueMode === 'year' ? 'bar' : 'line';
+
                     dailyRevenueChart = new Chart(ctx, {
-                        type: 'line',
+                        type: chartType,
                         data: {
                             labels: labels,
                             datasets: [{
                                 label: 'Doanh Thu (VND)',
                                 data: dataPoints,
                                 borderColor: '#34b057',
-                                backgroundColor: 'rgba(52, 176, 87, 0.1)',
-                                borderWidth: 3,
-                                fill: true,
+                                backgroundColor: chartType === 'bar' ? 'rgba(52, 176, 87, 0.7)' : 'rgba(52, 176, 87, 0.1)',
+                                borderWidth: chartType === 'bar' ? 1 : 3,
+                                borderRadius: chartType === 'bar' ? 4 : 0,
+                                fill: chartType === 'line',
                                 tension: 0.3,
                                 pointBackgroundColor: '#ffffff',
                                 pointBorderColor: '#34b057',
                                 pointBorderWidth: 2,
-                                pointRadius: 4,
-                                pointHoverRadius: 6
+                                pointRadius: chartType === 'line' ? 4 : 0,
+                                pointHoverRadius: chartType === 'line' ? 6 : 0
                             }]
                         },
                         options: {
@@ -2597,7 +2632,7 @@
                     });
                 }
             } catch (err) {
-                console.error("Failed to load daily revenue report:", err);
+                console.error("Failed to load revenue report:", err);
             }
         }
 
@@ -2831,7 +2866,7 @@
                 tbody.innerHTML = '';
 
                 if (history.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--text-secondary);">Không có dữ liệu lịch sử thao tác.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--text-secondary);">Không có dữ liệu lịch sử thao tác.</td></tr>';
                     return;
                 }
 
@@ -2855,6 +2890,9 @@
                             <td>${nvText}</td>
                             <td><strong>#${row.id_p}</strong></td>
                             <td style="color:var(--text-secondary); font-size:0.85rem;">${row.thoi_gian_str || row.thoi_gian}</td>
+                            <td>
+                                <button class="btn-primary" onclick="showReceiptModal(${row.id_hd})" style="padding:4px 8px; font-size:0.85rem; margin:0;">Chi tiết</button>
+                            </td>
                         </tr>
                     `;
                 });
@@ -2862,7 +2900,7 @@
                 console.error("Failed to load operations history:", err);
                 const tbody = document.getElementById('table-history-body');
                 if (tbody) {
-                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--error-color);">Lỗi khi tải lịch sử thao tác!</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--error-color);">Lỗi khi tải lịch sử thao tác!</td></tr>';
                 }
             }
         }
@@ -2979,21 +3017,21 @@
                 return;
             }
 
-            const checkinDate = new Date(checkinVal);
-            const checkoutDate = new Date(checkoutVal);
+            const checkinDate = new Date(`${checkinVal}T14:00:00`);
+            const checkoutDate = new Date(`${checkoutVal}T12:00:00`);
             const diffTime = checkoutDate - checkinDate;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
             if (diffDays <= 0) {
-                pricingInfo.style.display = 'none';
-                document.getElementById('qb-coc').value = 0;
-                return;
+                diffDays = 1;
             }
 
-            const deposit = diffDays * price * 0.5;
+            const totalEst = diffDays * price;
+            const deposit = totalEst * 0.5;
             document.getElementById('qb-coc').value = Math.round(deposit);
 
             document.getElementById('qb-display-price').innerText = `${Math.round(price).toLocaleString()}đ/đêm`;
+            document.getElementById('qb-display-total').innerText = `${Math.round(totalEst).toLocaleString()}đ`;
             document.getElementById('qb-display-deposit').innerText = `${Math.round(deposit).toLocaleString()}đ`;
             pricingInfo.style.display = 'block';
         }
@@ -3002,8 +3040,14 @@
 
         async function showReceiptModal(idHd, phuongThuc) {
             try {
-                // Find local invoice metadata
-                const inv = globalInvoices.find(i => i.id_hd === idHd);
+                // Fetch invoice metadata details from our new endpoint
+                const resDetails = await fetch(`${API_BASE}/invoice-details/${idHd}`);
+                const details = await resDetails.json();
+
+                if (!details.success) {
+                    showAlert("Lỗi tải thông tin hóa đơn: " + details.message, false);
+                    return;
+                }
 
                 // Fetch billing summary
                 const resBilling = await fetch(`${API_BASE}/invoice-billing/${idHd}`);
@@ -3024,33 +3068,22 @@
 
                 // Fill modal texts
                 document.getElementById('rec-id-hd').innerText = `#${idHd}`;
-                document.getElementById('rec-method').innerText = phuongThuc;
-                document.getElementById('rec-date').innerText = new Date().toLocaleString('vi-VN');
+                document.getElementById('rec-method').innerText = details.phuongthuc || phuongThuc || 'Chưa thanh toán';
+                
+                // Format the payment date or invoice date
+                const dateVal = details.ngaythanhtoan || details.ngaylap;
+                document.getElementById('rec-date').innerText = dateVal ? new Date(dateVal).toLocaleString('vi-VN') : new Date().toLocaleString('vi-VN');
 
                 // Customer name
                 let custName = "Khách vãng lai";
-                if (inv && inv.id_kh) {
-                    const cust = globalCustomers.find(c => c.id_kh === inv.id_kh);
-                    if (cust) {
-                        custName = cust.ho_ten;
-                    } else {
-                        custName = `Khách hàng (ID: ${inv.id_kh})`;
-                    }
+                if (details.id_kh) {
+                    custName = details.ten_kh || `Khách hàng (ID: ${details.id_kh})`;
                 }
                 document.getElementById('rec-customer').innerText = custName;
 
                 // Branch Name and Employee Name
-                let branchName = "Homestay Management Portal";
-                let employeeName = "Nhân viên lễ tân";
-
-                const session = sessionStorage.getItem('userSession');
-                if (session) {
-                    const user = JSON.parse(session);
-                    if (user.branchName) branchName = user.branchName;
-                    if (user.fullName) employeeName = user.fullName;
-                }
-                document.getElementById('rec-branch-name').innerText = branchName;
-                document.getElementById('rec-employee').innerText = employeeName;
+                document.getElementById('rec-branch-name').innerText = details.ten_cn || "Homestay Management Portal";
+                document.getElementById('rec-employee').innerText = details.ten_nv || "Hệ thống";
 
                 // Populate Table Items
                 const tbody = document.getElementById('rec-items-body');
