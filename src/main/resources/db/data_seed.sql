@@ -203,8 +203,8 @@ BEGIN
                 WHEN 1 THEN '20m2'
                 WHEN 2 THEN '25m2'
                 WHEN 3 THEN '32m2'
-                WHEN 4 THEN 'Large'
-                ELSE 'Large'
+                WHEN 4 THEN '45m2'
+                ELSE '50m2'
              END,
              CASE v_t
                 WHEN 1 THEN '1 người'

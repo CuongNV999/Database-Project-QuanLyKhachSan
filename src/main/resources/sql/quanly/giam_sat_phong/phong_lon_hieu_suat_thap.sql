@@ -56,7 +56,7 @@ JOIN quanly.loaiphong lp ON p.id_lp = lp.id_lp
 JOIN quanly.chinhanh cn ON lp.id_cn = cn.id_cn
 CROSS JOIN params pr
 LEFT JOIN room_booked_days rb ON p.id_p = rb.id_p
-WHERE lp.dien_tich = 'Large'
+WHERE lp.dien_tich IN ('45m2', '50m2')
   AND (
       COALESCE(rb.so_luot_dat, 0) < pr.muc_it_khach
       OR
