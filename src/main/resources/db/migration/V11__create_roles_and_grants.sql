@@ -40,7 +40,6 @@ GRANT USAGE ON ALL SEQUENCES IN SCHEMA hoadon TO nhan_vien;
 -- Facility management (quanly schema): Can SELECT details of rooms, branches, and facilities. Can also UPDATE room status (phong.trang_thai) and facility maintenance.
 GRANT SELECT ON ALL TABLES IN SCHEMA quanly TO nhan_vien;
 GRANT UPDATE (trang_thai) ON quanly.phong TO nhan_vien;
-GRANT INSERT, UPDATE, DELETE ON quanly.cosovatchat_duoc_baotri TO nhan_vien;
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA quanly TO nhan_vien;
 
 -- HR data (nhansu schema): Can only SELECT employee info (name, job title), cannot modify HR data

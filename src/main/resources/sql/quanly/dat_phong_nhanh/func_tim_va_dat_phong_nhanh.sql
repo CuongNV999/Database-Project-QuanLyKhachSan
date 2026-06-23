@@ -7,7 +7,7 @@
 --   p_loai_giuong: Loại giường (đơn, đôi)
 --   p_ngaynhan: Ngày nhận phòng dự kiến
 --   p_ngaytra: Ngày trả phòng dự kiến
---   p_tien_coc: Tiền đặt cọc (mặc định 0 VNĐ)
+--   p_tien_coc: Tiền đặt cọc (mặc định 0 VNĐ - không lưu trực tiếp vào bảng nữa)
 --   p_phu_thu: Phụ thu ban đầu (mặc định 0 VNĐ)
 --   p_dien_tich: Diện tích phòng (nhỏ, vừa, lớn - mặc định NULL để chọn bất kỳ)
 --   p_view: Tầm nhìn (biển, núi, thành phố - mặc định NULL để chọn bất kỳ)
@@ -33,31 +33,15 @@ DECLARE
     v_id_p INT;
     v_id_hd INT;
     v_gia_tien MONEY;
-    v_tong_tien_phong MONEY;
     v_so_ngay_luu_tru INT;
 BEGIN
-    -- 1. Tìm phòng trống của chi nhánh và loại phòng phù hợp các tiêu chí (bao gồm cả lọc diện tích, view, đối tượng sử dụng) và không bị trùng lịch đặt trước
-    SELECT p.id_p, lp.gia_tien INTO v_id_p, v_gia_tien
-    FROM quanly.phong p
-    JOIN quanly.loaiphong lp ON p.id_lp = lp.id_lp
-    WHERE lp.id_cn = p_id_cn
-      AND lp.chat_luong = p_chat_luong
-      AND lp.loai_giuong = p_loai_giuong
-      AND (p_dien_tich IS NULL OR lp.dien_tich = p_dien_tich)
-      AND (p_view IS NULL OR lp.view = p_view)
-      AND (p_doi_tuong IS NULL OR lp.doi_tuong = p_doi_tuong)
-      AND p.trang_thai = 'Còn trống'
-      AND NOT EXISTS (
-          -- Kiểm tra trùng lịch với bất kỳ đặt phòng nào khác của phòng này chưa hủy
-          SELECT 1 
-          FROM hoadon.hoadon_thue_phong htp
-          JOIN hoadon.hoadon h ON htp.id_hd = h.id_hd
-          WHERE htp.id_p = p.id_p
-            AND h.trang_thai != 'Đã hủy'
-            AND htp.ngaynhan < p_ngaytra
-            AND htp.ngaytra > p_ngaynhan
-      )
-    LIMIT 1;
+    -- 1. Tìm phòng trống bằng helper function
+    SELECT * INTO v_id_p, v_gia_tien
+    FROM quanly.func_tim_phong_trong_phu_hop(
+        p_id_cn, p_chat_luong, p_loai_giuong,
+        p_dien_tich, p_view, p_doi_tuong,
+        p_ngaynhan, p_ngaytra
+    );
 
     -- Nếu không tìm thấy phòng phù hợp, báo lỗi để dừng giao dịch
     IF v_id_p IS NULL THEN
@@ -76,19 +60,11 @@ BEGIN
         v_so_ngay_luu_tru := 1;
     END IF;
 
-    -- 3. Tạo bản ghi chi tiết thuê phòng (tạm thời để tổng tiền là 0)
-    INSERT INTO hoadon.hoadon_thue_phong (id_hd, id_p, ngaynhan, ngaytra, so_ngay_luu_tru, tien_coc, phu_thu, tong_tien)
-    VALUES (v_id_hd, v_id_p, p_ngaynhan, p_ngaytra, v_so_ngay_luu_tru, p_tien_coc, p_phu_thu, 0::money);
+    -- 3. Tạo bản ghi chi tiết thuê phòng (đã loại bỏ cột tien_coc, tong_tien)
+    INSERT INTO hoadon.hoadon_thue_phong (id_hd, id_p, ngaynhan, ngaytra, so_ngay_luu_tru, phu_thu_tieu_hao)
+    VALUES (v_id_hd, v_id_p, p_ngaynhan, p_ngaytra, v_so_ngay_luu_tru, p_phu_thu);
 
-    -- 4. Tính toán lại tổng tiền phòng thực tế dựa trên công thức nghiệp vụ
-    v_tong_tien_phong := hoadon.func_tinh_tien_phong(v_id_hd, v_id_p);
-
-    -- 5. Cập nhật lại tổng tiền phòng chính xác vào chi tiết hóa đơn
-    UPDATE hoadon.hoadon_thue_phong
-    SET tong_tien = v_tong_tien_phong
-    WHERE id_hd = v_id_hd AND id_p = v_id_p;
-
-    -- 6. Trả về ID của hóa đơn mới được lập
+    -- 4. Trả về ID của hóa đơn mới được lập
     RETURN v_id_hd;
 END;
 $$ LANGUAGE plpgsql;

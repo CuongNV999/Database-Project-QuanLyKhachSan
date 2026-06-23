@@ -34,7 +34,18 @@ ALTER TABLE public.hoadon_sudung_dichvu SET SCHEMA hoadon;
 
 -- 4. Move views to their schemas
 ALTER VIEW public.v_phong_status_detail SET SCHEMA quanly;
-ALTER VIEW public.v_thong_tin_chu_so_huu_chi_nhanh SET SCHEMA quanly;
+CREATE OR REPLACE VIEW quanly.v_thong_tin_chu_so_huu_chi_nhanh AS
+SELECT 
+    cn.id_cn,
+    cn.ten_cn,
+    cn.dia_chi AS dia_chi_chi_nhanh,
+    csh.id_csh,
+    csh.ten_csh AS ten_chu_so_huu,
+    csh.email AS email_chu_so_huu,
+    csh.sdt AS sdt_chu_so_huu
+FROM quanly.chinhanh cn
+JOIN quanly.chinhanh_chusohuu cc ON cn.id_cn = cc.id_cn
+JOIN quanly.chusohuu csh ON cc.id_csh = csh.id_csh;
 ALTER VIEW public.v_doanh_thu_chi_nhanh SET SCHEMA hoadon;
 
 -- 5. Move functions to their schemas

@@ -10,7 +10,7 @@ SELECT
     cn.ten_cn AS ten_chi_nhanh,
     htp.ngaynhan,
     htp.ngaytra,
-    htp.tong_tien::numeric AS tien_phong
+    hoadon.func_tinh_tien_phong(h.id_hd, htp.id_p)::numeric AS tien_phong
 FROM hoadon h
 JOIN hoadon_thue_phong htp ON h.id_hd = htp.id_hd
 JOIN phong p ON htp.id_p = p.id_p

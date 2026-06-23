@@ -19,10 +19,7 @@ UPDATE quanly.phong p SET id_cn = lp.id_cn FROM quanly.loaiphong lp WHERE p.id_l
 ALTER TABLE quanly.phong ADD CONSTRAINT phong_id_cn_fkey FOREIGN KEY (id_cn) REFERENCES quanly.chinhanh(id_cn) ON DELETE CASCADE;
 CREATE INDEX IF NOT EXISTS idx_phong_id_cn ON quanly.phong(id_cn);
 
--- 5. Table quanly.cosovatchat_duoc_baotri: Rename to baotri
-ALTER TABLE quanly.cosovatchat_duoc_baotri RENAME TO baotri;
-ALTER SEQUENCE quanly.cosovatchat_duoc_baotri_id_bao_tri_seq RENAME TO baotri_id_bao_tri_seq;
-ALTER TABLE quanly.baotri RENAME CONSTRAINT fk_cosovatchat_baotri TO fk_baotri_cosovatchat;
+
 
 -- 6. Recreate Trigger & Helper Functions due to column/table renames
 
@@ -81,28 +78,4 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Function: quanly.func_thong_ke_tan_suat_hong_hoc()
-CREATE OR REPLACE FUNCTION quanly.func_thong_ke_tan_suat_hong_hoc(p_id_cn INT)
-RETURNS TABLE (
-    ten_csvc VARCHAR(255),
-    mo_ta TEXT,
-    loai_csvc VARCHAR(50),
-    so_lan_bao_tri INT
-) AS $$
-BEGIN
-    RETURN QUERY
-    SELECT 
-        cvc.ten_csvc::VARCHAR(255),
-        cvc.mo_ta,
-        cvc.loai_csvc::VARCHAR(50),
-        COUNT(bt.id_bao_tri)::INT AS so_lan_bao_tri
-    FROM quanly.baotri bt
-    JOIN quanly.cosovatchat cvc ON bt.id_csvc = cvc.id_csvc
-    JOIN quanly.phong_trangbi_csvc ptb ON cvc.id_csvc = ptb.id_csvc
-    JOIN quanly.phong p ON ptb.id_p = p.id_p
-    JOIN quanly.loaiphong lp ON p.id_lp = lp.id_lp
-    WHERE (p_id_cn = -1 OR lp.id_cn = p_id_cn)
-    GROUP BY cvc.id_csvc, cvc.ten_csvc, cvc.mo_ta, cvc.loai_csvc
-    ORDER BY so_lan_bao_tri DESC;
-END;
-$$ LANGUAGE plpgsql;
+

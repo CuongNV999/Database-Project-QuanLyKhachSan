@@ -1,9 +1,4 @@
--- Function: Tính toán tỷ lệ phụ thu check-out muộn theo hạng hội viên của khách hàng
--- Đầu vào: 
--- 1. p_hang_hv (Hạng hội viên: Basic, Bronze, Silver, Gold hoặc NULL)
--- 2. p_ngaynhan (Ngày/giờ nhận phòng thực tế)
--- 3. p_so_ngay_luu_tru (Số ngày đăng ký lưu trú)
--- 4. p_ngaytra_thucte (Ngày/giờ checkout thực tế)
+-- Migration: V27 - Redefine late check-out fee function to scale by 100% per day overdue.
 
 CREATE OR REPLACE FUNCTION hoadon.func_tinh_ti_le_checkout_muon(
     p_hang_hv VARCHAR,
@@ -29,18 +24,14 @@ BEGIN
     v_expected_date := v_ngaytra_dukien::date;
     v_checkout_time := p_ngaytra_thucte::time;
 
-    -- Nếu check-out sau ngày dự kiến, tự động tính vượt mức 18:00 (phụ thu 100% giá phòng)
+    -- Nếu check-out sau ngày dự kiến, phụ thu 100% cho mỗi ngày trễ hạn (1.00 * n ngày)
     IF p_ngaytra_thucte::date > v_expected_date THEN
-        RETURN 1.00;
+        RETURN (p_ngaytra_thucte::date - v_expected_date)::NUMERIC;
     END IF;
 
     -- Kiểm tra điều kiện phụ thu theo từng hạng hội viên
     IF p_hang_hv IS NULL OR p_hang_hv = '' OR p_hang_hv = 'Basic' OR p_hang_hv = 'Bronze' THEN
         -- Khách lẻ vãng lai hoặc hạng Basic / Bronze:
-        -- Trả phòng trước 14:00: Miễn phí
-        -- Từ 14:00 đến 16:00: Phụ thu 30% giá phòng
-        -- Từ 16:00 đến 18:00: Phụ thu 50% giá phòng
-        -- Sau 18:00: Phụ thu 100% giá phòng
         IF v_checkout_time <= TIME '14:00:00' THEN
             v_ti_le := 0.00;
         ELSIF v_checkout_time <= TIME '16:00:00' THEN
@@ -52,9 +43,6 @@ BEGIN
         END IF;
     ELSIF p_hang_hv = 'Silver' THEN
         -- Hội viên hạng Silver:
-        -- Trả phòng trước 16:00: Miễn phí
-        -- Từ 16:00 đến 18:00: Phụ thu 20% giá phòng
-        -- Sau 18:00: Phụ thu 100% giá phòng
         IF v_checkout_time <= TIME '16:00:00' THEN
             v_ti_le := 0.00;
         ELSIF v_checkout_time <= TIME '18:00:00' THEN
@@ -64,8 +52,6 @@ BEGIN
         END IF;
     ELSIF p_hang_hv = 'Gold' THEN
         -- Hội viên hạng Gold:
-        -- Trả phòng trước 18:00: Miễn phí
-        -- Sau 18:00: Phụ thu 100% giá phòng
         IF v_checkout_time <= TIME '18:00:00' THEN
             v_ti_le := 0.00;
         ELSE
