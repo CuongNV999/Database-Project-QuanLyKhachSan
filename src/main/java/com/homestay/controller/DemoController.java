@@ -431,7 +431,6 @@ public class DemoController {
                 }
             }
 
-<<<<<<< HEAD
             Integer idHd = null;
             Integer idP = null;
             if (body.get("idP") != null) {
@@ -466,12 +465,7 @@ public class DemoController {
                         idKh, idNv, idCn, chatLuong, loaiGiuong,
                         Timestamp.valueOf(ngayNhan), Timestamp.valueOf(ngayTra),
                         tienCoc, phuThu);
-=======
-            String sql = "SELECT quanly.func_tim_va_dat_phong_nhanh(?, ?, ?, ?, ?, ?::timestamp, ?::timestamp, ?::numeric::money, ?::numeric::money) AS id_hd";
-            Integer idHd = jdbcTemplate.queryForObject(sql, Integer.class,
-                    idKh, idNv, idCn, chatLuong, loaiGiuong,
-                    Timestamp.valueOf(ngayNhan), Timestamp.valueOf(ngayTra),
-                    tienCoc, phuThu);
+            }
 
             // Log booking history
             try {
@@ -487,7 +481,6 @@ public class DemoController {
             } catch (Exception ex) {
                 // Ignore history logging errors to not block transaction
                 System.err.println("Failed to log booking history: " + ex.getMessage());
->>>>>>> 8bf46c0be80f717c9ac9ee785138f5a1a9d54704
             }
 
             return Map.of("success", true, "message", "Đặt phòng nhanh thành công!", "id_hd", idHd);

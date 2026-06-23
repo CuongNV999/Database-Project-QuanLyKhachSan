@@ -1807,11 +1807,7 @@
                     onCustomerSearchInput();
 
                     loadDropdowns();
-<<<<<<< HEAD
-=======
                     loadHistoryLog();
-                    // Reload dashboard to reflect room state change
->>>>>>> 8bf46c0be80f717c9ac9ee785138f5a1a9d54704
                     loadDashboard();
                     loadRoomStatusDetail();
                 } else {
@@ -2344,12 +2340,9 @@
                 if (data.success) {
                     showAlert(data.message, true);
                     loadDropdowns();
-<<<<<<< HEAD
                     loadDashboard();
                     loadRoomStatusDetail();
-=======
                     loadHistoryLog();
->>>>>>> 8bf46c0be80f717c9ac9ee785138f5a1a9d54704
                 } else {
                     showAlert(data.message, false);
                 }
@@ -2795,16 +2788,6 @@
             });
         }
 
-<<<<<<< HEAD
-        let currentAvailableRooms = [];
-
-        async function loadAvailableRoomsForBooking() {
-            const branchEl = document.getElementById('qb-cn');
-            if (!branchEl) return;
-            const branchId = parseInt(branchEl.value);
-            const checkinVal = document.getElementById('qb-checkin-date').value;
-            const checkoutVal = document.getElementById('qb-checkout-date').value;
-=======
         async function loadHistoryLog() {
             try {
                 const res = await fetch(`${API_BASE}/lich-su-thao-tac`);
@@ -2871,11 +2854,14 @@
             });
         }
 
-        function calculateQuickBookDeposit() {
-            const qbBranch = document.getElementById('qb-cn');
-            if (!qbBranch || qbBranch.selectedIndex < 0) return;
-            const branchName = qbBranch.options[qbBranch.selectedIndex].text;
->>>>>>> 8bf46c0be80f717c9ac9ee785138f5a1a9d54704
+        let currentAvailableRooms = [];
+
+        async function loadAvailableRoomsForBooking() {
+            const branchEl = document.getElementById('qb-cn');
+            if (!branchEl) return;
+            const branchId = parseInt(branchEl.value);
+            const checkinVal = document.getElementById('qb-checkin-date').value;
+            const checkoutVal = document.getElementById('qb-checkout-date').value;
             const quality = document.getElementById('qb-chatluong').value;
             const bed = document.getElementById('qb-giuong').value;
 
