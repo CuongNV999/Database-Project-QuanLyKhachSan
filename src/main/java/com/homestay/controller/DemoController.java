@@ -431,7 +431,6 @@ public class DemoController {
                 }
             }
 
-<<<<<<< HEAD
             Integer idHd = null;
             Integer idP = null;
             if (body.get("idP") != null) {
@@ -466,28 +465,24 @@ public class DemoController {
                         idKh, idNv, idCn, chatLuong, loaiGiuong,
                         Timestamp.valueOf(ngayNhan), Timestamp.valueOf(ngayTra),
                         tienCoc, phuThu);
-=======
-            String sql = "SELECT quanly.func_tim_va_dat_phong_nhanh(?, ?, ?, ?, ?, ?::timestamp, ?::timestamp, ?::numeric::money, ?::numeric::money) AS id_hd";
-            Integer idHd = jdbcTemplate.queryForObject(sql, Integer.class,
-                    idKh, idNv, idCn, chatLuong, loaiGiuong,
-                    Timestamp.valueOf(ngayNhan), Timestamp.valueOf(ngayTra),
-                    tienCoc, phuThu);
+            }
 
             // Log booking history
-            try {
-                String customerName = jdbcTemplate.queryForObject("SELECT ho_ten FROM khachhang.khachhang WHERE id_kh = ?", String.class, idKh);
-                String employeeName = jdbcTemplate.queryForObject("SELECT ten_nv FROM nhansu.nhanvien WHERE id_nv = ?", String.class, idNv);
-                List<Integer> roomIds = jdbcTemplate.queryForList("SELECT id_p FROM hoadon.hoadon_thue_phong WHERE id_hd = ?", Integer.class, idHd);
-                for (Integer roomId : roomIds) {
-                    jdbcTemplate.update(
-                        "INSERT INTO hoadon.lich_su_thao_tac (thao_tac, id_hd, id_kh, ho_ten_kh, id_nv, ten_nv, id_p) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                        "Đặt phòng", idHd, idKh, customerName, idNv, employeeName, roomId
-                    );
+            if (idHd != null) {
+                try {
+                    String customerName = jdbcTemplate.queryForObject("SELECT ho_ten FROM khachhang.khachhang WHERE id_kh = ?", String.class, idKh);
+                    String employeeName = jdbcTemplate.queryForObject("SELECT ten_nv FROM nhansu.nhanvien WHERE id_nv = ?", String.class, idNv);
+                    List<Integer> roomIds = jdbcTemplate.queryForList("SELECT id_p FROM hoadon.hoadon_thue_phong WHERE id_hd = ?", Integer.class, idHd);
+                    for (Integer roomId : roomIds) {
+                        jdbcTemplate.update(
+                            "INSERT INTO hoadon.lich_su_thao_tac (thao_tac, id_hd, id_kh, ho_ten_kh, id_nv, ten_nv, id_p) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                            "Đặt phòng", idHd, idKh, customerName, idNv, employeeName, roomId
+                        );
+                    }
+                } catch (Exception ex) {
+                    // Ignore history logging errors to not block transaction
+                    System.err.println("Failed to log booking history: " + ex.getMessage());
                 }
-            } catch (Exception ex) {
-                // Ignore history logging errors to not block transaction
-                System.err.println("Failed to log booking history: " + ex.getMessage());
->>>>>>> 8bf46c0be80f717c9ac9ee785138f5a1a9d54704
             }
 
             return Map.of("success", true, "message", "Đặt phòng nhanh thành công!", "id_hd", idHd);
