@@ -794,13 +794,7 @@
                 <span>Nghiệp Vụ</span>
             </li>
 
-            <li id="nav-efficiency" class="nav-item" onclick="switchTab('efficiency')">
-                <svg viewBox="0 0 24 24">
-                    <path
-                        d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" />
-                </svg>
-                <span>Hiệu Suất Phòng</span>
-            </li>
+
             <li id="nav-customers-tab" class="nav-item" onclick="switchTab('customers-tab')" style="display: none;">
                 <svg viewBox="0 0 24 24" style="fill: currentColor; width: 20px; height: 20px;">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
@@ -1342,60 +1336,7 @@
         </section>
 
 
-        <!-- 5. PHÒNG LỚN HIỆU SUẤT THẤP SECTION -->
-        <section id="efficiency" class="section-container">
-            <div class="section-header">
-                <h2>Báo Cáo Hiệu Suất & Lọc Phòng Diện Tích Lớn</h2>
-            </div>
 
-            <div class="filter-bar">
-                <div class="form-group">
-                    <label for="eff-tungay">Từ Ngày</label>
-                    <input type="date" id="eff-tungay" value="2026-06-01">
-                </div>
-                <div class="form-group">
-                    <label for="eff-denngay">Đến Ngày</label>
-                    <input type="date" id="eff-denngay" value="2026-06-30">
-                </div>
-                <div class="form-group">
-                    <label for="eff-itkhach">Số Lượt Đặt Tối Thiểu</label>
-                    <input type="number" id="eff-itkhach" value="3" style="width:100px;">
-                </div>
-                <div class="form-group">
-                    <label for="eff-mieusan">Mức Sàn Hiệu Suất (%)</label>
-                    <input type="number" id="eff-mieusan" value="40" style="width:100px;">
-                </div>
-                <div class="form-group" style="flex-grow: 1;">
-                    <label for="search-efficiency">Tìm kiếm phòng</label>
-                    <input type="text" id="search-efficiency" placeholder="Nhập mã phòng, tên chi nhánh..."
-                        oninput="filterEfficiencyTable()">
-                </div>
-                <button class="btn-primary" onclick="loadEfficiencyReport()">Chạy Báo Cáo</button>
-            </div>
-
-            <div class="table-responsive">
-                <table id="table-efficiency">
-                    <thead>
-                        <tr>
-                            <th>Mã Phòng</th>
-                            <th>Tên Phòng</th>
-                            <th>Chi Nhánh</th>
-                            <th>Chất Lượng</th>
-                            <th>Giường</th>
-                            <th>Diện Tích</th>
-                            <th>Số Lượt Đặt</th>
-                            <th>Số Đêm Thuê</th>
-                            <th>Khả Năng Phục Vụ</th>
-                            <th>Hiệu Suất (%)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="10" style="text-align:center">Thiết lập bộ lọc và chạy báo cáo...</td>
-                        </tr>
-                    </tbody>
-                </table>
-        </section>
 
         <!-- 6. QUẢN LÝ KHÁCH HÀNG SECTION -->
         <section id="customers-tab" class="section-container">
@@ -1577,9 +1518,7 @@
                 setHeadTitle('Nhiệm Vụ Nghiệp Vụ', 'Thực hiện Đặt phòng nhanh, Chuyển phòng cho khách, Hủy lịch đặt phòng và Thanh toán hóa đơn.');
                 loadDropdowns();
                 loadHistoryLog();
-            } else if (tabId === 'efficiency') {
-                setHeadTitle('Báo Cáo Hiệu Suất Phòng', 'Phân tích các phòng diện tích lớn (từ 45m² trở lên) hoạt động kém hoặc ít lượt khách đặt.');
-                loadEfficiencyReport();
+
             } else if (tabId === 'customers-tab') {
                 setHeadTitle('Quản Lý Khách Hàng', 'Quản lý thông tin khách hàng, lịch sử lưu trú và thông tin hạng hội viên.');
                 loadManagementCustomers();
@@ -2825,56 +2764,7 @@
         }
 
 
-        async function loadEfficiencyReport() {
-            try {
-                const tuNgay = document.getElementById('eff-tungay').value;
-                const denNgay = document.getElementById('eff-denngay').value;
-                const itKhach = document.getElementById('eff-itkhach').value;
-                const mucSan = document.getElementById('eff-mieusan').value;
 
-                const res = await fetch(`${API_BASE}/phong-lon-hieu-suat-thap?tuNgay=${tuNgay}&denNgay=${denNgay}&mucItKhach=${itKhach}&mucSanHieuSuat=${mucSan}`);
-                const data = await res.json();
-                const tbody = document.querySelector('#table-efficiency tbody');
-                tbody.innerHTML = '';
-
-                if (data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center">Không phát hiện phòng diện tích lớn nào có hiệu suất thấp trong khoảng thời gian đã chọn!</td></tr>`;
-                    return;
-                }
-
-                data.forEach(r => {
-                    let badgeClass = 'badge-success';
-                    if (r.hieu_suat < 40.0) badgeClass = 'badge-error';
-                    else if (r.hieu_suat < 70.0) badgeClass = 'badge-warning';
-
-                    let dienTichHienThi = r.dien_tich;
-                    if (dienTichHienThi === 'Large') {
-                        if (r.chat_luong === 'Suite') {
-                            dienTichHienThi = '45m2';
-                        } else if (r.chat_luong === 'Family') {
-                            dienTichHienThi = '50m2';
-                        } else {
-                            dienTichHienThi = '45m2';
-                        }
-                    }
-
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>#${r.id_p}</td>
-                            <td><strong>${r.ten_phong}</strong></td>
-                            <td>${r.ten_cn}</td>
-                            <td>${r.chat_luong}</td>
-                            <td>${r.loai_giuong}</td>
-                            <td>${dienTichHienThi}</td>
-                            <td>${r.so_luot_dat} lượt</td>
-                            <td>${r.tong_so_dem_thue} đêm</td>
-                            <td>${r.tong_so_dem_co_the_phuc_vu} đêm</td>
-                            <td><span class="badge ${badgeClass}">${r.hieu_suat}%</span></td>
-                        </tr>
-                    `;
-                });
-            } catch (e) { console.error(e); }
-        }
 
         // --- Client-side Filter Functions ---
         function filterDoanhThuTable() {
@@ -2930,14 +2820,7 @@
             }
         }
 
-        function filterEfficiencyTable() {
-            const query = document.getElementById('search-efficiency').value.toLowerCase();
-            const rows = document.querySelectorAll('#table-efficiency tbody tr');
-            rows.forEach(row => {
-                const text = row.innerText.toLowerCase();
-                row.style.display = text.includes(query) ? '' : 'none';
-            });
-        }
+
 
         async function loadHistoryLog() {
             try {
