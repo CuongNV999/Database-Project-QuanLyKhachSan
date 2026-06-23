@@ -397,6 +397,22 @@
             gap: 1.2rem;
         }
 
+        .autocomplete-dropdown-item {
+            padding: 10px 14px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.15s ease;
+            text-align: left;
+        }
+        .autocomplete-dropdown-item:last-child {
+            border-bottom: none;
+        }
+        .autocomplete-dropdown-item:hover {
+            background: #f1f5f9;
+        }
+
         /* Notifications toast */
         .toast {
             position: fixed;
@@ -646,13 +662,15 @@
             border-radius: 12px;
             background: #f8fafc;
             margin-bottom: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
             transition: all 0.2s ease;
         }
+
         .room-block:hover {
             border-color: #cbd5e1;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
+
         .surcharge-item-row {
             display: flex;
             justify-content: space-between;
@@ -662,13 +680,15 @@
             border-radius: 8px;
             font-size: 0.8rem;
             border: 1px solid #e2e8f0;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
         }
+
         .qty-stepper {
             display: flex;
             align-items: center;
             gap: 6px;
         }
+
         .qty-btn {
             width: 20px;
             height: 20px;
@@ -683,16 +703,19 @@
             color: var(--text-main);
             transition: all 0.1s ease;
         }
+
         .qty-btn:hover {
             background: #f1f5f9;
             border-color: #94a3b8;
         }
+
         .qty-val {
             min-width: 18px;
             text-align: center;
             font-weight: 600;
             color: #333;
         }
+
         .item-remove-btn {
             color: var(--error-color);
             border: none;
@@ -703,6 +726,7 @@
             line-height: 1;
             transition: transform 0.1s ease;
         }
+
         .item-remove-btn:hover {
             transform: scale(1.2);
         }
@@ -812,7 +836,7 @@
                     </div>
                     <div class="card-icon">
                         <svg style="width:24px; height:24px;" viewBox="0 0 24 24">
-                            <path fill="currentColor" d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z"/>
+                            <path fill="currentColor" d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" />
                         </svg>
                     </div>
                 </div>
@@ -823,7 +847,7 @@
                     </div>
                     <div class="card-icon">
                         <svg style="width:24px; height:24px;" viewBox="0 0 24 24">
-                            <path fill="currentColor" d="M19,7H11V14H3V5H1V20H3V17H21V20H23V11A4,4 0 0,0 19,7Z"/>
+                            <path fill="currentColor" d="M19,7H11V14H3V5H1V20H3V17H21V20H23V11A4,4 0 0,0 19,7Z" />
                         </svg>
                     </div>
                 </div>
@@ -834,7 +858,7 @@
                     </div>
                     <div class="card-icon">
                         <svg style="width:24px; height:24px;" viewBox="0 0 24 24">
-                            <path fill="currentColor" d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z"/>
+                            <path fill="currentColor" d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" />
                         </svg>
                     </div>
                 </div>
@@ -928,20 +952,21 @@
                             <path
                                 d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
                         </svg>
-                        Đặt Phòng Nhanh
+                        Đặt Phòng
                     </h3>
                     <form id="form-quickbook" onsubmit="handleQuickBook(event)">
-                        <div class="form-group">
+                        <div class="form-group" style="position: relative;">
                             <label for="qb-kh">Khách Hàng</label>
-                            <input type="text" id="qb-kh" list="qb-kh-list"
-                                placeholder="Nhập tên mới hoặc chọn khách hàng..." autocomplete="off" required>
-                            <datalist id="qb-kh-list"></datalist>
+                            <input type="text" id="qb-kh" placeholder="Nhập tên mới hoặc chọn khách hàng..." autocomplete="off" required>
+                            <div id="qb-kh-dropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: #ffffff; border: 1px solid var(--border-glass); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-height: 250px; overflow-y: auto; z-index: 1000; display: none; margin-top: 4px;"></div>
                         </div>
-                        
+
                         <!-- New Customer Additional Details Section -->
-                        <div id="qb-new-cust-details" style="background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px dashed var(--border-color); display: flex; flex-direction: column; gap: 10px; margin-bottom: 5px;">
-                            <span style="font-size: 0.85rem; font-weight: 600; color: var(--accent-secondary);">Thông Tin Khách Hàng Mới</span>
-                            
+                        <div id="qb-new-cust-details"
+                            style="background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px dashed var(--border-color); display: flex; flex-direction: column; gap: 10px; margin-bottom: 5px;">
+                            <span style="font-size: 0.85rem; font-weight: 600; color: var(--accent-secondary);">Thông
+                                Tin Khách Hàng Mới</span>
+
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                                 <div class="form-group">
                                     <label for="qb-kh-sdt" style="font-size: 0.8rem;">Số điện thoại</label>
@@ -952,19 +977,23 @@
                                     <input type="text" id="qb-kh-cccd" placeholder="Nhập CCCD...">
                                 </div>
                             </div>
-                            
+
                             <div class="form-group">
                                 <label for="qb-kh-diachi" style="font-size: 0.8rem;">Địa chỉ</label>
                                 <input type="text" id="qb-kh-diachi" placeholder="Nhập địa chỉ...">
                             </div>
 
-                            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; margin-top: 4px;">
-                                <input type="checkbox" id="qb-kh-laknn" onchange="toggleForeignFields()" style="width: 16px; height: 16px; margin: 0; cursor: pointer;">
-                                <label for="qb-kh-laknn" style="cursor: pointer; font-weight: 500;">Là khách nước ngoài</label>
+                            <div
+                                style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; margin-top: 4px;">
+                                <input type="checkbox" id="qb-kh-laknn" onchange="toggleForeignFields()"
+                                    style="width: 16px; height: 16px; margin: 0; cursor: pointer;">
+                                <label for="qb-kh-laknn" style="cursor: pointer; font-weight: 500;">Là khách nước
+                                    ngoài</label>
                             </div>
 
                             <!-- Foreign Guest Info (CCCD replaced by Passport/Visa) -->
-                            <div id="qb-kh-foreign-fields" style="display: none; flex-direction: column; gap: 10px; border-top: 1px solid var(--border-glass); padding-top: 8px; margin-top: 4px;">
+                            <div id="qb-kh-foreign-fields"
+                                style="display: none; flex-direction: column; gap: 10px; border-top: 1px solid var(--border-glass); padding-top: 8px; margin-top: 4px;">
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                                     <div class="form-group">
                                         <label for="qb-kh-passport" style="font-size: 0.8rem;">Số Passport</label>
@@ -977,7 +1006,8 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="qb-kh-quoctich" style="font-size: 0.8rem;">Quốc tịch</label>
-                                    <input type="text" id="qb-kh-quoctich" placeholder="Nhập quốc tịch..." value="Việt Nam">
+                                    <input type="text" id="qb-kh-quoctich" placeholder="Nhập quốc tịch..."
+                                        value="Việt Nam">
                                 </div>
                             </div>
                         </div>
@@ -990,11 +1020,11 @@
                         </div>
                         <div class="form-group">
                             <label for="qb-cn">Chi Nhánh</label>
-                            <select id="qb-cn" required onchange="calculateQuickBookDeposit()"></select>
+                            <select id="qb-cn" required onchange="loadAvailableRoomsForBooking()"></select>
                         </div>
                         <div class="form-group">
                             <label for="qb-chatluong">Chất Lượng Phòng</label>
-                            <select id="qb-chatluong" required onchange="calculateQuickBookDeposit()">
+                            <select id="qb-chatluong" required onchange="loadAvailableRoomsForBooking()">
                                 <option value="Deluxe">Deluxe</option>
                                 <option value="Standard">Standard</option>
                                 <option value="Superior">Superior</option>
@@ -1004,20 +1034,41 @@
                         </div>
                         <div class="form-group">
                             <label for="qb-giuong">Loại Giường</label>
-                            <select id="qb-giuong" required onchange="calculateQuickBookDeposit()">
+                            <select id="qb-giuong" required onchange="loadAvailableRoomsForBooking()">
                                 <option value="Single">Single</option>
                                 <option value="Double">Double</option>
+                                <option value="King">King</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="qb-checkin-date">Ngày Nhận Phòng</label>
                             <input type="date" id="qb-checkin-date" value="2026-06-15" required
-                                onchange="calculateQuickBookDeposit()">
+                                onchange="loadAvailableRoomsForBooking()">
                         </div>
                         <div class="form-group">
                             <label for="qb-checkout-date">Ngày Trả Phòng</label>
                             <input type="date" id="qb-checkout-date" value="2026-06-20" required
-                                onchange="calculateQuickBookDeposit()">
+                                onchange="loadAvailableRoomsForBooking()">
+                        </div>
+                        <div class="form-group">
+                            <label for="qb-room-select">Chọn Phòng Phù Hợp</label>
+                            <select id="qb-room-select" onchange="updateQuickBookPriceAndDeposit()">
+                                <option value="">-- Tự động xếp phòng --</option>
+                            </select>
+                        </div>
+                        <div id="qb-pricing-info"
+                            style="margin-top: 10px; margin-bottom: 15px; padding: 12px; background: #eef9f1; border-radius: 8px; border: 1px solid #c2ebd0; display: none;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                                <span style="font-size: 0.9rem; color: var(--text-main);">Đơn giá phòng:</span>
+                                <strong id="qb-display-price"
+                                    style="font-size: 0.9rem; color: var(--accent-secondary);">0đ/đêm</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="font-size: 0.9rem; color: var(--text-main);">Tiền cọc ước tính
+                                    (50%):</span>
+                                <strong id="qb-display-deposit"
+                                    style="font-size: 0.9rem; color: var(--accent-primary);">0đ</strong>
+                            </div>
                         </div>
                         <input type="hidden" id="qb-coc" value="0">
                         <input type="hidden" id="qb-phuthu" value="0">
@@ -1025,11 +1076,52 @@
                     </form>
                 </div>
 
+                <!-- Ghi Nhận Sử Dụng Dịch Vụ -->
+                <div class="form-card">
+                    <h3>
+                        <svg viewBox="0 0 24 24"
+                            style="width:20px; height:20px; fill:currentColor; margin-right:8px; vertical-align:middle;">
+                            <path
+                                d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z" />
+                        </svg>
+                        Ghi Nhận Sử Dụng Dịch Vụ
+                    </h3>
+                    <form id="form-add-service" onsubmit="handleAddService(event)">
+                        <div class="form-group">
+                            <label for="srv-hd">Chọn Hóa Đơn</label>
+                            <select id="srv-hd" required onchange="onServiceInvoiceChange()"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="srv-dv">Dịch Vụ</label>
+                            <select id="srv-dv" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="srv-soluong">Số Lượng</label>
+                            <input type="number" id="srv-soluong" value="1" min="1" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Thêm Dịch Vụ</button>
+                    </form>
+
+                    <!-- Service breakdown list -->
+                    <div id="srv-list-container" style="margin-top: 15px; display: none;">
+                        <label
+                            style="font-weight: 700; color: var(--accent-primary); margin-bottom: 8px; display: block; font-size: 0.9rem;">
+                            Dịch Vụ Đã Sử Dụng
+                        </label>
+                        <div id="srv-list"
+                            style="display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid var(--border-glass);">
+                            <!-- Dynamic items list populated here -->
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Check-Out & Thanh Toán Hợp Nhất -->
                 <div class="form-card" style="grid-column: span 2;">
                     <h3>
-                        <svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:currentColor; margin-right:8px; vertical-align:middle;">
-                            <path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L13.67 11H3v2h10.67l-3.58 3.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" />
+                        <svg viewBox="0 0 24 24"
+                            style="width:20px; height:20px; fill:currentColor; margin-right:8px; vertical-align:middle;">
+                            <path
+                                d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L13.67 11H3v2h10.67l-3.58 3.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" />
                         </svg>
                         Check-Out &amp; Thanh Toán Hợp Nhất
                     </h3>
@@ -1051,10 +1143,12 @@
 
                         <!-- Rooms list with custom surcharges -->
                         <div id="cop-rooms-container" style="margin-top: 15px; display: none;">
-                            <label style="font-weight: 700; color: var(--accent-primary); margin-bottom: 10px; display: block; font-size: 0.95rem;">
+                            <label
+                                style="font-weight: 700; color: var(--accent-primary); margin-bottom: 10px; display: block; font-size: 0.95rem;">
                                 Danh Sách Phòng Thuê &amp; Phụ Thu Vật Tư (Không cần tự nhập tiền)
                             </label>
-                            <div id="cop-rooms-list" style="display: flex; flex-direction: column; gap: 12px; max-height: 400px; overflow-y: auto; padding: 4px;">
+                            <div id="cop-rooms-list"
+                                style="display: flex; flex-direction: column; gap: 12px; max-height: 400px; overflow-y: auto; padding: 4px;">
                                 <!-- Dynamic Room list populated here -->
                             </div>
                         </div>
@@ -1063,26 +1157,39 @@
                         <div id="cop-billing-details"
                             style="background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; font-size: 0.9rem; line-height: 1.6; margin-top: 15px; display: none;">
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                                <p style="color: #333;"><strong>Tiền phòng &amp; dịch vụ:</strong> <span id="cop-val-phong-base" style="font-weight: 600;">0</span> VND</p>
-                                <p style="color: #333;"><strong>Tiền cọc đã đóng (50%):</strong> <span id="cop-val-coc" style="color: var(--accent-primary); font-weight: 600;">0</span> VND</p>
-                                <p style="color: #333;"><strong>Phụ thu tiêu hao:</strong> <span id="cop-val-tieuhao" style="color: var(--accent-secondary); font-weight: 600;">0</span> VND</p>
-                                <p style="color: #333;"><strong>Phụ thu hỏng hóc:</strong> <span id="cop-val-honghoc" style="color: var(--error-color); font-weight: 600;">0</span> VND</p>
+                                <p style="color: #333;"><strong>Tiền phòng &amp; dịch vụ:</strong> <span
+                                        id="cop-val-phong-base" style="font-weight: 600;">0</span> VND</p>
+                                <p style="color: #333;"><strong>Tiền cọc đã đóng (50%):</strong> <span id="cop-val-coc"
+                                        style="color: var(--accent-primary); font-weight: 600;">0</span> VND</p>
+                                <p style="color: #333;"><strong>Phụ thu tiêu hao:</strong> <span id="cop-val-tieuhao"
+                                        style="color: var(--accent-secondary); font-weight: 600;">0</span> VND</p>
+                                <p style="color: #333;"><strong>Phụ thu hỏng hóc:</strong> <span id="cop-val-honghoc"
+                                        style="color: var(--error-color); font-weight: 600;">0</span> VND</p>
                             </div>
-                            <div style="border-top: 1px dashed #cbd5e1; padding-top: 8px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center;">
-                                <strong style="font-size: 1.05rem; color: #333;">Tổng tiền thanh toán cuối cùng:</strong>
-                                <span id="cop-val-tong" style="font-size: 1.15rem; font-weight: 700; color: var(--accent-primary);">0 VND</span>
+                            <div
+                                style="border-top: 1px dashed #cbd5e1; padding-top: 8px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+                                <strong style="font-size: 1.05rem; color: #333;">Tổng tiền thanh toán cuối
+                                    cùng:</strong>
+                                <span id="cop-val-tong"
+                                    style="font-size: 1.15rem; font-weight: 700; color: var(--accent-primary);">0
+                                    VND</span>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
                                 <strong style="font-size: 1.05rem; color: #333;">Thực thu tại quầy:</strong>
-                                <span id="cop-val-trasau" style="font-size: 1.25rem; font-weight: 800; color: #e74c3c;">0 VND</span>
+                                <span id="cop-val-trasau"
+                                    style="font-size: 1.25rem; font-weight: 800; color: #e74c3c;">0 VND</span>
                             </div>
                         </div>
 
                         <div style="display: flex; gap: 12px; margin-top: 20px;">
-                            <button type="submit" class="btn-primary" style="flex-grow: 2; background: var(--success-color); padding: 12px;">
+                            <button type="submit" class="btn-primary"
+                                style="flex-grow: 2; background: var(--success-color); padding: 12px;">
                                 Xác Nhận Check-Out &amp; Thanh Toán
                             </button>
-                            <button type="button" class="btn-primary" style="flex-grow: 1; background: var(--error-color); padding: 12px;" onclick="handleHuyDatMerged()">
+                            <button type="button" class="btn-primary"
+                                style="flex-grow: 1; background: var(--error-color); padding: 12px;"
+                                onclick="handleHuyDatMerged()">
                                 Hủy Đặt Phòng
                             </button>
                         </div>
@@ -1166,6 +1273,10 @@
         let globalRoomsDetail = [];
         let globalInvoices = [];
         let globalFacilities = [];
+        let initialCustomers = [];
+        let khSearchTimeout = null;
+        let qbSelectedCustomerId = null;
+        let selectedCustomerDisplayVal = "";
 
         // Wrap global fetch to intercept 401 responses and force logout
         const originalFetch = window.fetch;
@@ -1201,7 +1312,24 @@
             const khSearch = document.getElementById('qb-kh');
             if (khSearch) {
                 khSearch.addEventListener('input', onCustomerSearchInput);
+                khSearch.addEventListener('focus', () => {
+                    const val = khSearch.value.trim();
+                    if (val.length < 2) {
+                        renderCustomerDropdown(initialCustomers);
+                    } else {
+                        onCustomerSearchInput();
+                    }
+                });
             }
+
+            // Click outside to close customer dropdown
+            document.addEventListener('click', function(e) {
+                const dropdown = document.getElementById('qb-kh-dropdown');
+                const input = document.getElementById('qb-kh');
+                if (dropdown && input && e.target !== input && !dropdown.contains(e.target)) {
+                    dropdown.style.display = 'none';
+                }
+            });
         };
 
         // Switch Tabs (SPA router)
@@ -1286,13 +1414,7 @@
                 // Customers
                 const resCust = await fetch(`${API_BASE}/customers`);
                 globalCustomers = await resCust.json();
-                const qbCustDatalist = document.getElementById('qb-kh-list');
-                if (qbCustDatalist) {
-                    qbCustDatalist.innerHTML = '';
-                    globalCustomers.forEach(c => {
-                        qbCustDatalist.innerHTML += `<option value="${c.ho_ten} (ID: ${c.id_kh})"></option>`;
-                    });
-                }
+                initialCustomers = [...globalCustomers];
 
                 // Staff
                 const resStaff = await fetch(`${API_BASE}/employees`);
@@ -1317,13 +1439,32 @@
                     console.error("Failed to load facilities list:", err);
                 }
 
+                // Services
+                try {
+                    const resServices = await fetch(`${API_BASE}/services`);
+                    const services = await resServices.json();
+                    const srvDv = document.getElementById('srv-dv');
+                    if (srvDv) {
+                        srvDv.innerHTML = '<option value="">-- Chọn dịch vụ --</option>';
+                        services.forEach(s => {
+                            srvDv.innerHTML += `<option value="${s.id_dv}">${s.ten_dv} (${Math.round(s.gia).toLocaleString()}đ - ${s.loai_dv})</option>`;
+                        });
+                    }
+                } catch (err) {
+                    console.error("Failed to load services list:", err);
+                }
+
                 // Invoices
                 const resInvoices = await fetch(`${API_BASE}/invoices`);
                 globalInvoices = await resInvoices.json();
                 const copInvoices = document.getElementById('cop-hd');
+                const srvHd = document.getElementById('srv-hd');
 
                 if (copInvoices) {
                     copInvoices.innerHTML = '<option value="">-- Chọn hóa đơn cần xử lý --</option>';
+                }
+                if (srvHd) {
+                    srvHd.innerHTML = '<option value="">-- Chọn hóa đơn --</option>';
                 }
 
                 // Show invoices that are not paid or cancelled
@@ -1331,6 +1472,7 @@
                 activeInvoices.forEach(inv => {
                     const option = `<option value="${inv.id_hd}">HĐ ${inv.id_hd} - Khách ${inv.id_kh} [${inv.trang_thai}]</option>`;
                     if (copInvoices) copInvoices.innerHTML += option;
+                    if (srvHd) srvHd.innerHTML += option;
                 });
 
                 // Apply role/branch restriction if logged in
@@ -1354,8 +1496,9 @@
                 }
 
                 // Trigger initial calculations and loads
-                calculateQuickBookDeposit();
+                await loadAvailableRoomsForBooking();
                 await onMergedInvoiceChange();
+                await onServiceInvoiceChange();
 
             } catch (err) {
                 console.error("Dropdown load failed:", err);
@@ -1446,7 +1589,7 @@
                 return;
             }
 
-            let idKh = null;
+            let idKh = qbSelectedCustomerId;
             let newCustName = qbKhVal;
             let cccd = '';
             let sdt = '';
@@ -1456,12 +1599,11 @@
             let visa = '';
             let laKnn = false;
 
-            // If the user selected from the datalist suggestion, strip the ID suffix to get the raw name and resolve ID
-            const khMatch = qbKhVal.match(/(.*)\s\(ID:\s(\d+)\)/);
-            if (khMatch) {
-                idKh = parseInt(khMatch[2]);
-                newCustName = khMatch[1].trim();
-            } else {
+            if (idKh === null) {
+                const bracketIdx = qbKhVal.indexOf('(');
+                if (bracketIdx !== -1) {
+                    newCustName = qbKhVal.substring(0, bracketIdx).trim();
+                }
                 cccd = document.getElementById('qb-kh-cccd').value.trim();
                 sdt = document.getElementById('qb-kh-sdt').value.trim();
                 diaChi = document.getElementById('qb-kh-diachi').value.trim();
@@ -1471,6 +1613,11 @@
                     passport = document.getElementById('qb-kh-passport').value.trim();
                     visa = document.getElementById('qb-kh-visa').value.trim();
                     cccd = '';
+                }
+            } else {
+                const bracketIdx = qbKhVal.indexOf('(');
+                if (bracketIdx !== -1) {
+                    newCustName = qbKhVal.substring(0, bracketIdx).trim();
                 }
             }
 
@@ -1488,6 +1635,9 @@
                 return;
             }
 
+            const selectedRoomId = document.getElementById('qb-room-select').value;
+            const idP = selectedRoomId ? parseInt(selectedRoomId) : null;
+
             const payload = {
                 idKh: idKh,
                 newCustName: newCustName,
@@ -1500,6 +1650,7 @@
                 laKnn: laKnn,
                 idNv: idNv,
                 idCn: parseInt(document.getElementById('qb-cn').value),
+                idP: idP,
                 chatLuong: document.getElementById('qb-chatluong').value,
                 loaiGiuong: document.getElementById('qb-giuong').value,
                 ngayNhan: `${checkinDateVal} 14:00:00`,
@@ -1521,6 +1672,8 @@
                     document.getElementById('qb-nv-search').value = '';
                     document.getElementById('qb-nv').value = '';
                     document.getElementById('qb-phuthu').value = '0';
+                    qbSelectedCustomerId = null;
+                    selectedCustomerDisplayVal = "";
                     
                     // Clear new customer inputs
                     document.getElementById('qb-kh-cccd').value = '';
@@ -1534,8 +1687,8 @@
                     onCustomerSearchInput();
 
                     loadDropdowns();
-                    // Reload dashboard to reflect room state change
                     loadDashboard();
+                    loadRoomStatusDetail();
                 } else {
                     showAlert(data.message, false);
                 }
@@ -1544,26 +1697,92 @@
             }
         }
 
+        function renderCustomerDropdown(customers) {
+            const dropdown = document.getElementById('qb-kh-dropdown');
+            if (!dropdown) return;
+
+            dropdown.innerHTML = '';
+            if (customers.length === 0) {
+                dropdown.style.display = 'none';
+                return;
+            }
+
+            customers.forEach(c => {
+                let note = '';
+                if (c.la_knn) {
+                    note = `Passport: ${c.passport || 'N/A'}`;
+                } else {
+                    note = `CCCD: ${c.cccd || 'N/A'}`;
+                }
+                const displayVal = `${c.ho_ten} (${note})`;
+
+                const item = document.createElement('div');
+                item.className = 'autocomplete-dropdown-item';
+                item.innerHTML = `<strong>${c.ho_ten}</strong> <span style="font-size:0.85rem; color:var(--text-secondary); float:right;">${note}</span>`;
+                item.addEventListener('click', () => {
+                    selectCustomer(c.id_kh, c.ho_ten, displayVal);
+                });
+                dropdown.appendChild(item);
+            });
+            dropdown.style.display = 'block';
+        }
+
+        function selectCustomer(id, name, displayVal) {
+            document.getElementById('qb-kh').value = displayVal;
+            qbSelectedCustomerId = id;
+            selectedCustomerDisplayVal = displayVal;
+            document.getElementById('qb-kh-dropdown').style.display = 'none';
+            document.getElementById('qb-new-cust-details').style.display = 'none';
+        }
+
         function onCustomerSearchInput() {
             const val = document.getElementById('qb-kh').value.trim();
             const detailSection = document.getElementById('qb-new-cust-details');
             if (!detailSection) return;
-            
-            // Check if it matches "Name (ID: xx)"
-            const khMatch = val.match(/(.*)\s\(ID:\s(\d+)\)/);
-            if (khMatch) {
-                detailSection.style.display = 'none';
-            } else {
+
+            if (val !== selectedCustomerDisplayVal) {
+                qbSelectedCustomerId = null;
                 detailSection.style.display = 'flex';
+            } else {
+                detailSection.style.display = 'none';
             }
+
+            // Debounced dynamic query
+            if (khSearchTimeout) {
+                clearTimeout(khSearchTimeout);
+            }
+
+            khSearchTimeout = setTimeout(async () => {
+                if (val.length < 2) {
+                    // Reset to initial 100 customers
+                    renderCustomerDropdown(initialCustomers);
+                    return;
+                }
+
+                try {
+                    const res = await fetch(`${API_BASE}/customers?query=${encodeURIComponent(val)}`);
+                    const searchCustomers = await res.json();
+
+                    // Update global list with search results so ID resolution works in handleQuickBook
+                    searchCustomers.forEach(sc => {
+                        if (!globalCustomers.some(c => c.id_kh === sc.id_kh)) {
+                            globalCustomers.push(sc);
+                        }
+                    });
+
+                    renderCustomerDropdown(searchCustomers);
+                } catch (err) {
+                    console.error("Dynamic customer search failed:", err);
+                }
+            }, 300);
         }
-        
+
         function toggleForeignFields() {
             const isKnn = document.getElementById('qb-kh-laknn').checked;
             const foreignFields = document.getElementById('qb-kh-foreign-fields');
             const cccdWrapper = document.getElementById('qb-kh-cccd-wrapper');
             const quocTichInput = document.getElementById('qb-kh-quoctich');
-            
+
             if (isKnn) {
                 foreignFields.style.display = 'flex';
                 cccdWrapper.style.opacity = '0.5';
@@ -1580,6 +1799,91 @@
             }
         }
 
+        async function onServiceInvoiceChange() {
+            const srvHd = document.getElementById('srv-hd');
+            const srvListContainer = document.getElementById('srv-list-container');
+            const srvList = document.getElementById('srv-list');
+
+            if (!srvHd) return;
+            const invoiceId = srvHd.value;
+            if (!invoiceId) {
+                srvListContainer.style.display = 'none';
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/invoice-services/${invoiceId}`);
+                const usedServices = await res.json();
+
+                srvList.innerHTML = '';
+                if (usedServices.length === 0) {
+                    srvList.innerHTML = '<p style="text-align:center; color:var(--text-secondary); font-size:0.85rem; margin:0;">Chưa sử dụng dịch vụ nào.</p>';
+                } else {
+                    usedServices.forEach(s => {
+                        const srvCost = s.gia * s.so_luong;
+                        srvList.innerHTML += `
+                            <div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff; padding:6px 10px; border-radius:6px; font-size:0.8rem; border:1px solid var(--border-glass);">
+                                <div style="text-align:left;">
+                                    <strong style="color:#333;">${s.ten_dv}</strong> <span style="color:var(--text-secondary); font-size:0.75rem;">(x${s.so_luong})</span><br>
+                                    <span style="font-size:0.75rem; color:#666;">Đơn giá: ${Math.round(s.gia).toLocaleString()}đ</span>
+                                </div>
+                                <strong style="color:var(--accent-secondary);">${Math.round(srvCost).toLocaleString()}đ</strong>
+                            </div>
+                        `;
+                    });
+                }
+                srvListContainer.style.display = 'block';
+            } catch (err) {
+                console.error("Failed to load invoice services:", err);
+                showAlert("Lỗi tải thông tin dịch vụ của hóa đơn!", false);
+            }
+        }
+
+        async function handleAddService(event) {
+            event.preventDefault();
+            const idHd = parseInt(document.getElementById('srv-hd').value);
+            const idDv = parseInt(document.getElementById('srv-dv').value);
+            const soLuong = parseInt(document.getElementById('srv-soluong').value);
+
+            if (!idHd || !idDv || !soLuong || soLuong <= 0) {
+                showAlert("Vui lòng nhập đầy đủ thông tin dịch vụ hợp lệ!", false);
+                return;
+            }
+
+            const payload = {
+                idHd: idHd,
+                idDv: idDv,
+                soLuong: soLuong
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/them-dich-vu`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showAlert(data.message, true);
+                    document.getElementById('srv-soluong').value = '1';
+                    document.getElementById('srv-dv').value = '';
+
+                    // Refresh service list for this invoice
+                    await onServiceInvoiceChange();
+
+                    // If the checkout card is open on the same invoice, refresh its billing details!
+                    const copHd = document.getElementById('cop-hd');
+                    if (copHd && parseInt(copHd.value) === idHd) {
+                        await onMergedInvoiceChange();
+                    }
+                } else {
+                    showAlert(data.message, false);
+                }
+            } catch (err) {
+                showAlert("Không thể thêm dịch vụ vào hóa đơn!", false);
+            }
+        }
+
         let selectedSurcharges = {}; // Map of room ID -> Array of { id_csvc, ten_csvc, loai_csvc, price, qty }
         let currentInvoiceBilling = null; // Store fetched invoice billing values (base cost, deposit, etc.)
         let currentInvoiceRooms = []; // Store rooms list
@@ -1589,7 +1893,7 @@
             const roomsContainer = document.getElementById('cop-rooms-container');
             const roomsList = document.getElementById('cop-rooms-list');
             const billingDetails = document.getElementById('cop-billing-details');
-            
+
             if (!hdSelect) return;
             const invoiceId = hdSelect.value;
             if (!invoiceId) {
@@ -1597,19 +1901,19 @@
                 billingDetails.style.display = 'none';
                 return;
             }
-            
+
             try {
                 // 1. Fetch Rooms in this invoice
                 const resRooms = await fetch(`${API_BASE}/invoice-rooms/${invoiceId}`);
                 currentInvoiceRooms = await resRooms.json();
-                
+
                 // 2. Fetch Billing summary from DB (which calculates base cost and deposit)
                 const resBilling = await fetch(`${API_BASE}/invoice-billing/${invoiceId}`);
                 currentInvoiceBilling = await resBilling.json();
-                
+
                 // Reset selected surcharges
                 selectedSurcharges = {};
-                
+
                 roomsList.innerHTML = '';
                 if (currentInvoiceRooms.length === 0) {
                     roomsList.innerHTML = '<p style="text-align:center; color:var(--text-secondary);">Hóa đơn không có phòng thuê.</p>';
@@ -1617,20 +1921,20 @@
                     billingDetails.style.display = 'none';
                     return;
                 }
-                
+
                 currentInvoiceRooms.forEach(room => {
                     selectedSurcharges[room.id_p] = [];
-                    
+
                     // Render room block
                     roomsList.innerHTML += renderRoomCheckoutBlock(room);
                 });
-                
+
                 roomsContainer.style.display = 'block';
                 billingDetails.style.display = 'block';
-                
+
                 // Perform initial calculation
                 recalculateMergedBilling();
-                
+
             } catch (err) {
                 console.error("Failed to load merged invoice details:", err);
                 showAlert("Lỗi tải thông tin hóa đơn!", false);
@@ -1709,13 +2013,13 @@
             const selectId = `sel-${type}-${roomId}`;
             const selectEl = document.getElementById(selectId);
             if (!selectEl) return;
-            
+
             const idCsvc = parseInt(selectEl.value);
             if (!idCsvc) return;
-            
+
             const facility = globalFacilities.find(f => f.id_csvc === idCsvc);
             if (!facility) return;
-            
+
             const existing = selectedSurcharges[roomId].find(item => item.id_csvc === idCsvc);
             if (existing) {
                 existing.qty += 1;
@@ -1728,9 +2032,9 @@
                     qty: 1
                 });
             }
-            
+
             selectEl.value = '';
-            
+
             renderSelectedItems(roomId);
             recalculateMergedBilling();
         }
@@ -1738,13 +2042,13 @@
         function renderSelectedItems(roomId) {
             const listTieuHao = document.getElementById(`list-tieuhao-${roomId}`);
             const listHongHoc = document.getElementById(`list-honghoc-${roomId}`);
-            
+
             listTieuHao.innerHTML = '';
             listHongHoc.innerHTML = '';
-            
+
             let sumTieuHao = 0;
             let sumHongHoc = 0;
-            
+
             selectedSurcharges[roomId].forEach(item => {
                 const itemCost = item.price * item.qty;
                 const html = `
@@ -1761,7 +2065,7 @@
                         </div>
                     </div>
                 `;
-                
+
                 if (item.loai_csvc === 'Tiêu hao') {
                     listTieuHao.innerHTML += html;
                     sumTieuHao += itemCost;
@@ -1770,7 +2074,7 @@
                     sumHongHoc += itemCost;
                 }
             });
-            
+
             document.getElementById(`lbl-tieuhao-${roomId}`).innerText = sumTieuHao.toLocaleString() + 'đ';
             document.getElementById(`lbl-honghoc-${roomId}`).innerText = sumHongHoc.toLocaleString() + 'đ';
         }
@@ -1778,13 +2082,13 @@
         function changeQty(roomId, idCsvc, delta) {
             const item = selectedSurcharges[roomId].find(i => i.id_csvc === idCsvc);
             if (!item) return;
-            
+
             item.qty += delta;
             if (item.qty <= 0) {
                 removeSurchargeItem(roomId, idCsvc);
                 return;
             }
-            
+
             renderSelectedItems(roomId);
             recalculateMergedBilling();
         }
@@ -1797,10 +2101,10 @@
 
         function recalculateMergedBilling() {
             if (!currentInvoiceBilling || !currentInvoiceRooms) return;
-            
+
             let extraTieuHao = 0;
             let extraHongHoc = 0;
-            
+
             Object.keys(selectedSurcharges).forEach(roomId => {
                 selectedSurcharges[roomId].forEach(item => {
                     if (item.loai_csvc === 'Tiêu hao') {
@@ -1810,13 +2114,13 @@
                     }
                 });
             });
-            
+
             const giamGiaPercent = currentInvoiceBilling.giamGiaPercent || 0.0;
             const extraCost = (extraTieuHao + extraHongHoc) * (1.08 - giamGiaPercent / 100.0);
-            
+
             const liveTotal = currentInvoiceBilling.tongChiPhi + extraCost;
             const liveTraSau = Math.max(0, liveTotal - currentInvoiceBilling.tienCoc);
-            
+
             document.getElementById('cop-val-phong-base').innerText = Math.round(currentInvoiceBilling.tongChiPhi).toLocaleString();
             document.getElementById('cop-val-coc').innerText = Math.round(currentInvoiceBilling.tienCoc).toLocaleString();
             document.getElementById('cop-val-tieuhao').innerText = Math.round(extraTieuHao).toLocaleString();
@@ -1829,17 +2133,17 @@
             event.preventDefault();
             const idHd = parseInt(document.getElementById('cop-hd').value);
             const phuongThuc = document.getElementById('cop-phuongthuc').value;
-            
+
             if (!idHd) {
                 showAlert("Vui lòng chọn hóa đơn để check-out và thanh toán!", false);
                 return;
             }
-            
+
             const roomsPayload = [];
             currentInvoiceRooms.forEach(room => {
                 let phuThuTieuHao = 0;
                 let phuThuHongHoc = 0;
-                
+
                 if (selectedSurcharges[room.id_p]) {
                     selectedSurcharges[room.id_p].forEach(item => {
                         if (item.loai_csvc === 'Tiêu hao') {
@@ -1849,20 +2153,20 @@
                         }
                     });
                 }
-                
+
                 roomsPayload.push({
                     idP: room.id_p,
                     phuThuTieuHao: phuThuTieuHao,
                     phuThuHongHoc: phuThuHongHoc
                 });
             });
-            
+
             const payload = {
                 idHd: idHd,
                 phuongThuc: phuongThuc,
                 rooms: roomsPayload
             };
-            
+
             try {
                 const res = await fetch(`${API_BASE}/check-out-va-thanh-toan`, {
                     method: 'POST',
@@ -1870,16 +2174,17 @@
                     body: JSON.stringify(payload)
                 });
                 const data = await res.json();
-                
+
                 if (data.success) {
                     showAlert(`${data.message} Tổng tiền thực thu: ${data.tong_tien.toLocaleString()} VND`, true);
-                    
+
                     // Show receipt modal
                     await showReceiptModal(idHd, phuongThuc);
-                    
-                    // Reload dropdowns and dashboard
+
+                    // Reload dropdowns, dashboard and room details
                     await loadDropdowns();
                     loadDashboard();
+                    loadRoomStatusDetail();
                 } else {
                     showAlert(data.message, false);
                 }
@@ -1894,11 +2199,11 @@
                 showAlert("Vui lòng chọn hóa đơn trước!", false);
                 return;
             }
-            
+
             if (!confirm("Bạn có chắc chắn muốn hủy đặt phòng cho hóa đơn #" + idHd + "?")) {
                 return;
             }
-            
+
             const payload = {
                 idHd: idHd
             };
@@ -1913,6 +2218,8 @@
                 if (data.success) {
                     showAlert(data.message, true);
                     loadDropdowns();
+                    loadDashboard();
+                    loadRoomStatusDetail();
                 } else {
                     showAlert(data.message, false);
                 }
@@ -2210,31 +2517,93 @@
             });
         }
 
-        function calculateQuickBookDeposit() {
-            const qbBranch = document.getElementById('qb-cn');
-            if (!qbBranch || qbBranch.selectedIndex < 0) return;
-            const branchName = qbBranch.options[qbBranch.selectedIndex].text;
+        let currentAvailableRooms = [];
+
+        async function loadAvailableRoomsForBooking() {
+            const branchEl = document.getElementById('qb-cn');
+            if (!branchEl) return;
+            const branchId = parseInt(branchEl.value);
+            const checkinVal = document.getElementById('qb-checkin-date').value;
+            const checkoutVal = document.getElementById('qb-checkout-date').value;
             const quality = document.getElementById('qb-chatluong').value;
             const bed = document.getElementById('qb-giuong').value;
 
-            // Find a room matching these criteria in globalRoomsDetail to get the price
-            const matchedRoom = globalRoomsDetail.find(r =>
-                r.ten_cn === branchName &&
-                r.chat_luong === quality &&
-                r.loai_giuong === bed
-            );
+            const roomSelect = document.getElementById('qb-room-select');
+            const pricingInfo = document.getElementById('qb-pricing-info');
+            if (!roomSelect) return;
 
-            if (!matchedRoom) {
+            if (!branchId || !checkinVal || !checkoutVal) {
+                roomSelect.innerHTML = '<option value="">-- Vui lòng chọn đủ chi nhánh và ngày --</option>';
+                currentAvailableRooms = [];
+                if (pricingInfo) pricingInfo.style.display = 'none';
+                return;
+            }
+
+            const checkIn = `${checkinVal} 14:00:00`;
+            const checkOut = `${checkoutVal} 12:00:00`;
+
+            try {
+                const res = await fetch(`${API_BASE}/phong-trong?chiNhanhId=${branchId}&checkIn=${encodeURIComponent(checkIn)}&checkOut=${encodeURIComponent(checkOut)}`);
+                const availableRooms = await res.json();
+
+                // Filter by Quality and Bed Type on client side
+                currentAvailableRooms = availableRooms.filter(r =>
+                    r.chat_luong === quality &&
+                    r.loai_giuong === bed
+                );
+
+                roomSelect.innerHTML = '';
+                if (currentAvailableRooms.length === 0) {
+                    roomSelect.innerHTML = '<option value="">-- Không có phòng trống phù hợp --</option>';
+                    document.getElementById('qb-coc').value = 0;
+                    if (pricingInfo) pricingInfo.style.display = 'none';
+                    return;
+                }
+
+                // Add default option
+                roomSelect.innerHTML = '<option value="">-- Tự động xếp phòng --</option>';
+                currentAvailableRooms.forEach(r => {
+                    const priceFormatted = Math.round(r.gia_tien).toLocaleString();
+                    roomSelect.innerHTML += `<option value="${r.id_p}">Phòng ${r.ten_phong} (ID: ${r.id_p}) - ${priceFormatted}đ/đêm</option>`;
+                });
+
+                updateQuickBookPriceAndDeposit();
+            } catch (err) {
+                console.error("Failed to load available rooms:", err);
+                roomSelect.innerHTML = '<option value="">-- Lỗi tải danh sách phòng --</option>';
+                if (pricingInfo) pricingInfo.style.display = 'none';
+            }
+        }
+
+        function updateQuickBookPriceAndDeposit() {
+            const roomSelect = document.getElementById('qb-room-select');
+            const pricingInfo = document.getElementById('qb-pricing-info');
+            if (!roomSelect || !pricingInfo) return;
+
+            if (!currentAvailableRooms || currentAvailableRooms.length === 0) {
+                pricingInfo.style.display = 'none';
                 document.getElementById('qb-coc').value = 0;
                 return;
             }
 
-            const price = matchedRoom.gia_tien; // numeric price
+            let price = 0;
+            const selectedRoomId = roomSelect.value;
+
+            if (selectedRoomId) {
+                const matched = currentAvailableRooms.find(r => r.id_p == selectedRoomId);
+                if (matched) {
+                    price = matched.gia_tien;
+                }
+            } else {
+                // Auto-allocate: use the price of the first matching room
+                price = currentAvailableRooms[0].gia_tien;
+            }
 
             // Calculate nights
             const checkinVal = document.getElementById('qb-checkin-date').value;
             const checkoutVal = document.getElementById('qb-checkout-date').value;
             if (!checkinVal || !checkoutVal) {
+                pricingInfo.style.display = 'none';
                 document.getElementById('qb-coc').value = 0;
                 return;
             }
@@ -2245,12 +2614,17 @@
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
             if (diffDays <= 0) {
+                pricingInfo.style.display = 'none';
                 document.getElementById('qb-coc').value = 0;
                 return;
             }
 
             const deposit = diffDays * price * 0.5;
             document.getElementById('qb-coc').value = Math.round(deposit);
+
+            document.getElementById('qb-display-price').innerText = `${Math.round(price).toLocaleString()}đ/đêm`;
+            document.getElementById('qb-display-deposit').innerText = `${Math.round(deposit).toLocaleString()}đ`;
+            pricingInfo.style.display = 'block';
         }
 
 
@@ -2267,6 +2641,10 @@
                 // Fetch room leases
                 const resRooms = await fetch(`${API_BASE}/invoice-rooms/${idHd}`);
                 const rooms = await resRooms.json();
+
+                // Fetch service uses
+                const resSrv = await fetch(`${API_BASE}/invoice-services/${idHd}`);
+                const services = await resSrv.json();
 
                 if (!billing.success) {
                     showAlert("Lỗi tải thông tin hóa đơn: " + billing.message, false);
@@ -2310,6 +2688,7 @@
                 let totalBaseRoomCost = 0;
                 let totalTieuHao = 0;
                 let totalHongHoc = 0;
+                let totalSrvCost = 0;
 
                 rooms.forEach(r => {
                     const roomRate = r.gia_tien || 0;
@@ -2336,18 +2715,35 @@
                     `;
                 });
 
+                services.forEach(s => {
+                    const srvTotal = s.gia * s.so_luong;
+                    totalSrvCost += srvTotal;
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td style="text-align: left; width: 50%;">
+                                <strong>${s.ten_dv}</strong><br>
+                                <span style="font-size:0.75rem; color:var(--text-secondary)">Dịch vụ (${s.loai_dv})</span>
+                            </td>
+                            <td style="text-align: right; width: 20%;">${Math.round(s.gia).toLocaleString()}</td>
+                            <td style="text-align: right; width: 12%;">${s.so_luong}</td>
+                            <td style="text-align: right; width: 18%;">${Math.round(srvTotal).toLocaleString()}</td>
+                        </tr>
+                    `;
+                });
+
                 // Calculate VAT & Membership Discount from billing values
                 const baseTotalWithSurcharges = totalBaseRoomCost + totalTieuHao + totalHongHoc;
-                const vatVal = baseTotalWithSurch2arges = totalBaseRoomCost + totalTieuHao + totalHongHoc;
-                const vatAmt = baseTotalWithSurch2arges * 0.08;
+                const vatAmt = baseTotalWithSurcharges * 0.08;
 
-                let discountVal = baseTotalWithSurch2arges + vatAmt - billing.tongChiPhi;
+                let discountVal = baseTotalWithSurcharges + vatAmt + totalSrvCost - billing.tongChiPhi;
                 if (discountVal < 0) discountVal = 0;
 
                 // Write summary values
                 document.getElementById('rec-val-base').innerText = `${Math.round(totalBaseRoomCost).toLocaleString()} VND`;
                 document.getElementById('rec-val-tieuhao').innerText = `${Math.round(totalTieuHao).toLocaleString()} VND`;
                 document.getElementById('rec-val-honghoc').innerText = `${Math.round(totalHongHoc).toLocaleString()} VND`;
+                document.getElementById('rec-val-dichvu').innerText = `${Math.round(totalSrvCost).toLocaleString()} VND`;
                 document.getElementById('rec-val-vat').innerText = `${Math.round(vatAmt).toLocaleString()} VND`;
                 document.getElementById('rec-val-giamgia').innerText = `${Math.round(discountVal).toLocaleString()} VND`;
 
@@ -2409,6 +2805,7 @@
                 <p><span>Cộng tiền phòng:</span> <span id="rec-val-base">0 VND</span></p>
                 <p><span>Phụ thu tiêu hao:</span> <span id="rec-val-tieuhao">0 VND</span></p>
                 <p><span>Phụ thu hỏng hóc:</span> <span id="rec-val-honghoc">0 VND</span></p>
+                <p><span>Tiền dịch vụ:</span> <span id="rec-val-dichvu">0 VND</span></p>
                 <p><span>Thuế VAT (8%):</span> <span id="rec-val-vat">0 VND</span></p>
                 <p><span>Giảm giá thành viên:</span> <span id="rec-val-giamgia">0 VND</span></p>
                 <p><span>Tổng chi phí:</span> <span id="rec-val-tong">0 VND</span></p>
