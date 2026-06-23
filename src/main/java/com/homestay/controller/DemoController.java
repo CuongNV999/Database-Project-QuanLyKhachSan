@@ -14,6 +14,7 @@ import org.springframework.lang.NonNull;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/demo")
@@ -284,6 +285,153 @@ public class DemoController {
         }
         String sql = "SELECT * FROM v_phong_status_detail ORDER BY id_p";
         return jdbcTemplate.queryForList(sql);
+    }
+
+    @GetMapping("/phong-detail/{id}")
+    public Map<String, Object> getPhongDetail(@PathVariable int id, HttpSession session) {
+        // 1. Get room basic info
+        String roomSql = "SELECT p.id_p, cn.ten_cn, p.dia_chi, lp.chat_luong, lp.loai_giuong, lp.view, lp.dien_tich, lp.gia_tien::numeric AS gia_tien, p.trang_thai " +
+                "FROM quanly.phong p " +
+                "LEFT JOIN quanly.loaiphong lp ON p.id_lp = lp.id_lp " +
+                "LEFT JOIN quanly.chinhanh cn ON lp.id_cn = cn.id_cn " +
+                "WHERE p.id_p = ?";
+        List<Map<String, Object>> roomList = jdbcTemplate.queryForList(roomSql, id);
+        if (roomList.isEmpty()) {
+            return Map.of("success", false, "message", "Phòng không tồn tại!");
+        }
+        Map<String, Object> room = new HashMap<>(roomList.get(0));
+
+        // 2. Check branch access
+        Integer branchId = checkBranchAccess(session);
+        if (branchId > 0) {
+            String checkBranchSql = "SELECT COUNT(*) FROM quanly.phong p JOIN quanly.loaiphong lp ON p.id_lp = lp.id_lp WHERE p.id_p = ? AND lp.id_cn = ?";
+            Integer count = jdbcTemplate.queryForObject(checkBranchSql, Integer.class, id, branchId);
+            if (count == null || count == 0) {
+                return Map.of("success", false, "message", "Bạn không có quyền xem thông tin phòng này!");
+            }
+        }
+
+        // 3. Compute room utilization efficiency over last 30 days
+        String effSql = "WITH date_series AS ( " +
+                "    SELECT generate_series(CURRENT_DATE - INTERVAL '30 days', CURRENT_DATE - INTERVAL '1 day', '1 day'::interval)::date AS booked_day " +
+                "), " +
+                "booked_days AS ( " +
+                "    SELECT COUNT(DISTINCT ds.booked_day) AS total_booked " +
+                "    FROM hoadon.hoadon_thue_phong htp " +
+                "    JOIN hoadon.hoadon h ON htp.id_hd = h.id_hd " +
+                "    CROSS JOIN date_series ds " +
+                "    WHERE htp.id_p = ? " +
+                "      AND h.trang_thai != 'Đã hủy' " +
+                "      AND ds.booked_day >= htp.ngaynhan::date " +
+                "      AND ds.booked_day < htp.ngaytra::date " +
+                ") " +
+                "SELECT ROUND((total_booked::numeric / 30.0) * 100, 2) AS hieu_suat " +
+                "FROM booked_days";
+        Double hieuSuat = jdbcTemplate.queryForObject(effSql, Double.class, id);
+        room.put("hieu_suat", hieuSuat != null ? hieuSuat : 0.00);
+
+        // 4. If status is "Đã đặt", get booking customer & employee info
+        if ("Đã đặt".equals(room.get("trang_thai"))) {
+            String bookingSql = "SELECT h.id_hd, kh.id_kh, kh.ho_ten AS ten_kh, kh.sdt AS sdt_kh, nv.id_nv, nv.ten_nv, htp.ngaynhan, htp.ngaytra " +
+                    "FROM hoadon.hoadon_thue_phong htp " +
+                    "JOIN hoadon.hoadon h ON htp.id_hd = h.id_hd " +
+                    "LEFT JOIN khachhang.khachhang kh ON h.id_kh = kh.id_kh " +
+                    "LEFT JOIN nhansu.nhanvien nv ON h.id_nv = nv.id_nv " +
+                    "WHERE htp.id_p = ? " +
+                    "  AND h.trang_thai = 'Đã đặt' " +
+                    "ORDER BY htp.ngaynhan DESC " +
+                    "LIMIT 1";
+            List<Map<String, Object>> bookings = jdbcTemplate.queryForList(bookingSql, id);
+            if (!bookings.isEmpty()) {
+                room.put("booking", bookings.get(0));
+            }
+        }
+
+        return Map.of("success", true, "data", room);
+    }
+
+    private void checkManagerAccess(HttpSession session) {
+        checkBranchAccess(session);
+        String role = (String) session.getAttribute("role");
+        if (!"Quản lý".equals(role)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Bạn không có quyền thực hiện thao tác này!");
+        }
+    }
+
+    @GetMapping("/management/customers")
+    public List<Map<String, Object>> getManagementCustomers(HttpSession session) {
+        checkManagerAccess(session);
+        String sql = "SELECT kh.id_kh, kh.ho_ten, kh.cccd, kh.sdt, kh.dia_chi, kh.quoc_tich, kh.passport, kh.visa, kh.la_knn, " +
+                "       hv.hang AS hang_hoi_vien, hv.tong_luu_tru " +
+                "FROM khachhang.khachhang kh " +
+                "LEFT JOIN ( " +
+                "    SELECT h.id_hv, mhv.hang, h.tong_luu_tru " +
+                "    FROM khachhang.hoivien h " +
+                "    JOIN khachhang.muchoivien mhv ON h.id_mhv = mhv.id_mhv " +
+                                ") hv ON kh.id_hv = hv.id_hv " +
+                "ORDER BY kh.id_kh";
+        return jdbcTemplate.queryForList(sql);
+    }
+
+    @GetMapping("/management/customers/{id}/history")
+    public List<Map<String, Object>> getCustomerBookingHistory(@PathVariable int id, HttpSession session) {
+        checkManagerAccess(session);
+        String sql = "SELECT h.id_hd, h.ngaylap, h.trang_thai, htp.id_p, p.dia_chi AS ten_phong, cn.ten_cn, htp.ngaynhan, htp.ngaytra " +
+                "FROM hoadon.hoadon h " +
+                "JOIN hoadon.hoadon_thue_phong htp ON h.id_hd = htp.id_hd " +
+                "JOIN quanly.phong p ON htp.id_p = p.id_p " +
+                "JOIN quanly.chinhanh cn ON p.id_cn = cn.id_cn " +
+                "WHERE h.id_kh = ? " +
+                "ORDER BY h.id_hd DESC";
+        return jdbcTemplate.queryForList(sql, id);
+    }
+
+    @GetMapping("/management/employees")
+    public List<Map<String, Object>> getManagementEmployees(HttpSession session) {
+        checkManagerAccess(session);
+        Integer branchId = (Integer) session.getAttribute("branchId");
+        if (branchId > 0) {
+            String sql = "SELECT nv.id_nv, nv.ten_nv, nv.chuc_vu, nv.luong::numeric AS luong, cn.ten_cn, nv.id_cn " +
+                    "FROM nhansu.nhanvien nv " +
+                    "JOIN quanly.chinhanh cn ON nv.id_cn = cn.id_cn " +
+                    "WHERE nv.id_cn = ? " +
+                    "ORDER BY nv.id_nv";
+            return jdbcTemplate.queryForList(sql, branchId);
+        } else {
+            String sql = "SELECT nv.id_nv, nv.ten_nv, nv.chuc_vu, nv.luong::numeric AS luong, cn.ten_cn, nv.id_cn " +
+                    "FROM nhansu.nhanvien nv " +
+                    "JOIN quanly.chinhanh cn ON nv.id_cn = cn.id_cn " +
+                    "ORDER BY nv.id_nv";
+            return jdbcTemplate.queryForList(sql);
+        }
+    }
+
+    @PostMapping("/management/employees")
+    @Transactional
+    public Map<String, Object> addEmployee(@RequestBody Map<String, Object> body, HttpSession session) {
+        checkManagerAccess(session);
+        try {
+            String tenNv = (String) body.get("tenNv");
+            String chucVu = (String) body.get("chucVu");
+            int idCn = ((Number) body.get("idCn")).intValue();
+            double luong = ((Number) body.get("luong")).doubleValue();
+
+            if (tenNv == null || tenNv.trim().isEmpty() || chucVu == null || chucVu.trim().isEmpty()) {
+                return Map.of("success", false, "message", "Thông tin nhân viên không hợp lệ!");
+            }
+
+            Integer branchId = (Integer) session.getAttribute("branchId");
+            if (branchId > 0 && idCn != branchId) {
+                return Map.of("success", false, "message", "Bạn không có quyền thêm nhân viên vào chi nhánh khác!");
+            }
+
+            String sql = "INSERT INTO nhansu.nhanvien (ten_nv, chuc_vu, id_cn, luong) VALUES (?, ?, ?, ?::numeric::money)";
+            jdbcTemplate.update(sql, tenNv.trim(), chucVu.trim(), idCn, luong);
+
+            return Map.of("success", true, "message", "Thêm nhân viên thành công!");
+        } catch (Exception e) {
+            return Map.of("success", false, "message", "Lỗi thêm nhân viên: " + e.getMessage());
+        }
     }
 
     @GetMapping("/chua-don-dep")

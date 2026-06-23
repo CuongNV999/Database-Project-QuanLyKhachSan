@@ -801,6 +801,18 @@
                 </svg>
                 <span>Hiệu Suất Phòng</span>
             </li>
+            <li id="nav-customers-tab" class="nav-item" onclick="switchTab('customers-tab')" style="display: none;">
+                <svg viewBox="0 0 24 24" style="fill: currentColor; width: 20px; height: 20px;">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                </svg>
+                <span>Quản Lý Khách Hàng</span>
+            </li>
+            <li id="nav-employees-tab" class="nav-item" onclick="switchTab('employees-tab')" style="display: none;">
+                <svg viewBox="0 0 24 24" style="fill: currentColor; width: 20px; height: 20px;">
+                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                </svg>
+                <span>Quản Lý Nhân Viên</span>
+            </li>
         </ul>
     </aside>
 
@@ -1383,6 +1395,72 @@
                         </tr>
                     </tbody>
                 </table>
+        </section>
+
+        <!-- 6. QUẢN LÝ KHÁCH HÀNG SECTION -->
+        <section id="customers-tab" class="section-container">
+            <div class="section-header">
+                <h2>Danh Sách & Quản Lý Khách Hàng</h2>
+            </div>
+            <div class="filter-bar">
+                <div class="form-group" style="flex-grow: 1;">
+                    <label for="search-mgt-customers">Tìm kiếm khách hàng</label>
+                    <input type="text" id="search-mgt-customers" placeholder="Nhập tên, số điện thoại, CCCD/Passport..." oninput="filterMgtCustomersTable()">
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table id="table-mgt-customers">
+                    <thead>
+                        <tr>
+                            <th>Mã KH</th>
+                            <th>Họ Tên</th>
+                            <th>CCCD/Passport</th>
+                            <th>Số Điện Thoại</th>
+                            <th>Địa Chỉ</th>
+                            <th>Quốc Tịch</th>
+                            <th>Hạng Hội Viên</th>
+                            <th>Số Đêm Đã Thuê</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-mgt-customers-body">
+                        <tr>
+                            <td colspan="9" style="text-align:center">Đang tải danh sách khách hàng...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 7. QUẢN LÝ NHÂN VIÊN SECTION -->
+        <section id="employees-tab" class="section-container">
+            <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <h2>Quản Lý Thông Tin Nhân Sự</h2>
+                <button class="btn-primary" onclick="showAddEmployeeModal()" style="margin: 0; padding: 8px 16px;">+ Thêm Nhân Viên</button>
+            </div>
+            <div class="filter-bar">
+                <div class="form-group" style="flex-grow: 1;">
+                    <label for="search-mgt-employees">Tìm kiếm nhân viên</label>
+                    <input type="text" id="search-mgt-employees" placeholder="Nhập tên nhân viên, chức vụ, chi nhánh..." oninput="filterMgtEmployeesTable()">
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table id="table-mgt-employees">
+                    <thead>
+                        <tr>
+                            <th>Mã NV</th>
+                            <th>Họ Tên</th>
+                            <th>Chức Vụ</th>
+                            <th>Mức Lương (VND)</th>
+                            <th>Chi Nhánh Công Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-mgt-employees-body">
+                        <tr>
+                            <td colspan="5" style="text-align:center">Đang tải danh sách nhân sự...</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </section>
 
@@ -1467,8 +1545,8 @@
             const session = sessionStorage.getItem('userSession');
             if (session) {
                 const user = JSON.parse(session);
-                if (tabId === 'dashboard' && user.role === 'Nhân viên') {
-                    showAlert('Bạn không có quyền xem Doanh thu & Tổng quan!', false);
+                if ((tabId === 'dashboard' || tabId === 'customers-tab' || tabId === 'employees-tab') && user.role === 'Nhân viên') {
+                    showAlert('Bạn không có quyền truy cập chức năng này!', false);
                     return;
                 }
             }
@@ -1494,6 +1572,12 @@
             } else if (tabId === 'efficiency') {
                 setHeadTitle('Báo Cáo Hiệu Suất Phòng', 'Phân tích các phòng diện tích lớn (từ 45m² trở lên) hoạt động kém hoặc ít lượt khách đặt.');
                 loadEfficiencyReport();
+            } else if (tabId === 'customers-tab') {
+                setHeadTitle('Quản Lý Khách Hàng', 'Quản lý thông tin khách hàng, lịch sử lưu trú và thông tin hạng hội viên.');
+                loadManagementCustomers();
+            } else if (tabId === 'employees-tab') {
+                setHeadTitle('Quản Lý Nhân Viên', 'Quản lý thông tin nhân viên, cấp bậc chức vụ và lương của từng nhân viên.');
+                loadManagementEmployees();
             }
         }
 
@@ -1667,17 +1751,23 @@
                 document.getElementById('btn-logout').style.display = 'block';
 
                 const navDashboard = document.getElementById('nav-dashboard');
+                const navCust = document.getElementById('nav-customers-tab');
+                const navEmp = document.getElementById('nav-employees-tab');
                 if (user.role === 'Nhân viên') {
                     if (navDashboard) navDashboard.style.display = 'none';
-                    // Auto switch to rooms-tab if currently on dashboard
+                    if (navCust) navCust.style.display = 'none';
+                    if (navEmp) navEmp.style.display = 'none';
+                    // Auto switch to rooms-tab if currently on dashboard or management tabs
                     const activeTab = document.querySelector('.section-container.active');
-                    if (!activeTab || activeTab.id === 'dashboard') {
+                    if (!activeTab || activeTab.id === 'dashboard' || activeTab.id === 'customers-tab' || activeTab.id === 'employees-tab') {
                         switchTab('rooms-tab');
                     } else {
                         loadDropdowns();
                     }
                 } else {
                     if (navDashboard) navDashboard.style.display = 'flex';
+                    if (navCust) navCust.style.display = 'flex';
+                    if (navEmp) navEmp.style.display = 'flex';
                     // Auto switch to dashboard if no active tab or if currently active is dashboard
                     const activeTab = document.querySelector('.section-container.active');
                     if (!activeTab || activeTab.id === 'dashboard') {
@@ -2689,6 +2779,7 @@
                 <th>Diện Tích</th>
                 <th>Giá Phòng (VND) / Ngày</th>
                 <th>Trạng Thái</th>
+                <th>Hành động</th>
             `;
             const tbody = document.getElementById('table-rooms-body');
             tbody.innerHTML = '';
@@ -2719,6 +2810,7 @@
                         <td>${dienTichHienThi}</td>
                         <td style="font-weight:600">${r.gia_tien.toLocaleString()} VND</td>
                         <td><span class="badge ${badgeClass}">${r.trang_thai}</span></td>
+                        <td><button class="btn-primary" onclick="showRoomDetail(${r.id_p})" style="padding:4px 8px; font-size:0.85rem; margin:0;">Chi tiết</button></td>
                     </tr>
                 `;
             });
@@ -3152,6 +3244,318 @@
             document.getElementById('receipt-modal').classList.remove('show');
         }
 
+        async function showRoomDetail(roomId) {
+            try {
+                const res = await fetch(`${API_BASE}/phong-detail/${roomId}`);
+                const result = await res.json();
+                if (!result.success) {
+                    showAlert(result.message, false);
+                    return;
+                }
+                const r = result.data;
+                
+                // Set room basic info
+                document.getElementById('room-det-id').innerText = `#${r.id_p}`;
+                document.getElementById('room-det-name').innerText = r.dia_chi || '-';
+                document.getElementById('room-det-branch').innerText = r.ten_cn || '-';
+                document.getElementById('room-det-quality').innerText = r.chat_luong || '-';
+                document.getElementById('room-det-bed').innerText = r.loai_giuong || '-';
+                document.getElementById('room-det-view').innerText = r.view || '-';
+                document.getElementById('room-det-size').innerText = r.dien_tich || '-';
+                document.getElementById('room-det-price').innerText = `${Math.round(r.gia_tien).toLocaleString()} VND`;
+                
+                const statusEl = document.getElementById('room-det-status');
+                statusEl.innerText = r.trang_thai;
+                statusEl.className = 'badge'; // reset classes
+                if (r.trang_thai === 'Còn trống') {
+                    statusEl.classList.add('badge-success');
+                } else if (r.trang_thai === 'Đã đặt') {
+                    statusEl.classList.add('badge-warning');
+                } else {
+                    statusEl.classList.add('badge-info');
+                }
+
+                document.getElementById('room-det-efficiency').innerText = `${r.hieu_suat}%`;
+
+                const bookingSec = document.getElementById('room-det-booking-sec');
+                if (r.trang_thai === 'Đã đặt' && r.booking) {
+                    const b = r.booking;
+                    document.getElementById('room-det-booking-hd').innerText = `#${b.id_hd}`;
+                    document.getElementById('room-det-booking-cust').innerText = b.id_kh ? `${b.ten_kh} (ID: ${b.id_kh})` : 'Khách lẻ';
+                    document.getElementById('room-det-booking-phone').innerText = b.sdt_kh || '-';
+                    document.getElementById('room-det-booking-emp').innerText = b.id_nv ? `${b.ten_nv} (ID: ${b.id_nv})` : 'Hệ thống';
+                    document.getElementById('room-det-booking-checkin').innerText = b.ngaynhan ? new Date(b.ngaynhan).toLocaleString() : '-';
+                    document.getElementById('room-det-booking-checkout').innerText = b.ngaytra ? new Date(b.ngaytra).toLocaleString() : '-';
+                    bookingSec.style.display = 'block';
+                } else {
+                    bookingSec.style.display = 'none';
+                }
+
+                // Show modal
+                document.getElementById('room-detail-modal').classList.add('show');
+            } catch (err) {
+                console.error("Failed to load room details:", err);
+                showAlert('Không thể tải thông tin chi tiết phòng!', false);
+            }
+        }
+
+        function closeRoomDetailModal() {
+            document.getElementById('room-detail-modal').classList.remove('show');
+        }
+
+        // --- Customer Management ---
+        let globalMgtCustomers = [];
+        async function loadManagementCustomers() {
+            try {
+                const res = await fetch(`${API_BASE}/management/customers`);
+                if (res.status === 403) {
+                    showAlert('Bạn không có quyền thực hiện thao tác này!', false);
+                    return;
+                }
+                const data = await res.json();
+                globalMgtCustomers = data;
+                renderMgtCustomers(globalMgtCustomers);
+            } catch (err) {
+                console.error("Failed to load management customers:", err);
+                showAlert('Không thể tải danh sách khách hàng!', false);
+            }
+        }
+
+        function renderMgtCustomers(list) {
+            const tbody = document.getElementById('table-mgt-customers-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center">Không tìm thấy khách hàng nào.</td></tr>`;
+                return;
+            }
+            list.forEach(c => {
+                const docId = c.cccd || c.passport || '-';
+                const hang = c.hang_hoi_vien || 'Chưa có';
+                const dem = c.tong_luu_tru !== null && c.tong_luu_tru !== undefined ? c.tong_luu_tru : 0;
+                
+                let badgeClass = 'badge-info';
+                if (hang === 'Gold' || hang === 'Vàng') badgeClass = 'badge-warning';
+                else if (hang === 'Diamond' || hang === 'Kim cương') badgeClass = 'badge-success';
+                else if (hang === 'Silver' || hang === 'Bạc') badgeClass = 'badge-secondary';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>#${c.id_kh}</strong></td>
+                        <td>${c.ho_ten}</td>
+                        <td>${docId}</td>
+                        <td>${c.sdt || '-'}</td>
+                        <td>${c.dia_chi || '-'}</td>
+                        <td>${c.quoc_tich || '-'}</td>
+                        <td><span class="badge ${badgeClass}">${hang}</span></td>
+                        <td>${dem} đêm</td>
+                        <td>
+                            <button class="btn-primary" onclick="showCustomerHistory(${c.id_kh}, '${c.ho_ten.replace(/'/g, "\\'")}')" style="padding:4px 8px; font-size:0.85rem; margin:0;">Lịch sử đặt</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function filterMgtCustomersTable() {
+            const query = document.getElementById('search-mgt-customers').value.toLowerCase().trim();
+            if (!query) {
+                renderMgtCustomers(globalMgtCustomers);
+                return;
+            }
+            const filtered = globalMgtCustomers.filter(c => {
+                const name = (c.ho_ten || '').toLowerCase();
+                const sdt = (c.sdt || '').toLowerCase();
+                const docId = ((c.cccd || '') + ' ' + (c.passport || '')).toLowerCase();
+                return name.includes(query) || sdt.includes(query) || docId.includes(query);
+            });
+            renderMgtCustomers(filtered);
+        }
+
+        async function showCustomerHistory(idKh, hoTen) {
+            try {
+                const res = await fetch(`${API_BASE}/management/customers/${idKh}/history`);
+                if (res.status === 403) {
+                    showAlert('Bạn không có quyền thực hiện thao tác này!', false);
+                    return;
+                }
+                const data = await res.json();
+                
+                document.getElementById('cust-hist-title').innerText = `Lịch sử đặt phòng - KH: ${hoTen} (#${idKh})`;
+                const tbody = document.getElementById('table-customer-history-body');
+                tbody.innerHTML = '';
+                if (data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center">Khách hàng chưa có lịch sử đặt phòng nào.</td></tr>`;
+                } else {
+                    data.forEach(h => {
+                        const ngayLap = h.ngaylap ? new Date(h.ngaylap).toLocaleDateString() : '-';
+                        const ngayNhan = h.ngaynhan ? new Date(h.ngaynhan).toLocaleDateString() : '-';
+                        const ngayTra = h.ngaytra ? new Date(h.ngaytra).toLocaleDateString() : '-';
+                        tbody.innerHTML += `
+                            <tr>
+                                <td><strong>#${h.id_hd}</strong></td>
+                                <td>${ngayLap}</td>
+                                <td>${h.ten_cn || '-'}</td>
+                                <td>#${h.id_p} - ${h.ten_phong || '-'}</td>
+                                <td>${ngayNhan}</td>
+                                <td>${ngayTra}</td>
+                                <td><span class="badge ${h.trang_thai === 'Đã hủy' ? 'badge-error' : h.trang_thai === 'Đã thanh toán' ? 'badge-success' : 'badge-warning'}">${h.trang_thai}</span></td>
+                            </tr>
+                        `;
+                    });
+                }
+                document.getElementById('customer-history-modal').classList.add('show');
+            } catch (err) {
+                console.error("Failed to load customer history:", err);
+                showAlert('Không thể tải lịch sử đặt phòng!', false);
+            }
+        }
+
+        function closeCustomerHistoryModal() {
+            document.getElementById('customer-history-modal').classList.remove('show');
+        }
+
+        // --- Employee Management ---
+        let globalMgtEmployees = [];
+        async function loadManagementEmployees() {
+            try {
+                const res = await fetch(`${API_BASE}/management/employees`);
+                if (res.status === 403) {
+                    showAlert('Bạn không có quyền thực hiện thao tác này!', false);
+                    return;
+                }
+                const data = await res.json();
+                globalMgtEmployees = data;
+                renderMgtEmployees(globalMgtEmployees);
+            } catch (err) {
+                console.error("Failed to load employees list:", err);
+                showAlert('Không thể tải danh sách nhân sự!', false);
+            }
+        }
+
+        function renderMgtEmployees(list) {
+            const tbody = document.getElementById('table-mgt-employees-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center">Không tìm thấy nhân viên nào.</td></tr>`;
+                return;
+            }
+            list.forEach(emp => {
+                const luongFormatted = Math.round(emp.luong).toLocaleString();
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>#${emp.id_nv}</strong></td>
+                        <td>${emp.ten_nv}</td>
+                        <td>${emp.chuc_vu}</td>
+                        <td style="font-weight:600">${luongFormatted} VND</td>
+                        <td>${emp.ten_cn || '-'}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function filterMgtEmployeesTable() {
+            const query = document.getElementById('search-mgt-employees').value.toLowerCase().trim();
+            if (!query) {
+                renderMgtEmployees(globalMgtEmployees);
+                return;
+            }
+            const filtered = globalMgtEmployees.filter(emp => {
+                const name = (emp.ten_nv || '').toLowerCase();
+                const role = (emp.chuc_vu || '').toLowerCase();
+                const branch = (emp.ten_cn || '').toLowerCase();
+                return name.includes(query) || role.includes(query) || branch.includes(query);
+            });
+            renderMgtEmployees(filtered);
+        }
+
+        async function showAddEmployeeModal() {
+            const session = sessionStorage.getItem('userSession');
+            if (!session) return;
+            const user = JSON.parse(session);
+            
+            document.getElementById('emp-add-name').value = '';
+            document.getElementById('emp-add-chucvu').value = '';
+            document.getElementById('emp-add-luong').value = '';
+            
+            const branchSelect = document.getElementById('emp-add-branch');
+            branchSelect.innerHTML = '';
+            
+            if (user.branchId > 0) {
+                const opt = document.createElement('option');
+                opt.value = user.branchId;
+                opt.innerText = user.branchName;
+                branchSelect.appendChild(opt);
+                branchSelect.disabled = true;
+            } else {
+                try {
+                    const res = await fetch(`${API_BASE}/branches`);
+                    const branches = await res.json();
+                    branches.forEach(b => {
+                        const opt = document.createElement('option');
+                        opt.value = b.id_cn;
+                        opt.innerText = b.ten_cn;
+                        branchSelect.appendChild(opt);
+                    });
+                    branchSelect.disabled = false;
+                } catch (err) {
+                    console.error("Failed to load branches for employee creation:", err);
+                    showAlert("Không thể tải danh sách chi nhánh!", false);
+                }
+            }
+            
+            document.getElementById('add-employee-modal').classList.add('show');
+        }
+
+        function closeAddEmployeeModal() {
+            document.getElementById('add-employee-modal').classList.remove('show');
+        }
+
+        async function handleAddEmployee(event) {
+            event.preventDefault();
+            
+            const tenNv = document.getElementById('emp-add-name').value.trim();
+            const chucVu = document.getElementById('emp-add-chucvu').value.trim();
+            const luongStr = document.getElementById('emp-add-luong').value.trim();
+            const idCnSelect = document.getElementById('emp-add-branch');
+            const idCn = parseInt(idCnSelect.value);
+            
+            if (!tenNv || !chucVu || !luongStr || isNaN(idCn)) {
+                showAlert('Vui lòng nhập đầy đủ và chính xác thông tin!', false);
+                return;
+            }
+            
+            const luong = parseFloat(luongStr);
+            if (isNaN(luong) || luong < 0) {
+                showAlert('Mức lương phải là một số hợp lệ và lớn hơn hoặc bằng 0!', false);
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_BASE}/management/employees`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tenNv, chucVu, idCn, luong })
+                });
+                if (res.status === 403) {
+                    showAlert('Bạn không có quyền thực hiện thao tác này!', false);
+                    return;
+                }
+                const result = await res.json();
+                if (result.success) {
+                    showAlert(result.message, true);
+                    closeAddEmployeeModal();
+                    loadManagementEmployees();
+                } else {
+                    showAlert(result.message, false);
+                }
+            } catch (err) {
+                console.error("Failed to add employee:", err);
+                showAlert("Không thể kết nối để thêm nhân viên!", false);
+            }
+        }
+
     </script>
 
     <!-- Receipt Modal -->
@@ -3206,6 +3610,111 @@
                 <p>Cảm ơn quý khách. Hẹn gặp lại!</p>
                 <p style="margin-top: 5px; font-size: 0.7rem; color: #cbd5e1;">Powered by Homestay Management</p>
             </div>
+        </div>
+    </div>
+
+    <!-- Room Detail Modal -->
+    <div id="room-detail-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 550px;">
+            <div class="modal-header">
+                <span class="modal-title">Chi Tiết Phòng</span>
+                <button class="modal-close" onclick="closeRoomDetailModal()">&times;</button>
+            </div>
+            
+            <div style="margin-top: 1.5rem;">
+                <h4 style="margin-bottom: 0.8rem; border-bottom: 1px solid var(--border-color); padding-bottom: 4px; color: var(--accent-primary);">Thông Tin Phòng</h4>
+                <div class="receipt-details" style="margin-bottom: 1.5rem;">
+                    <p><span>Mã phòng:</span> <span id="room-det-id">#000</span></p>
+                    <p><span>Tên phòng/Địa chỉ:</span> <span id="room-det-name">-</span></p>
+                    <p><span>Chi nhánh:</span> <span id="room-det-branch">-</span></p>
+                    <p><span>Chất lượng:</span> <span id="room-det-quality">-</span></p>
+                    <p><span>Loại giường:</span> <span id="room-det-bed">-</span></p>
+                    <p><span>Hướng nhìn (View):</span> <span id="room-det-view">-</span></p>
+                    <p><span>Diện tích:</span> <span id="room-det-size">-</span></p>
+                    <p><span>Giá phòng/Đêm:</span> <span id="room-det-price">-</span></p>
+                    <p><span>Trạng thái:</span> <span id="room-det-status" class="badge">-</span></p>
+                    <p><span>Hiệu suất sử dụng (30 ngày qua):</span> <span id="room-det-efficiency" style="font-weight:600; color:var(--accent-secondary);">-</span></p>
+                </div>
+
+                <!-- Booking Details (only shown if room is Booked) -->
+                <div id="room-det-booking-sec" style="display: none;">
+                    <h4 style="margin-bottom: 0.8rem; border-bottom: 1px solid var(--border-color); padding-bottom: 4px; color: var(--accent-primary);">Thông Tin Đặt Phòng Hiện Tại</h4>
+                    <div class="receipt-details">
+                        <p><span>Mã hóa đơn:</span> <span id="room-det-booking-hd">#000</span></p>
+                        <p><span>Khách hàng:</span> <span id="room-det-booking-cust">-</span></p>
+                        <p><span>Số điện thoại:</span> <span id="room-det-booking-phone">-</span></p>
+                        <p><span>Nhân viên quản lý:</span> <span id="room-det-booking-emp">-</span></p>
+                        <p><span>Ngày nhận phòng:</span> <span id="room-det-booking-checkin">-</span></p>
+                        <p><span>Ngày trả phòng:</span> <span id="room-det-booking-checkout">-</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer History Modal -->
+    <div id="customer-history-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 850px;">
+            <div class="modal-header">
+                <span id="cust-hist-title" class="modal-title">Lịch Sử Đặt Phòng</span>
+                <button class="modal-close" onclick="closeCustomerHistoryModal()">&times;</button>
+            </div>
+            
+            <div style="margin-top: 1.5rem;" class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hóa Đơn</th>
+                            <th>Ngày Lập</th>
+                            <th>Chi Nhánh</th>
+                            <th>Phòng</th>
+                            <th>Ngày Nhận</th>
+                            <th>Ngày Trả</th>
+                            <th>Trạng Thái</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-customer-history-body">
+                        <tr>
+                            <td colspan="7" style="text-align:center">Đang tải lịch sử...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Employee Modal -->
+    <div id="add-employee-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <span class="modal-title">Thêm Nhân Viên Mới</span>
+                <button class="modal-close" onclick="closeAddEmployeeModal()">&times;</button>
+            </div>
+            
+            <form id="form-add-employee" onsubmit="handleAddEmployee(event)" style="margin-top: 1.5rem;">
+                <div class="form-group" style="margin-bottom: 1.2rem;">
+                    <label for="emp-add-name">Họ và Tên</label>
+                    <input type="text" id="emp-add-name" required placeholder="Nhập tên nhân viên...">
+                </div>
+                <div class="form-group" style="margin-bottom: 1.2rem;">
+                    <label for="emp-add-chucvu">Chức Vụ</label>
+                    <input type="text" id="emp-add-chucvu" required placeholder="Ví dụ: Nhân viên, Lễ tân, Quản lý...">
+                </div>
+                <div class="form-group" style="margin-bottom: 1.2rem;">
+                    <label for="emp-add-luong">Mức Lương (VND)</label>
+                    <input type="number" id="emp-add-luong" min="0" required placeholder="Nhập mức lương...">
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="emp-add-branch">Chi Nhánh</label>
+                    <select id="emp-add-branch" required>
+                        <!-- Options dynamically loaded -->
+                    </select>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 12px;">
+                    <button type="button" class="btn-primary" onclick="closeAddEmployeeModal()" style="margin: 0; padding: 8px 16px; background: var(--text-secondary);">Hủy</button>
+                    <button type="submit" class="btn-primary" style="margin: 0; padding: 8px 16px; background: var(--accent-primary);">Lưu lại</button>
+                </div>
+            </form>
         </div>
     </div>
 </body>
