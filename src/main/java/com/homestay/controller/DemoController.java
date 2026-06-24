@@ -743,8 +743,12 @@ public class DemoController {
                 if (soNgay <= 0) soNgay = 1;
 
                 // 3. Insert into hoadon.hoadon_thue_phong
-                jdbcTemplate.update("INSERT INTO hoadon.hoadon_thue_phong (id_hd, id_p, ngaynhan, ngaytra, so_ngay_luu_tru, phu_thu_tieu_hao) VALUES (?, ?, ?::timestamp, ?::timestamp, ?, ?::numeric::money)",
-                        idHd, idP, ngayNhan, ngayTra, soNgay, phuThu);
+                jdbcTemplate.update("INSERT INTO hoadon.hoadon_thue_phong (id_hd, id_p, ngaynhan, ngaytra, so_ngay_luu_tru) VALUES (?, ?, ?::timestamp, ?::timestamp, ?)",
+                        idHd, idP, ngayNhan, ngayTra, soNgay);
+                if (phuThu > 0) {
+                    jdbcTemplate.update("INSERT INTO hoadon.phu_thu_phong (id_hd, id_p, loai_phu_thu, so_tien) VALUES (?, ?, 'Tiêu hao', ?::numeric::money)",
+                            idHd, idP, phuThu);
+                }
             } else {
                 String sql = "SELECT quanly.func_tim_va_dat_phong_nhanh(?, ?, ?, ?, ?, ?::timestamp, ?::timestamp, ?::numeric::money, ?::numeric::money) AS id_hd";
                 idHd = jdbcTemplate.queryForObject(sql, Integer.class,
@@ -969,8 +973,8 @@ public class DemoController {
         checkBranchAccess(session);
         return jdbcTemplate.queryForList(
             "SELECT htp.id_p, p.dia_chi, htp.ngaynhan, htp.ngaytra, htp.so_ngay_luu_tru, " +
-            "COALESCE(htp.phu_thu_tieu_hao::numeric, 0) AS phu_thu_tieu_hao, " +
-            "COALESCE(htp.phu_thu_hong_hoc::numeric, 0) AS phu_thu_hong_hoc, " +
+            "COALESCE((SELECT SUM(so_tien) FROM hoadon.phu_thu_phong pt WHERE pt.id_hd = htp.id_hd AND pt.id_p = htp.id_p AND pt.loai_phu_thu = 'Tiêu hao'), 0::money)::numeric AS phu_thu_tieu_hao, " +
+            "COALESCE((SELECT SUM(so_tien) FROM hoadon.phu_thu_phong pt WHERE pt.id_hd = htp.id_hd AND pt.id_p = htp.id_p AND pt.loai_phu_thu = 'Hỏng hóc'), 0::money)::numeric AS phu_thu_hong_hoc, " +
             "lp.gia_tien::numeric AS gia_tien, lp.chat_luong, lp.loai_giuong " +
             "FROM hoadon.hoadon_thue_phong htp " +
             "JOIN quanly.phong p ON htp.id_p = p.id_p " +

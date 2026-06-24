@@ -31,7 +31,8 @@ TRUNCATE TABLE
     hoadon.dichvu, 
     hoadon.hoadon, 
     hoadon.hoadon_thue_phong, 
-    hoadon.hoadon_sudung_dichvu
+    hoadon.hoadon_sudung_dichvu,
+    hoadon.phu_thu_phong
 CASCADE;
 
 -- 1. Seed muchoivien
@@ -401,16 +402,26 @@ BEGIN
         v_phu_tieu_hao := CASE WHEN v_i % 7 = 0 THEN 50000 ELSE 0 END::numeric::money;
         v_phu_hong_hoc := CASE WHEN v_i % 25 = 0 THEN 300000 ELSE 0 END::numeric::money;
 
-        INSERT INTO hoadon.hoadon_thue_phong (id_hd, id_p, so_luong, ngaynhan, ngaytra, phu_thu_tieu_hao, phu_thu_hong_hoc, so_ngay_luu_tru) VALUES
+        INSERT INTO hoadon.hoadon_thue_phong (id_hd, id_p, so_luong, ngaynhan, ngaytra, so_ngay_luu_tru) VALUES
         (v_id_hd, 
          v_id_p, 
          1, 
          v_ngaynhan, 
          v_ngaytra, 
-         v_phu_tieu_hao, 
-         v_phu_hong_hoc, 
          v_so_ngay)
         ON CONFLICT (id_hd, id_p) DO NOTHING;
+
+        IF FOUND THEN
+            IF v_phu_tieu_hao > 0::money THEN
+                INSERT INTO hoadon.phu_thu_phong (id_hd, id_p, loai_phu_thu, so_tien)
+                VALUES (v_id_hd, v_id_p, 'Tiêu hao', v_phu_tieu_hao);
+            END IF;
+
+            IF v_phu_hong_hoc > 0::money THEN
+                INSERT INTO hoadon.phu_thu_phong (id_hd, id_p, loai_phu_thu, so_tien)
+                VALUES (v_id_hd, v_id_p, 'Hỏng hóc', v_phu_hong_hoc);
+            END IF;
+        END IF;
     END LOOP;
 
     -- N. Generate 6,000 Service Usages
@@ -433,8 +444,8 @@ INSERT INTO hoadon.hoadon (id_hd, trang_thai, ngaylap, id_kh, id_nv) VALUES
 (9001, 'Đã đặt', '2026-06-22', 10001, 2)
 ON CONFLICT (id_hd) DO NOTHING;
 
-INSERT INTO hoadon.hoadon_thue_phong (id_hd, id_p, so_luong, ngaynhan, ngaytra, phu_thu_tieu_hao, phu_thu_hong_hoc, so_ngay_luu_tru) VALUES
-(9001, 101, 1, '2026-06-22 14:00:00', '2026-06-25 12:00:00', 0::money, 0::money, 3)
+INSERT INTO hoadon.hoadon_thue_phong (id_hd, id_p, so_luong, ngaynhan, ngaytra, so_ngay_luu_tru) VALUES
+(9001, 101, 1, '2026-06-22 14:00:00', '2026-06-25 12:00:00', 3)
 ON CONFLICT (id_hd, id_p) DO NOTHING;
 
 -- Update room 101 state to 'Đã đặt'
@@ -445,8 +456,8 @@ INSERT INTO hoadon.hoadon (id_hd, trang_thai, ngaylap, id_kh, id_nv) VALUES
 (9002, 'Đã đặt', '2026-06-18', 10002, 2)
 ON CONFLICT (id_hd) DO NOTHING;
 
-INSERT INTO hoadon.hoadon_thue_phong (id_hd, id_p, so_luong, ngaynhan, ngaytra, phu_thu_tieu_hao, phu_thu_hong_hoc, so_ngay_luu_tru) VALUES
-(9002, 102, 1, '2026-06-18 14:00:00', '2026-06-21 12:00:00', 0::money, 0::money, 3)
+INSERT INTO hoadon.hoadon_thue_phong (id_hd, id_p, so_luong, ngaynhan, ngaytra, so_ngay_luu_tru) VALUES
+(9002, 102, 1, '2026-06-18 14:00:00', '2026-06-21 12:00:00', 3)
 ON CONFLICT (id_hd, id_p) DO NOTHING;
 
 -- Update room 102 state to 'Đã đặt'

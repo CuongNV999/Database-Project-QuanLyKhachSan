@@ -60,11 +60,17 @@ BEGIN
         v_so_ngay_luu_tru := 1;
     END IF;
 
-    -- 3. Tạo bản ghi chi tiết thuê phòng (đã loại bỏ cột tien_coc, tong_tien)
-    INSERT INTO hoadon.hoadon_thue_phong (id_hd, id_p, ngaynhan, ngaytra, so_ngay_luu_tru, phu_thu_tieu_hao)
-    VALUES (v_id_hd, v_id_p, p_ngaynhan, p_ngaytra, v_so_ngay_luu_tru, p_phu_thu);
+    -- 3. Tạo bản ghi chi tiết thuê phòng
+    INSERT INTO hoadon.hoadon_thue_phong (id_hd, id_p, ngaynhan, ngaytra, so_ngay_luu_tru)
+    VALUES (v_id_hd, v_id_p, p_ngaynhan, p_ngaytra, v_so_ngay_luu_tru);
 
-    -- 4. Trả về ID của hóa đơn mới được lập
+    -- 4. Lưu phụ thu ban đầu vào bảng mới nếu có
+    IF p_phu_thu > 0::money THEN
+        INSERT INTO hoadon.phu_thu_phong (id_hd, id_p, loai_phu_thu, so_tien)
+        VALUES (v_id_hd, v_id_p, 'Tiêu hao', p_phu_thu);
+    END IF;
+
+    -- 5. Trả về ID của hóa đơn mới được lập
     RETURN v_id_hd;
 END;
 $$ LANGUAGE plpgsql;
