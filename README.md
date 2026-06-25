@@ -1,6 +1,6 @@
 # 🏨 Hệ thống Quản lý Khách sạn & Homestay (Homestay Management)
 
-Chào mừng bạn đến với dự án **Hệ thống Quản lý Khách sạn & Homestay**. Đây là một ứng dụng Spring Boot kết hợp với cơ sở dữ liệu PostgreSQL mạnh mẽ để quản lý các hoạt động vận hành của khách sạn/homestay, bao gồm quản lý chi nhánh, phòng, khách hàng, nhân sự, hóa đơn dịch vụ và báo cáo doanh thu.
+**Hệ thống Quản lý Khách sạn & Homestay** là một ứng dụng Spring Boot kết hợp với cơ sở dữ liệu PostgreSQL mạnh mẽ để quản lý các hoạt động vận hành của khách sạn/homestay, bao gồm quản lý chi nhánh, phòng, khách hàng, nhân sự, hóa đơn dịch vụ và báo cáo doanh thu.
 
 ---
 
@@ -97,13 +97,13 @@ Nếu không sử dụng Windows hoặc muốn chạy thủ công, bạn thực 
 ---
 
 ### 💡 Cách thiết lập Database độc lập (Không qua Spring Boot/Flyway)
-Nếu bạn chỉ muốn tạo cơ sở dữ liệu PostgreSQL để học tập hoặc chạy script độc lập mà không cần khởi động ứng dụng Spring Boot, bạn có thể thực hiện chạy tuần tự 9 file SQL hợp nhất tại thư mục [src/main/resources/db/create/](file:///d:/Database-Project/QuanLyKhachSan/src/main/resources/db/create/):
+Nếu bạn chỉ muốn tạo cơ sở dữ liệu PostgreSQL hoặc chạy script độc lập mà không cần khởi động ứng dụng Spring Boot, bạn có thể thực hiện chạy tuần tự 9 file SQL hợp nhất tại thư mục [src/main/resources/db/create/](file:///d:/Database-Project/QuanLyKhachSan/src/main/resources/db/create/):
 1. `01_create_database.sql` (Chạy bằng tài khoản superuser postgres)
 2. `02_create_tables.sql` (Từ bước này, hãy kết nối vào database `quanlykhachsan` vừa tạo)
 3. `03_create_indexes.sql`
 4. `04_create_foreign_keys.sql`
-5. `05_create_views.sql`
-6. `06_create_functions.sql`
+5. `06_create_functions.sql`
+6. `05_create_views.sql`
 7. `07_create_triggers.sql`
 8. `08_create_roles.sql`
 9. `09_seed_data.sql`
@@ -124,10 +124,3 @@ Tại đây, bạn sẽ có thể tương tác trực tiếp với hệ thống 
 
 ---
 
-## 📂 Cấu trúc thư mục dự án quan trọng
-- `src/main/java/com/homestay/App.java`: File khởi chạy chính của dự án Spring Boot, chứa đoạn code demo truy vấn dữ liệu mẫu khi start-up.
-- `src/main/java/com/homestay/controller/DemoController.java`: Nơi xử lý toàn bộ các API Endpoints giao tiếp giữa giao diện Web Frontend và Database.
-- `src/main/resources/static/index.html`: Mã nguồn của giao diện web SPA.
-- `src/main/resources/db/migration/`: Chứa 36 tệp migration của Flyway lưu vết lịch sử thay đổi Database.
-- `src/main/resources/db/create/`: Chứa 9 file SQL hợp nhất cấu trúc database ở trạng thái mới nhất.
-- `src/main/resources/db/data_seed.sql`: File chứa script nạp lượng lớn dữ liệu giả lập chất lượng cao.
