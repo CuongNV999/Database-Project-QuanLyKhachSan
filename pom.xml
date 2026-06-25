@@ -17,6 +17,7 @@
   <properties>
     <java.version>17</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <start-class>com.homestay.App</start-class>
   </properties>
 
   <dependencies>
@@ -49,6 +50,9 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <mainClass>com.homestay.App</mainClass>
+        </configuration>
       </plugin>
     </plugins>
   </build>

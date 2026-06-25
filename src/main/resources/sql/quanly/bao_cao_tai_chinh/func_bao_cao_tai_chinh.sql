@@ -46,15 +46,27 @@ BEGIN
       AND htp.ngaynhan >= CURRENT_TIMESTAMP;
 
     -- 3. Tổng phụ thu vật phẩm tiêu hao thực tế thu được
-    -- 4. Tổng tiền đền bù hỏng hóc cố định thực tế thu được
-    -- Cả hai được trích xuất từ hóa đơn đã thanh toán trong khoảng thời gian được chọn
-    SELECT COALESCE(SUM(htp.phu_thu_tieu_hao), 0::money), COALESCE(SUM(htp.phu_thu_hong_hoc), 0::money)
-    INTO v_tieu_hao, v_hong_hoc
+    SELECT COALESCE(SUM(so_tien), 0::money)
+    INTO v_tieu_hao
     FROM hoadon.hoadon h
-    JOIN hoadon.hoadon_thue_phong htp ON h.id_hd = htp.id_hd
-    JOIN quanly.phong p ON htp.id_p = p.id_p
+    JOIN hoadon.phu_thu_phong pt ON h.id_hd = pt.id_hd
+    JOIN quanly.phong p ON pt.id_p = p.id_p
     JOIN quanly.loaiphong lp ON p.id_lp = lp.id_lp
     WHERE h.trang_thai = 'Đã thanh toán'
+      AND pt.loai_phu_thu = 'Tiêu hao'
+      AND (p_id_cn = -1 OR lp.id_cn = p_id_cn)
+      AND h.ngaythanhtoan >= p_tu_ngay
+      AND h.ngaythanhtoan <= p_den_ngay;
+
+    -- 4. Tổng tiền đền bù hỏng hóc thực tế thu được
+    SELECT COALESCE(SUM(so_tien), 0::money)
+    INTO v_hong_hoc
+    FROM hoadon.hoadon h
+    JOIN hoadon.phu_thu_phong pt ON h.id_hd = pt.id_hd
+    JOIN quanly.phong p ON pt.id_p = p.id_p
+    JOIN quanly.loaiphong lp ON p.id_lp = lp.id_lp
+    WHERE h.trang_thai = 'Đã thanh toán'
+      AND pt.loai_phu_thu = 'Hỏng hóc'
       AND (p_id_cn = -1 OR lp.id_cn = p_id_cn)
       AND h.ngaythanhtoan >= p_tu_ngay
       AND h.ngaythanhtoan <= p_den_ngay;
