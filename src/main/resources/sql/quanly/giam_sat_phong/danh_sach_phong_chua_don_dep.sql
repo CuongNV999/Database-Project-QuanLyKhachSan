@@ -11,5 +11,5 @@ SELECT
 FROM phong p
 JOIN loaiphong lp ON p.id_lp = lp.id_lp
 WHERE lp.id_cn = ?
-  AND p.trang_thai = 'Đang dọn dẹp'
+  AND p.trang_thai = 'Còn trống'
 ORDER BY p.id_p;
