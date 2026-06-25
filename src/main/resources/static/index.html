@@ -1351,8 +1351,9 @@
 
         <!-- 6. QUẢN LÝ KHÁCH HÀNG SECTION -->
         <section id="customers-tab" class="section-container">
-            <div class="section-header">
+            <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                 <h2>Danh Sách & Quản Lý Khách Hàng</h2>
+                <button class="btn-primary" onclick="showAddMemberModal()" style="margin: 0; padding: 8px 16px;">+ Thêm Hội Viên</button>
             </div>
             <div class="filter-bar">
                 <div class="form-group" style="flex-grow: 1;">
@@ -3384,6 +3385,83 @@
             document.getElementById('customer-history-modal').classList.remove('show');
         }
 
+        // --- Membership Management ---
+        async function showAddMemberModal() {
+            const session = sessionStorage.getItem('userSession');
+            if (!session) return;
+
+            const custSelect = document.getElementById('member-add-customer');
+            custSelect.innerHTML = '<option value="">Đang tải...</option>';
+
+            document.getElementById('add-member-modal').classList.add('show');
+
+            try {
+                // Load only non-member customers via lightweight endpoint
+                const res = await fetch(`${API_BASE}/management/customers/non-members`);
+                if (res.status === 403) {
+                    showAlert('Bạn không có quyền thực hiện thao tác này!', false);
+                    closeAddMemberModal();
+                    return;
+                }
+                const customers = await res.json();
+
+                custSelect.innerHTML = '';
+                if (customers.length === 0) {
+                    custSelect.innerHTML = '<option value="">Không có khách hàng nào chưa có hội viên</option>';
+                } else {
+                    custSelect.innerHTML = '<option value="">-- Chọn khách hàng --</option>';
+                    customers.forEach(c => {
+                        const doc = c.cccd || c.passport || '';
+                        const label = `${c.ho_ten} (ID: ${c.id_kh}${doc ? ' - ' + doc : ''})`;
+                        custSelect.innerHTML += `<option value="${c.id_kh}">${label}</option>`;
+                    });
+                }
+            } catch (err) {
+                console.error('Failed to load customers for membership:', err);
+                custSelect.innerHTML = '<option value="">Lỗi tải danh sách</option>';
+                showAlert('Không thể tải danh sách khách hàng!', false);
+            }
+        }
+
+        function closeAddMemberModal() {
+            document.getElementById('add-member-modal').classList.remove('show');
+        }
+
+        async function handleAddMember(event) {
+            event.preventDefault();
+
+            const custSelect = document.getElementById('member-add-customer');
+            const idKh = parseInt(custSelect.value);
+
+            if (!idKh || isNaN(idKh)) {
+                showAlert('Vui lòng chọn khách hàng!', false);
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/management/customers/add-membership`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ idKh })
+                });
+                if (res.status === 403) {
+                    showAlert('Bạn không có quyền thực hiện thao tác này!', false);
+                    return;
+                }
+                const result = await res.json();
+                if (result.success) {
+                    showAlert(result.message, true);
+                    closeAddMemberModal();
+                    loadManagementCustomers();
+                } else {
+                    showAlert(result.message, false);
+                }
+            } catch (err) {
+                console.error('Failed to add membership:', err);
+                showAlert('Không thể kết nối để đăng ký hội viên!', false);
+            }
+        }
+
         // --- Employee Management ---
         let globalMgtEmployees = [];
         async function loadManagementEmployees() {
@@ -3686,6 +3764,33 @@
             </form>
         </div>
     </div>
+
+    <!-- Add Member Modal -->
+    <div id="add-member-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <span class="modal-title">Đăng Ký Hội Viên</span>
+                <button class="modal-close" onclick="closeAddMemberModal()">&times;</button>
+            </div>
+
+            <form id="form-add-member" onsubmit="handleAddMember(event)" style="margin-top: 1.5rem;">
+                <div class="form-group" style="margin-bottom: 1.2rem;">
+                    <label for="member-add-customer">Chọn Khách Hàng</label>
+                    <select id="member-add-customer" required>
+                        <!-- Options dynamically loaded -->
+                    </select>
+                </div>
+                <div style="background: var(--accent-light); border-radius: 8px; padding: 12px; margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+                    <strong style="color: var(--text-main);">💡 Lưu ý:</strong> Số đêm tích lũy ban đầu sẽ được tính từ đơn hàng gần nhất đã thanh toán của khách hàng. Hạng hội viên sẽ tự động được xác định dựa trên số đêm.
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 12px;">
+                    <button type="button" class="btn-primary" onclick="closeAddMemberModal()" style="margin: 0; padding: 8px 16px; background: var(--text-secondary);">Hủy</button>
+                    <button type="submit" class="btn-primary" style="margin: 0; padding: 8px 16px; background: var(--accent-primary);">Lưu lại</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </body>
 
 </html>
